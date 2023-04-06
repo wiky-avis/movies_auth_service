@@ -4,6 +4,7 @@ from gevent import monkey
 
 from src.api.v1.ping import api as ping_api
 
+
 monkey.patch_all()
 
 app = Flask(__name__)
