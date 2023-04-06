@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restx import Api
 from gevent import monkey
 
-from src.api.v1.ping import api as ping_api
+from src.api.technical.ping import api as ping_api
 
 
 monkey.patch_all()
