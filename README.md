@@ -3,7 +3,7 @@
 ## Сборка и запуск в контейнере
 
 ```bash
-make build
+make test_build
 ```
 
 ###  Тест API

@@ -14,6 +14,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH ./src
 
+RUN apt-get update -y && \
+    apt-get install -y postgresql-client --no-install-recommends
+
 WORKDIR /opt/app
 
 COPY --from=requirements-stage /tmp/requirements.txt /opt/app/requirements.txt
