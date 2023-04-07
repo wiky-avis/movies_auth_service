@@ -2,20 +2,26 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:13.0-alpine
+    image: postgres:15
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - pgdata:/var/lib/postgresql/data/
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data
     env_file:
       - ./.env
     networks:
       - "backend"
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis
@@ -23,9 +29,20 @@ services:
       - "backend"
     volumes:
       - "redis_data:/opt/redis/data"
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    env_file:
+      - ./.env
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
 
   api:
     build: .
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
     env_file:
       - ./.env
     networks:
@@ -36,7 +53,8 @@ services:
 
 volumes:
     redis_data:
-    postgres_data:
+    pgdata:
 
 networks:
   backend:
+    driver: bridge

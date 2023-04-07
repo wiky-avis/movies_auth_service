@@ -2,12 +2,14 @@ from flask import Flask
 from flask_restx import Api
 from gevent import monkey
 
+from src import init_db
 from src.api.technical.ping import api as ping_api
-
 
 monkey.patch_all()
 
 app = Flask(__name__)
+
+init_db(app)
 
 api = Api(
     app=app,

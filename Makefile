@@ -13,10 +13,11 @@ test_build:
 	docker build -t my-flask-app . && docker run -p 5000:5000 my-flask-app
 
 up:
+	cp .env.example .env
 	docker-compose -f docker-compose-base.yml -f docker-compose-prod.yml up -d
 
 build:
 	docker-compose -f docker-compose-base.yml -f docker-compose-prod.yml up -d --build
 
 down:
-	docker-compose -f docker-compose-base.yml -f docker-compose-prod.yml down
+	docker-compose -f docker-compose-base.yml -f docker-compose-prod.yml down -v

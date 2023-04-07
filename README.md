@@ -1,9 +1,24 @@
 # Проектная работа 6 спринта
 
-## Сборка и запуск в контейнере
-
+###  Сборка и запуск в контейнере
+- prod
 ```bash
-make test_build
+make up
+```
+- создать миграцию
+alembic revision --autogenerate -m "initial migration"
+- применить миграцию
+alembic upgrade head
+
+### Тестирование (локально)
+- установка зависимостей
+```bash
+pip3 install poetry
+poetry install --no-root && poetry shell
+```
+- создание .env файла(перед сборкой контейнеров следует удалить этот файл, либо взять значения переменных из файла .env.example)
+```bash
+cp .env.test .env
 ```
 
 ###  Тест API

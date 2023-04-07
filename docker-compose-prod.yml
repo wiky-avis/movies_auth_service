@@ -5,6 +5,14 @@ services:
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
 
+  redis:
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+
+  api:
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+
   nginx:
     build: ./nginx
     restart: always

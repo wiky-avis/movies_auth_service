@@ -18,6 +18,8 @@ gevent = "^22.10.2"
 flask-restx = "^1.1.0"
 flask-security = "^3.0.0"
 flask-jwt-extended = "^4.4.4"
+python-dotenv = "^1.0.0"
+Flask-SQLAlchemy = "^3.0.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
