@@ -1,9 +1,9 @@
 from pathlib import Path
 
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
-from flask import Flask
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 MIGRATION_DIR = BASE_DIR / "db" / "migrations"
@@ -22,7 +22,9 @@ db = SQLAlchemy(metadata=metadata)
 def init_db(app: Flask):
     """Инициализация базы данных."""
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://app:123qwe@localhost:5432/auth_database'
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ] = "postgresql://app:123qwe@localhost:5432/auth_database"
     db.init_app(app)
     # Migrate(app, db, MIGRATION_DIR, command='db')
 
