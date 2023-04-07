@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  db:
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+
+  nginx:
+    build: ./nginx
+    restart: always
+    env_file:
+      - ./.env
+    networks:
+      - "backend"
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+    depends_on:
+      - api
+
+volumes:
+    redis_data:
+    postgres_data:
+
+networks:
+  backend:

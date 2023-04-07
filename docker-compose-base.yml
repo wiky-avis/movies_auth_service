@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13.0-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    networks:
+      - "backend"
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    networks:
+      - "backend"
+    volumes:
+      - "redis_data:/opt/redis/data"
+
+  api:
+    build: .
+    env_file:
+      - ./.env
+    networks:
+      - "backend"
+    depends_on:
+      - db
+      - redis
+
+volumes:
+    redis_data:
+    postgres_data:
+
+networks:
+  backend:
