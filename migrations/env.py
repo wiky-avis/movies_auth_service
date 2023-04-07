@@ -6,6 +6,7 @@ from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
+from src import database
 
 sys.path.append(os.path.split(os.getcwd())[0])
 
@@ -14,12 +15,9 @@ load_dotenv()
 config = context.config
 fileConfig(config.config_file_name)
 
-from src import db
+target_metadata = database.metadata
+
 from src.schemas import *
-
-
-target_metadata = db.metadata
-
 
 def get_url():
     return os.getenv("DB_URL")

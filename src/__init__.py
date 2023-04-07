@@ -4,10 +4,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-MIGRATION_DIR = BASE_DIR / "db" / "migrations"
-
 convention = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -16,7 +12,7 @@ convention = {
     "pk": "pk_%(table_name)s",
 }
 metadata = MetaData(naming_convention=convention)
-db = SQLAlchemy(metadata=metadata)
+database = SQLAlchemy(metadata=metadata)
 
 
 def init_db(app: Flask):
@@ -25,7 +21,6 @@ def init_db(app: Flask):
     app.config[
         "SQLALCHEMY_DATABASE_URI"
     ] = "postgresql://app:123qwe@localhost:5432/auth_database"
-    db.init_app(app)
-    # Migrate(app, db, MIGRATION_DIR, command='db')
+    database.init_app(app)
 
-    return db
+    return database
