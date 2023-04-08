@@ -1,22 +1,46 @@
 import enum
-import time
 import uuid
 from datetime import timezone
 
-import jwt
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from src import db
-from src.app import app
 from src.common.utils.datetime_util import (
     get_local_utcoffset,
     localized_dt_string,
     make_tzaware,
     utc_now,
 )
-from src.models.role import Role
+
+
+db = SQLAlchemy()
+
+
+class RoleType(str, enum.Enum):
+    ROLE_TEMPORARY_USER = "ROLE_TEMPORARY_USER"
+    ROLE_PORTAL_USER = "ROLE_PORTAL_USER"
+
+
+class Role(db.Model):
+    __tablename__ = "roles"
+
+    id = db.Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        unique=True,
+        nullable=False,
+    )
+    name = db.Column(db.String(72), unique=True, nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    users = db.relationship(
+        "User", secondary="user_role", back_populates="roles"
+    )
+
+    def __repr__(self):
+        return f"<Role: {self.name}>"
 
 
 class User(db.Model):
@@ -35,26 +59,11 @@ class User(db.Model):
     verified_mail = db.Column(db.Boolean, unique=False, default=False)
     login_history = db.relationship("LoginHistory", backref="user")
     roles = db.relationship(
-        Role, secondary="user_role", back_populates="users"
+        "Role", secondary="user_role", back_populates="users"
     )
 
     def __repr__(self):
         return f"<User email={self.email}>"
-
-    def generate_auth_token(self, expires_in=app.config["JWT_EXPIRES_IN"]):
-        payload = {
-            "UserId": self.id,
-            "Email": self.email,
-            "VerifiedMail": self.verified_mail,
-            "Roles": self.roles,
-            "exp": time.time() + expires_in,
-        }
-        token = jwt.encode(
-            payload,
-            app.config["JWT_PRIVATE_KEY"],
-            algorithm=app.config["JWT_ALGORITHM"],
-        )
-        return token
 
     @hybrid_property
     def registered_on_str(self):
@@ -101,13 +110,14 @@ class UserRole(db.Model):
     )
 
 
+class DeviceType(str, enum.Enum):
+    WEB = "web"
+    MOBILE = "mobile"
+    TABLET = "tablet"
+
+
 class LoginHistory(db.Model):
     __tablename__ = "login_history"
-
-    class DeviceType(enum.Enum):
-        WEB = "web"
-        MOBILE = "mobile"
-        TABLET = "tablet"
 
     id = db.Column(
         UUID(as_uuid=True),
@@ -121,7 +131,7 @@ class LoginHistory(db.Model):
     device_type = db.Column(
         db.Enum(DeviceType, name="device_type"),
         nullable=False,
-        default=DeviceType.WEB.value,
+        default=DeviceType.WEB,
     )
     login_dt = db.Column(db.DateTime, nullable=False)
 

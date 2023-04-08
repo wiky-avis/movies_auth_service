@@ -57,3 +57,12 @@ class Config:
     JWT_PUBLIC_KEY = os.getenv("JWT_PUBLIC_KEY", default=TEST_PUBLIC_KEY)
     JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
     JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))
+
+
+convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
+}
