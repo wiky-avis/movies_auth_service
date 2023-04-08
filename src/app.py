@@ -1,26 +1,11 @@
-from flask import Flask
-from flask_restx import Api
 from gevent import monkey
 
-from src import init_db
-from src.api.technical.ping import api as ping_api
+from src import create_app
 
 
 monkey.patch_all()
 
-app = Flask(__name__)
-
-init_db(app)
-
-api = Api(
-    app=app,
-    title="API Auth",
-    description="API для авторизации пользователей",
-    doc="/api/swagger/",
-    version="1.0.0",
-)
-api.add_namespace(ping_api)
-
+app = create_app()
 
 if __name__ == "__main__":
     app.run()

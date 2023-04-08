@@ -5,10 +5,27 @@
 ```bash
 make up
 ```
+
+
+
+```bash
+flask db init
+```
+```bash
+flask db migrate "message"
+```
+```bash
+flask db upgrade
+```
+
 - создать миграцию
+```bash
 alembic revision --autogenerate -m "initial migration"
+```
 - применить миграцию
+```bash
 alembic upgrade head
+```
 
 ### Тестирование (локально)
 - установка зависимостей
