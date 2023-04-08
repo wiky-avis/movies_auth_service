@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
 from src.api.technical.ping import api as ping_api
-
+from src.api.v1.auth.checking_mail import api as check_mail
 
 convention = {
     "ix": "ix_%(column_0_label)s",
@@ -33,7 +33,9 @@ def init_db(app: Flask):
 def create_app():
     app = Flask(__name__)
     app.config.from_object("config.Config")
+
     init_db(app)
+
     api = Api(
         app=app,
         title="API Auth",
@@ -42,6 +44,8 @@ def create_app():
         version="1.0.0",
     )
     api.add_namespace(ping_api)
+    api.add_namespace(check_mail)
+
     cors.init_app(app)
 
     return app
