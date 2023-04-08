@@ -27,9 +27,10 @@ migrate = Migrate()
 
 def init_db(app: Flask):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"
-    ] = os.environ.get("DB_URL", default="postgresql://app:123qwe@localhost:5432/auth_database")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+        "DB_URL",
+        default="postgresql://app:123qwe@localhost:5432/auth_database",
+    )
     db.init_app(app)
     migrate.init_app(app, db)
 
