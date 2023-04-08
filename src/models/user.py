@@ -30,7 +30,7 @@ class User(db.Model):
         nullable=False,
     )
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password_hash = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(100), nullable=True)
     registered_on = db.Column(db.DateTime, default=utc_now)
     verified_mail = db.Column(db.Boolean, unique=False, default=False)
     login_history = db.relationship("LoginHistory", backref="user")
