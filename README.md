@@ -23,7 +23,6 @@ POST /api/v1/users/sign_up
 body:
 {
 "email":"sgsf@sgfg.ru",
-"password": "pass",
 "roles":["ROLE_TEMPORARY_USER"]
 }
 
