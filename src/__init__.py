@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -26,11 +24,6 @@ migrate = Migrate()
 
 
 def init_db(app: Flask):
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-        "DB_URL",
-        default="postgresql://app:123qwe@localhost:5432/auth_database",
-    )
     db.init_app(app)
     migrate.init_app(app, db)
 
@@ -39,10 +32,7 @@ def init_db(app: Flask):
 
 def create_app():
     app = Flask(__name__)
-    app.config["JWT_PRIVATE_KEY"] = os.getenv("PRIVATE_KEY")
-    app.config["JWT_PUBLIC_KEY"] = os.getenv("PUBLIC_KEY")
-    app.config["JWT_ALGORITHM"] = os.getenv("JWT_ALGORITHM")
-    app.config["JWT_EXPIRES_IN"] = os.getenv("EXPIRES_IN")
+    app.config.from_object("config.Config")
     init_db(app)
     api = Api(
         app=app,
