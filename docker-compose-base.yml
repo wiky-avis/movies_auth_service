@@ -41,7 +41,6 @@ services:
 
   api:
     build: .
-    command: bash -c "flask db upgrade"
     ports:
       - "${HTTP_PORT}:${HTTP_PORT}"
     env_file:
@@ -51,6 +50,16 @@ services:
     depends_on:
       - db
       - redis
+
+  migration:
+    build: .
+    command: bash -c "flask db upgrade"
+    env_file:
+      - ./.env
+    networks:
+      - "backend"
+    depends_on:
+      - api
 
 volumes:
     redis_data:

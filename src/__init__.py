@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -27,7 +29,7 @@ def init_db(app: Flask):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql://app:123qwe@localhost:5432/auth_database"
+    ] = os.environ.get("DB_URL", default="postgresql://app:123qwe@localhost:5432/auth_database")
     db.init_app(app)
     migrate.init_app(app, db)
 
