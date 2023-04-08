@@ -6,13 +6,21 @@
 make up
 ```
 
-- создать миграцию
+- автоматическое создание миграции после изменения модели
 ```bash
-flask db migrate "message"
+flask db migrate --message "message"
 ```
 - применить миграцию
 ```bash
 flask db upgrade
+```
+- откат миграции
+```bash
+flask db downgrade
+```
+- содать пустую миграцию
+```bash
+flask db revision --message "message"
 ```
 
 ### Тестирование (локально)
