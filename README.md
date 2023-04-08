@@ -6,25 +6,13 @@
 make up
 ```
 
-
-
-```bash
-flask db init
-```
+- создать миграцию
 ```bash
 flask db migrate "message"
 ```
-```bash
-flask db upgrade
-```
-
-- создать миграцию
-```bash
-alembic revision --autogenerate -m "initial migration"
-```
 - применить миграцию
 ```bash
-alembic upgrade head
+flask db upgrade
 ```
 
 ### Тестирование (локально)
