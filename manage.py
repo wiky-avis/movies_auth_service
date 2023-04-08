@@ -1,5 +1,3 @@
-import os
-
 import click
 
 
@@ -13,9 +11,9 @@ def api():
     from src.app import app
 
     app.run(
-        host=os.getenv("HTTP_HOST", default="localhost"),
-        port=int(os.getenv("HTTP_PORT", default=5000)),
-        debug=bool(os.getenv("DEBUG", default=1)),
+        host=app.config["HTTP_HOST"],
+        port=app.config["HTTP_PORT"],
+        debug=True,
     )
 
 

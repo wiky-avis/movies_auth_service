@@ -42,6 +42,10 @@ make up_local_compose
 ```bash
 cp .env.test .env
 ```
+- привозникновении ошибки "ModuleNotFoundError: No module named 'config'"
+```bash
+export PYTHONPATH=src
+```
 - запуск апи
 ```bash
 python manage.py api
