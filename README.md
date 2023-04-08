@@ -38,7 +38,7 @@ poetry install --no-root && poetry shell
 ```bash
 make up_local_compose
 ```
-- создание .env файла(перед сборкой контейнеров следует удалить этот файл, либо взять значения переменных из файла .env.example)
+- создание .env файла
 ```bash
 cp .env.test .env
 ```

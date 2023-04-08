@@ -4,14 +4,20 @@ services:
   db:
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    networks:
+      - "test-app"
 
   redis:
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - "test-app"
 
   api:
     ports:
       - "${HTTP_PORT}:${HTTP_PORT}"
+    networks:
+      - "test-app"
 
   tests:
     build:
@@ -21,4 +27,7 @@ services:
     depends_on:
       - api
     networks:
-      - "backend"
+      - "test-app"
+
+networks:
+  test-app:
