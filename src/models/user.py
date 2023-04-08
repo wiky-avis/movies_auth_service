@@ -25,7 +25,6 @@ class User(db.Model):
         unique=True,
         nullable=False,
     )
-    login = db.Column(db.String, unique=True, nullable=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(100), nullable=False)
     registered_on = db.Column(db.DateTime, default=utc_now)
