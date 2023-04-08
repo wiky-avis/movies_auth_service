@@ -39,6 +39,10 @@ def init_db(app: Flask):
 
 def create_app():
     app = Flask(__name__)
+    app.config["JWT_PRIVATE_KEY"] = os.getenv("PRIVATE_KEY")
+    app.config["JWT_PUBLIC_KEY"] = os.getenv("PUBLIC_KEY")
+    app.config["JWT_ALGORITHM"] = os.getenv("JWT_ALGORITHM")
+    app.config["JWT_EXPIRES_IN"] = os.getenv("EXPIRES_IN")
     init_db(app)
     api = Api(
         app=app,

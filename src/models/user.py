@@ -1,4 +1,3 @@
-import os
 import time
 import uuid
 from datetime import timezone
@@ -9,6 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from src import db
+from src.app import app
 from src.common.utils.datetime_util import (
     get_local_utcoffset,
     localized_dt_string,
@@ -40,7 +40,7 @@ class User(db.Model):
     def __repr__(self):
         return f"<User email={self.email}>"
 
-    def generate_auth_token(self, expires_in=int(os.getenv("EXPIRES_IN"))):
+    def generate_auth_token(self, expires_in=app.config["JWT_EXPIRES_IN"]):
         payload = {
             "UserId": self.id,
             "Email": self.email,
@@ -50,8 +50,8 @@ class User(db.Model):
         }
         token = jwt.encode(
             payload,
-            os.getenv("PRIVATE_KEY"),
-            algorithm=os.getenv("JWT_ALGORITHM"),
+            app.config["JWT_PRIVATE_KEY"],
+            algorithm=app.config["JWT_ALGORITHM"],
         )
         return token
 
