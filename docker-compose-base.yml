@@ -41,6 +41,7 @@ services:
 
   api:
     build: .
+    command: bash -c "flask db upgrade"
     ports:
       - "${HTTP_PORT}:${HTTP_PORT}"
     env_file:
