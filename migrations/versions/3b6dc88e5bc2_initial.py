@@ -1,8 +1,8 @@
-"""empty message
+"""initial
 
-Revision ID: aa15c0dc0e24
+Revision ID: 3b6dc88e5bc2
 Revises: 
-Create Date: 2023-04-08 08:50:21.190939
+Create Date: 2023-04-08 16:13:26.342234
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'aa15c0dc0e24'
+revision = '3b6dc88e5bc2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,23 +28,21 @@ def upgrade():
     )
     op.create_table('users',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('login', sa.String(), nullable=True),
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('password_hash', sa.String(length=100), nullable=False),
     sa.Column('registered_on', sa.DateTime(), nullable=True),
     sa.Column('verified_mail', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
     sa.UniqueConstraint('email', name=op.f('uq_users_email')),
-    sa.UniqueConstraint('id', name=op.f('uq_users_id')),
-    sa.UniqueConstraint('login', name=op.f('uq_users_login'))
+    sa.UniqueConstraint('id', name=op.f('uq_users_id'))
     )
     op.create_table('login_history',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('user_id', sa.UUID(), nullable=True),
-    sa.Column('device_type', sa.String(), nullable=False),
+    sa.Column('device_type', sa.Enum('WEB', 'MOBILE', 'TABLET', name='device_type'), nullable=False),
     sa.Column('login_dt', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_login_history_user_id_users'), ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id', 'device_type', name=op.f('pk_login_history'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_login_history'))
     )
     op.create_table('user_role',
     sa.Column('id', sa.UUID(), nullable=False),

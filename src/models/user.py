@@ -1,3 +1,4 @@
+import enum
 import time
 import uuid
 from datetime import timezone
@@ -103,6 +104,11 @@ class UserRole(db.Model):
 class LoginHistory(db.Model):
     __tablename__ = "login_history"
 
+    class DeviceType(enum.Enum):
+        WEB = "web"
+        MOBILE = "mobile"
+        TABLET = "tablet"
+
     id = db.Column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -112,7 +118,11 @@ class LoginHistory(db.Model):
     user_id = db.Column(
         UUID(as_uuid=True), db.ForeignKey(User.id, ondelete="CASCADE")
     )
-    device_type = db.Column(db.String(), primary_key=True)
+    device_type = db.Column(
+        db.Enum(DeviceType, name="device_type"),
+        nullable=False,
+        default=DeviceType.WEB.value,
+    )
     login_dt = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):

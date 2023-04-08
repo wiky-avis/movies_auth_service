@@ -1,8 +1,14 @@
+import enum
 import uuid
 
 from sqlalchemy.dialects.postgresql import UUID
 
 from src import db
+
+
+class RoleType(enum.Enum):
+    ROLE_TEMPORARY_USER = "ROLE_TEMPORARY_USER"
+    ROLE_PORTAL_USER = "ROLE_PORTAL_USER"
 
 
 class Role(db.Model):
