@@ -5,7 +5,12 @@
 ```bash
 make up
 ```
+- local
+```bash
+make up_local_compose
+```
 
+### Миграции
 - автоматическое создание миграции после изменения модели
 ```bash
 flask db migrate --message "message"
@@ -29,9 +34,21 @@ flask db revision --message "message"
 pip3 install poetry
 poetry install --no-root && poetry shell
 ```
+- сборка контейнеров
+```bash
+make up_local_compose
+```
 - создание .env файла(перед сборкой контейнеров следует удалить этот файл, либо взять значения переменных из файла .env.example)
 ```bash
 cp .env.test .env
+```
+- запуск апи
+```bash
+python manage.py api
+```
+- запуск тестов
+```bash
+pytest
 ```
 
 ###  Тест API
