@@ -34,7 +34,6 @@ body:
     "roles": [
       "ROLE_TEMPORARY_USER"
     ],
-    "access_token": "fsdcshocjsapa"
   }
 }
 
@@ -80,8 +79,6 @@ PATCH /api/v1/users/308645/sign_up
     "roles": [
       "ROLE_PORTAL_USER"
     ],
-    "access_token": "fsdcshogffhcjsapa",
-    "refresh_token": "ggddahAKhdh5rthrt"
   }
 }
 ```
