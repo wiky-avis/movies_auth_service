@@ -5,7 +5,12 @@
 ```bash
 make up
 ```
+- local
+```bash
+make up_local_compose
+```
 
+### Миграции
 - автоматическое создание миграции после изменения модели
 ```bash
 flask db migrate --message "message"
@@ -29,9 +34,25 @@ flask db revision --message "message"
 pip3 install poetry
 poetry install --no-root && poetry shell
 ```
-- создание .env файла(перед сборкой контейнеров следует удалить этот файл, либо взять значения переменных из файла .env.example)
+- сборка контейнеров
+```bash
+make up_local_compose
+```
+- создание .env файла
 ```bash
 cp .env.test .env
+```
+- привозникновении ошибки "ModuleNotFoundError: No module named 'config'"
+```bash
+export PYTHONPATH=src
+```
+- запуск апи
+```bash
+python manage.py api
+```
+- запуск тестов
+```bash
+pytest
 ```
 
 ###  Тест API

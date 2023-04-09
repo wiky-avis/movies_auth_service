@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  db:
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    networks:
+      - "test-app"
+
+  redis:
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - "test-app"
+
+  api:
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+    networks:
+      - "test-app"
+
+  tests:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    entrypoint: sh -c "pytest tests/functional"
+    depends_on:
+      - api
+    networks:
+      - "test-app"
+
+networks:
+  test-app:
