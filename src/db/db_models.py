@@ -5,9 +5,9 @@ from datetime import timezone
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.hybrid import hybrid_property
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash
 
-from src.common.utils.datetime_util import (
+from src.common.datetime_util import (
     get_local_utcoffset,
     localized_dt_string,
     make_tzaware,
@@ -18,21 +18,25 @@ from src.common.utils.datetime_util import (
 db = SQLAlchemy()
 
 
+class BaseMixin:
+    def to_dict(self):
+        return {
+            c.name: getattr(self, c.name, None) for c in self.__table__.columns
+        }
+
+
+class UUIDMixin(BaseMixin):
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+
 class RoleType(str, enum.Enum):
     ROLE_TEMPORARY_USER = "ROLE_TEMPORARY_USER"
     ROLE_PORTAL_USER = "ROLE_PORTAL_USER"
 
 
-class Role(db.Model):
+class Role(UUIDMixin, db.Model):
     __tablename__ = "roles"
 
-    id = db.Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-        unique=True,
-        nullable=False,
-    )
     name = db.Column(db.String(72), unique=True, nullable=False)
     description = db.Column(db.String(255), nullable=False)
     users = db.relationship(
@@ -43,16 +47,9 @@ class Role(db.Model):
         return f"<Role: {self.name}>"
 
 
-class User(db.Model):
+class User(UUIDMixin, db.Model):
     __tablename__ = "users"
 
-    id = db.Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-        unique=True,
-        nullable=False,
-    )
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(100), nullable=True)
     registered_on = db.Column(db.DateTime, default=utc_now)
@@ -82,26 +79,10 @@ class User(db.Model):
     def password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
-        if not password:
-            return False
-        return check_password_hash(self.password_hash, password)
 
-    @classmethod
-    def find_by_email(cls, email):
-        return cls.query.filter_by(email=email).first()
-
-
-class UserRole(db.Model):
+class UserRole(UUIDMixin, db.Model):
     __tablename__ = "user_role"
 
-    id = db.Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-        unique=True,
-        nullable=False,
-    )
     user_id = db.Column(
         UUID(as_uuid=True), db.ForeignKey(User.id, ondelete="CASCADE")
     )
@@ -116,15 +97,9 @@ class DeviceType(str, enum.Enum):
     TABLET = "tablet"
 
 
-class LoginHistory(db.Model):
+class LoginHistory(UUIDMixin, db.Model):
     __tablename__ = "login_history"
 
-    id = db.Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-        nullable=False,
-    )
     user_id = db.Column(
         UUID(as_uuid=True), db.ForeignKey(User.id, ondelete="CASCADE")
     )
