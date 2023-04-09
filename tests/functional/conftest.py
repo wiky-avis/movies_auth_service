@@ -1,27 +1,39 @@
+import psycopg2
 import pytest
+from flask import Flask, current_app
+from flask_restx import Api
+from psycopg2.extras import DictCursor
 
-from src.app import create_app
-from src.db import User
-from src.db.db_factory import db as database
+from src.api.technical.ping import api as ping_api
+from src.api.v1.auth.checking_mail import api as check_mail
+from src.config import Config
+from src.db.db_factory import db as database, init_db
 
 
 @pytest.fixture(scope="session")
-def app():
-    app = create_app()
+def test_app():
+    config = Config()
+    app = Flask(__name__)
+    app.config.from_object(config)
+    ctx = app.app_context()
+    ctx.push()
+
+    init_db(app)
+
+    api = Api(app)
+    api.add_namespace(ping_api)
+    api.add_namespace(check_mail)
+
     return app
 
 
-@pytest.fixture(scope="session")
-def db(app, test_client, request):
-    database.drop_all()
+@pytest.fixture(scope='session')
+def test_db(test_app):
     database.create_all()
     database.session.commit()
-
-    def fin():
-        database.session.remove()
-
-    request.addfinalizer(fin)
-    return database
+    yield database
+    database.session.remove()
+    database.drop_all()
 
 
 @pytest.fixture
@@ -30,15 +42,33 @@ def setup_url():
 
 
 @pytest.fixture(scope="session")
-def test_client(app):
-    with app.test_client() as testing_client:
-        with app.app_context():
+def test_client(test_app):
+    with test_app.test_client() as testing_client:
+        with test_app.app_context():
             yield testing_client
 
 
+def clean_tables(*tables):
+    DSL = {
+        "dbname": current_app.config.get("POSTGRES_DB"),
+        "user": current_app.config.get("POSTGRES_USER"),
+        "password": current_app.config.get("POSTGRES_PASSWORD"),
+        "host": current_app.config.get("POSTGRES_HOST"),
+        "port": current_app.config.get("POSTGRES_PORT"),
+    }
+
+    pg_conn = psycopg2.connect(**DSL, cursor_factory=DictCursor)
+    if pg_conn:
+        with pg_conn.cursor() as cur:
+            for table in tables:
+                cur.execute("DELETE FROM %s" % table)
+        pg_conn.commit()
+        pg_conn.close()
+
+
 @pytest.fixture
-def user(db):
-    user = User(email="test@mail.test", password="test_password")
-    db.session.add(user)
-    db.session.commit()
-    return user
+def clean_table(request):
+    def teardown():
+        clean_tables(*request.param)
+
+    request.addfinalizer(teardown)

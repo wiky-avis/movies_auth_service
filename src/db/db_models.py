@@ -1,7 +1,9 @@
 import enum
+import re
 import uuid
 from datetime import timezone
 
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -77,7 +79,8 @@ class User(UUIDMixin, db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = generate_password_hash(password)
+        log_rounds = current_app.config.get("BCRYPT_LOG_ROUNDS")
+        self.password_hash = generate_password_hash(password=password, salt_length=log_rounds)
 
 
 class UserRole(UUIDMixin, db.Model):

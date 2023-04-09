@@ -1,5 +1,9 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 TEST_PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDIzi1aV7xG1BGjwf1ZsCxiMO5jdYEPVfdPDLbBQtMD4VZlNb4p
@@ -33,21 +37,21 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DB_URL",
-        default="postgresql://app:123qwe@localhost:5432/auth_database",
+        default="postgresql://app:123qwe@db:5432/auth_database",
     )
 
     POSTGRES_USER = os.getenv("POSTGRES_USER", default="app")
     POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", default="123qwe")
     POSTGRES_DB = os.getenv("POSTGRES_DB", default="auth_database")
     POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", default=5432))
-    POSTGRES_HOST = os.getenv("POSTGRES_HOST", default="localhost")
+    POSTGRES_HOST = os.getenv("POSTGRES_HOST", default="db")
     DB_URL = os.getenv(
         "DB_URL",
-        default="postgresql://app:123qwe@localhost:5432/auth_database",
+        default="postgresql://app:123qwe@db:5432/auth_database",
     )
 
     HTTP_PORT = int(os.getenv("HTTP_PORT", default=5000))
-    HTTP_HOST = os.getenv("HTTP_HOST", default="localhost")
+    HTTP_HOST = os.getenv("HTTP_HOST", default="api")
 
     REDIS_PORT = int(os.getenv("REDIS_PORT", default=6379))
 
@@ -57,6 +61,8 @@ class Config:
     JWT_PUBLIC_KEY = os.getenv("JWT_PUBLIC_KEY", default=TEST_PUBLIC_KEY)
     JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
     JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))
+
+    BCRYPT_LOG_ROUNDS = 13
 
 
 convention = {

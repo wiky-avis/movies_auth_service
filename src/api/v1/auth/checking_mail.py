@@ -25,11 +25,11 @@ checking_mail_model_response = api.model(
 class CheckingMail(Resource):
     @api.doc(
         responses={
-            int(HTTPStatus.OK): (
+            HTTPStatus.OK: (
                 "User already exist.",
                 checking_mail_model_response,
             ),
-            int(HTTPStatus.NOT_FOUND): "User does not exist.",
+            HTTPStatus.NOT_FOUND: "User does not exist.",
         }
     )
     @api.param("email", "Почта пользователя")

@@ -1,11 +1,10 @@
 import time
 
 import jwt
+from flask import current_app
 
-from src.app import app
 
-
-def generate_auth_token(expires_in=app.config["JWT_EXPIRES_IN"], **kwargs):
+def generate_auth_token(expires_in=current_app.config.get("JWT_EXPIRES_IN"), **kwargs):
     payload = {
         "UserId": kwargs.get("id"),
         "Email": kwargs.get("email"),
@@ -15,7 +14,7 @@ def generate_auth_token(expires_in=app.config["JWT_EXPIRES_IN"], **kwargs):
     }
     token = jwt.encode(
         payload,
-        app.config["JWT_PRIVATE_KEY"],
-        algorithm=app.config["JWT_ALGORITHM"],
+        current_app.config.get("JWT_PRIVATE_KEY"),
+        algorithm=current_app.config.get("JWT_ALGORITHM"),
     )
     return token
