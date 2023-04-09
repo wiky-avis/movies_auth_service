@@ -30,6 +30,7 @@ class CheckingMail(Resource):
                 checking_mail_model_response,
             ),
             HTTPStatus.NOT_FOUND: "User does not exist.",
+            HTTPStatus.BAD_REQUEST: "Email is not valid.",
         }
     )
     @api.param("email", "Почта пользователя")
