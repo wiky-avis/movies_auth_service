@@ -28,3 +28,13 @@ def test_checking_mail(test_db, test_client, setup_url):
     assert body["success"] is True
     assert body["result"]["id"]
     assert body["result"]["email"] == email
+
+
+def test_checking_mail_error(test_client, setup_url):
+    res = test_client.get("/api/v1/users/checking_mail")
+    assert res.status_code == HTTPStatus.BAD_REQUEST
+    assert res.json == {
+        "success": False,
+        "error": {"msg": "Email is not valid."},
+        "result": None,
+    }

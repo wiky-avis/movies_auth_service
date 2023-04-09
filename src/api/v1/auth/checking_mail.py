@@ -35,7 +35,7 @@ class CheckingMail(Resource):
     @api.param("email", "Почта пользователя")
     def get(self):
         args = parser.parse_args()
-        email = args["email"]
+        email = args.get("email")
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
         return auth_service.checking_mail(email)

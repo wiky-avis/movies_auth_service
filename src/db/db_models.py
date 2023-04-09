@@ -1,5 +1,4 @@
 import enum
-import re
 import uuid
 from datetime import timezone
 
@@ -80,7 +79,9 @@ class User(UUIDMixin, db.Model):
     @password.setter
     def password(self, password):
         log_rounds = current_app.config.get("BCRYPT_LOG_ROUNDS")
-        self.password_hash = generate_password_hash(password=password, salt_length=log_rounds)
+        self.password_hash = generate_password_hash(
+            password=password, salt_length=log_rounds
+        )
 
 
 class UserRole(UUIDMixin, db.Model):

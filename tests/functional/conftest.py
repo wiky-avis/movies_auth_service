@@ -27,7 +27,7 @@ def test_app():
     return app
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def test_db(test_app):
     database.create_all()
     database.session.commit()

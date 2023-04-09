@@ -4,7 +4,9 @@ import jwt
 from flask import current_app
 
 
-def generate_auth_token(expires_in=current_app.config.get("JWT_EXPIRES_IN"), **kwargs):
+def generate_auth_token(
+    expires_in=current_app.config.get("JWT_EXPIRES_IN"), **kwargs
+):
     payload = {
         "UserId": kwargs.get("id"),
         "Email": kwargs.get("email"),
