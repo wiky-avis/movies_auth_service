@@ -18,6 +18,11 @@ gevent = "^22.10.2"
 flask-restx = "^1.1.0"
 flask-security = "^3.0.0"
 flask-jwt-extended = "^4.4.4"
+python-dotenv = "^1.0.0"
+Flask-SQLAlchemy = "^3.0.3"
+flask-migrate = "^4.0.4"
+flask-cors = "^3.0.10"
+pyjwt = "^2.6.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
@@ -37,6 +42,7 @@ exclude = '''
 /(
     .venv
     | venv
+    | migrations
 )/
 '''
 
@@ -45,4 +51,4 @@ line_length = 79
 combine_as_imports = true
 include_trailing_comma = true
 lines_after_imports = 2
-skip = [".venv", "venv"]
+skip = [".venv", "venv", "migrations"]

@@ -1,9 +1,37 @@
 # Проектная работа 6 спринта
 
-## Сборка и запуск в контейнере
-
+###  Сборка и запуск в контейнере
+- prod
 ```bash
-make test_build
+make up
+```
+
+- автоматическое создание миграции после изменения модели
+```bash
+flask db migrate --message "message"
+```
+- применить миграцию
+```bash
+flask db upgrade
+```
+- откат миграции
+```bash
+flask db downgrade
+```
+- содать пустую миграцию
+```bash
+flask db revision --message "message"
+```
+
+### Тестирование (локально)
+- установка зависимостей
+```bash
+pip3 install poetry
+poetry install --no-root && poetry shell
+```
+- создание .env файла(перед сборкой контейнеров следует удалить этот файл, либо взять значения переменных из файла .env.example)
+```bash
+cp .env.test .env
 ```
 
 ###  Тест API

@@ -3,7 +3,15 @@ version: "3.8"
 services:
   db:
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+
+  redis:
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+
+  api:
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
 
   nginx:
     build: ./nginx
