@@ -4,6 +4,7 @@ from flask_restx import Namespace, Resource, fields
 from src.db.db_factory import db
 from src.db.db_models import RoleType
 from src.repositories.auth_repository import AuthRepository
+from src.services.auth_service import AuthService
 
 
 api = Namespace(name="registration", path="/api/v1/users")
@@ -25,14 +26,12 @@ class SignUp(Resource):
         email = request.json.get("email")
         role = RoleType.ROLE_TEMPORARY_USER.value
         auth_repository = AuthRepository(db)
-        auth_repository.create_user(email=email)
-        auth_repository.create_role(email=email, role_name=role)
+        auth_service = AuthService(repository=auth_repository)
+        user = auth_service.get_register_user_or_temporary_user(
+            email=email, role_name=role
+        )
 
         return {
             "success": True,
-            "data": {
-                "id": 308866,
-                "email": "sds@sdfsdf.ru",
-                "roles": ["ROLE_TEMPORARY_USER"],
-            },
+            "result": user,
         }

@@ -32,3 +32,14 @@ class AuthService:
             )
         result = UserResponse(id=str(user.id), email=user.email).dict()
         return BaseResponse(success=True, result=result).dict(), HTTPStatus.OK
+
+    def get_register_user_or_temporary_user(self, **kwargs):
+        email = kwargs.get("email")
+        password = kwargs.get("password")
+        role = kwargs.get("role")
+        self.repository.create_user(email=email, password=password)
+        self.repository.create_role(email=email, role_name=role)
+        user = self.repository.get_user(email=email)
+        return UserResponse(
+            id=user.id, email=user.email, roles=user.roles
+        ).dict()
