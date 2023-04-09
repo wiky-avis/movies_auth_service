@@ -1,11 +1,8 @@
 import pytest
 
 from src.app import create_app
-from src.db.db_factory import get_db
-from src.db.db_models import User
-
-
-database = get_db()
+from src.db import User
+from src.db.db_factory import db as database
 
 
 @pytest.fixture(scope="session")
