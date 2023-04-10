@@ -1,7 +1,8 @@
 from http import HTTPStatus
 
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import Namespace, Resource, reqparse
 
+from src.api.v1.models.dto import UserModelResponse
 from src.db.db_factory import db
 from src.repositories.auth_repository import AuthRepository
 from src.services.auth_service import AuthService
@@ -13,11 +14,8 @@ parser.add_argument("email", type=str)
 
 
 checking_mail_model_response = api.model(
-    "CheckingMailModelResponse",
-    {
-        "id": fields.String(required=True),
-        "email": fields.String(required=True),
-    },
+    "CheckingMailResponse",
+    UserModelResponse,
 )
 
 
@@ -25,15 +23,16 @@ checking_mail_model_response = api.model(
 class CheckingMail(Resource):
     @api.doc(
         responses={
-            HTTPStatus.OK: (
+            int(HTTPStatus.OK): (
                 "User already exist.",
                 checking_mail_model_response,
             ),
-            HTTPStatus.NOT_FOUND: "User does not exist.",
-            HTTPStatus.BAD_REQUEST: "Email is not valid.",
-        }
+            int(HTTPStatus.NOT_FOUND): "User does not exist.",
+            int(HTTPStatus.BAD_REQUEST): "Email is not valid.",
+        },
+        description="Получение информации о пользователе по email адресу.",
     )
-    @api.param("email", "Почта пользователя")
+    @api.param("email", "Email адрес")
     def get(self):
         args = parser.parse_args()
         email = args.get("email")

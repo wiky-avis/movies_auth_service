@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from sqlalchemy.exc import DatabaseError, IntegrityError
+from sqlalchemy.exc import IntegrityError
 
 from src.api.v1.models.response import UserResponse
 from src.common.response import BaseResponse
@@ -16,7 +16,7 @@ class AuthService:
     def __init__(self, repository: AuthRepository):
         self.repository = repository
 
-    def checking_mail(self, email):
+    def checking_mail(self, email: str):
         if not email:
             logger.error("Email is not valid: %s", email)
             return (
@@ -37,21 +37,13 @@ class AuthService:
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
     def register_user(self, email: str, role: str) -> None:
-        try:
-            self.repository.create_user(email=email)
-        except (IntegrityError, DatabaseError):
-            raise
-
+        self.repository.create_user(email=email)
         user = self.repository.get_user(email)
         if not user:
             return
+        self.repository.set_role(user, role)
 
-        try:
-            self.repository.set_role(user, role)
-        except (IntegrityError, DatabaseError):
-            raise
-
-    def get_user_roles(self, user_id):
+    def get_user_roles(self, user_id: str) -> list:
         roles_ids = self.repository.get_ids_roles(user_id)
         roles = self.repository.get_roles(roles_ids)
         return roles
@@ -72,14 +64,6 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.CONFLICT,
             )
-        except DatabaseError:
-            logger.error("DatabaseError", exc_info=True)
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "Service Unavailable"}
-                ).dict(),
-                HTTPStatus.SERVICE_UNAVAILABLE,
-            )
 
         user = self.repository.get_user(email)
         user_roles = self.get_user_roles(user.id)
@@ -90,4 +74,7 @@ class AuthService:
             verified_mail=user.verified_mail,
             registered_on=str(user.registered_on),
         )
-        return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
+        return (
+            BaseResponse(success=True, result=user).dict(),
+            HTTPStatus.CREATED,
+        )
