@@ -9,6 +9,8 @@ from src.api.v1.endpoints.auth.checking_mail import api as check_mail
 from src.api.v1.endpoints.registration.sign_up import api as sign_up
 from src.config import Config
 from src.db.db_factory import db as database, init_db
+from src.db.db_models import Role
+from tests.functional.vars.roles import ROLES
 
 
 @pytest.fixture(scope="session")
@@ -74,3 +76,11 @@ def clean_table(request):
         clean_tables(*request.param)
 
     request.addfinalizer(teardown)
+
+
+@pytest.fixture
+def create_roles(test_db):
+    for role in ROLES:
+        role = Role(name=role, description="")
+        test_db.session.add(role)
+        test_db.session.commit()

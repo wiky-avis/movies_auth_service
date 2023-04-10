@@ -1,8 +1,11 @@
 import logging
 from http import HTTPStatus
 
+from sqlalchemy.exc import DatabaseError, IntegrityError
+
 from src.api.v1.models.response import UserResponse
 from src.common.response import BaseResponse
+from src.db.db_models import RoleType
 from src.repositories.auth_repository import AuthRepository
 
 
@@ -30,15 +33,23 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.NOT_FOUND,
             )
-        result = UserResponse(id=str(user.id), email=user.email)
-        return BaseResponse(success=True, result=result).dict(), HTTPStatus.OK
+        user = UserResponse(id=str(user.id), email=user.email)
+        return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
-    def register_user(self, email, role_name):
-        self.repository.create_user(email=email)
+    def register_user(self, email: str, role: str) -> None:
+        try:
+            self.repository.create_user(email=email)
+        except (IntegrityError, DatabaseError):
+            raise
+
         user = self.repository.get_user(email)
         if not user:
-            return None
-        self.repository.set_role(user, role_name)
+            return
+
+        try:
+            self.repository.set_role(user, role)
+        except (IntegrityError, DatabaseError):
+            raise
 
     def get_user_roles(self, user_id):
         roles_ids = self.repository.get_ids_roles(user_id)
@@ -47,8 +58,29 @@ class AuthService:
 
     def register_temporary_user(self, **kwargs):
         email = kwargs.get("email")
-        role = kwargs.get("role")
-        self.register_user(email, role)
+        role = RoleType.ROLE_TEMPORARY_USER.value
+
+        try:
+            self.register_user(email=email, role=role)
+        except IntegrityError:
+            logger.error(
+                "User already exists: email %s.", email, exc_info=True
+            )
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User already exists."}
+                ).dict(),
+                HTTPStatus.CONFLICT,
+            )
+        except DatabaseError:
+            logger.error("DatabaseError", exc_info=True)
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "Service Unavailable"}
+                ).dict(),
+                HTTPStatus.SERVICE_UNAVAILABLE,
+            )
+
         user = self.repository.get_user(email)
         user_roles = self.get_user_roles(user.id)
         user = UserResponse(
