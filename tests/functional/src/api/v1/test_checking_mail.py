@@ -10,7 +10,6 @@ from tests.functional.vars.tables import CLEAN_TABLES
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_checking_mail(test_db, test_client, setup_url):
     email = "test@test.ru"
-    password = "pass"
 
     res = test_client.get(f"/api/v1/users/checking_mail?email={email}")
     assert res.status_code == HTTPStatus.NOT_FOUND
@@ -21,7 +20,7 @@ def test_checking_mail(test_db, test_client, setup_url):
     }
 
     auth_repository = AuthRepository(test_db)
-    auth_repository.create_user(email=email, password=password)
+    auth_repository.create_user(email=email)
     res = test_client.get(f"/api/v1/users/checking_mail?email={email}")
     assert res.status_code == HTTPStatus.OK
     body = res.json
