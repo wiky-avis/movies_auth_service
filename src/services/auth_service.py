@@ -51,12 +51,11 @@ class AuthService:
         self.register_user(email, role)
         user = self.repository.get_user(email)
         user_roles = self.get_user_roles(user.id)
-        print("---DATE", user.registered_on, type(user.registered_on))
         user = UserResponse(
             id=str(user.id),
             email=user.email,
             roles=user_roles,
             verified_mail=user.verified_mail,
-            registered_on=user.registered_on,
+            # registered_on=user.registered_on,
         ).dict()
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
