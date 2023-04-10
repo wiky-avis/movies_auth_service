@@ -1,12 +1,11 @@
-from datetime import datetime
 from typing import List, Optional
 
-from src.api.v1.models.base import ORDJSONModelMixin
+from src.api.v1.models.base import IdModelMixin, ORDJSONModelMixin
 from src.db.db_models import RoleType
 
 
-class UserResponse(ORDJSONModelMixin):
+class UserResponse(IdModelMixin, ORDJSONModelMixin):
     email: str
-    roles: List[RoleType]
-    verified_mail: Optional[bool]
-    registered_on: Optional[datetime]
+    roles: List[RoleType] = list()
+    verified_mail: Optional[bool] = None
+    registered_on: Optional[str] = None

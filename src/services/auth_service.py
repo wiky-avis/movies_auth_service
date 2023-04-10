@@ -30,7 +30,7 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.NOT_FOUND,
             )
-        result = UserResponse(id=str(user.id), email=user.email).dict()
+        result = UserResponse(id=str(user.id), email=user.email)
         return BaseResponse(success=True, result=result).dict(), HTTPStatus.OK
 
     def register_user(self, email, role_name):
@@ -56,6 +56,6 @@ class AuthService:
             email=user.email,
             roles=user_roles,
             verified_mail=user.verified_mail,
-            # registered_on=user.registered_on,
-        ).dict()
+            registered_on=str(user.registered_on),
+        )
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
