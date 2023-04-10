@@ -27,11 +27,4 @@ class SignUp(Resource):
         role = RoleType.ROLE_TEMPORARY_USER.value
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
-        user = auth_service.get_register_user_or_temporary_user(
-            email=email, role_name=role
-        )
-
-        return {
-            "success": True,
-            "result": user,
-        }
+        return auth_service.register_temporary_user(email=email, role=role)
