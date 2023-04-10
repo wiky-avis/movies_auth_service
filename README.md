@@ -71,8 +71,7 @@ GET /api/v1/users/checking_mail?email=sgsf@sgfg.ru
 POST /api/v1/users/sign_up
 body:
 {
-"email":"sgsf@sgfg.ru",
-"roles":["ROLE_TEMPORARY_USER"]
+"email":"sgsf@sgfg.ru"
 }
 
 Ответ:
