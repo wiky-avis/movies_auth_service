@@ -11,6 +11,9 @@ from src.api.v1.endpoints.get_list_login_history import (
 )
 from src.api.v1.endpoints.get_user import api as get_user
 from src.api.v1.endpoints.sign_up import api as sign_up
+from src.api.v1.endpoints.email_confirmation import (
+    api as email_confirmation,
+)
 from src.db.db_factory import init_db
 
 
@@ -39,6 +42,7 @@ def create_app():
     api.add_namespace(list_login_history)
     api.add_namespace(change_data)
     api.add_namespace(change_password)
+    api.add_namespace(email_confirmation)
 
     cors.init_app(app)
 
