@@ -78,3 +78,10 @@ class AuthService:
             BaseResponse(success=True, result=user).dict(),
             HTTPStatus.CREATED,
         )
+
+    def get_list_user_login_history(self, user_id: str):
+        login_history = self.repository.get_list_login_history(user_id)
+        return (
+            BaseResponse(success=True, result=login_history).dict(),
+            HTTPStatus.OK,
+        )

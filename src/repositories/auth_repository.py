@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from src.db import Role, User, UserRole
+from src.api.v1.models.login_history import UserLoginHistory
+from src.db import LoginHistory, Role, User, UserRole
 
 
 class AuthRepository:
@@ -49,3 +50,18 @@ class AuthRepository:
         user_role = UserRole(role_id=role_id, user_id=user_id)
         self.db.session.add(user_role)
         self.db.session.commit()
+
+    def get_list_login_history(self, user_id):
+        login_history = (
+            self.db.session.query(LoginHistory)
+            .filter_by(user_id=user_id)
+            .order_by(LoginHistory.login_dt.desc())
+        )
+        login_history = [
+            UserLoginHistory(
+                device_type=user_history.device_type,
+                login_dt=str(user_history.login_dt),
+            )
+            for user_history in login_history
+        ]
+        return login_history

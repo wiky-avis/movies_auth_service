@@ -8,9 +8,9 @@ from src.services.auth_service import AuthService
 api = Namespace(name="auth", path="/api/v1/users")
 
 
-@api.route("/<int:user_id>/login_history")
+@api.route("/<string:user_id>/login_history")
 class GetListUserLoginHistory(Resource):
     def get(self, user_id):
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
-        return {}
+        return auth_service.get_list_user_login_history(user_id)
