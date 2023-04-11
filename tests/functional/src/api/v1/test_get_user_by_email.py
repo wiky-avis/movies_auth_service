@@ -8,11 +8,10 @@ from tests.functional.vars.tables import CLEAN_TABLES
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_checking_mail(test_db, test_client, setup_url):
+def test_get_user_by_email(test_db, test_client, setup_url):
     email = "test@test.ru"
-    password = "pass"
 
-    res = test_client.get(f"/api/v1/users/checking_mail?email={email}")
+    res = test_client.get(f"/api/v1/users?email={email}")
     assert res.status_code == HTTPStatus.NOT_FOUND
     assert res.json == {
         "success": False,
@@ -21,8 +20,8 @@ def test_checking_mail(test_db, test_client, setup_url):
     }
 
     auth_repository = AuthRepository(test_db)
-    auth_repository.create_user(email=email, password=password)
-    res = test_client.get(f"/api/v1/users/checking_mail?email={email}")
+    auth_repository.create_user(email=email)
+    res = test_client.get(f"/api/v1/users?email={email}")
     assert res.status_code == HTTPStatus.OK
     body = res.json
     assert body["success"] is True
@@ -30,8 +29,8 @@ def test_checking_mail(test_db, test_client, setup_url):
     assert body["result"]["email"] == email
 
 
-def test_checking_mail_error(test_client, setup_url):
-    res = test_client.get("/api/v1/users/checking_mail")
+def test_get_user_by_email_error(test_client, setup_url):
+    res = test_client.get("/api/v1/users")
     assert res.status_code == HTTPStatus.BAD_REQUEST
     assert res.json == {
         "success": False,

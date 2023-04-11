@@ -4,7 +4,8 @@ from flask_restx import Api
 from gevent import monkey
 
 from src.api.technical.ping import api as ping_api
-from src.api.v1.endpoints.auth.checking_mail import api as check_mail
+from src.api.v1.endpoints.auth.get_user import api as check_mail
+from src.api.v1.endpoints.registration.sign_up import api as sign_up
 from src.db.db_factory import init_db
 
 
@@ -29,6 +30,7 @@ def create_app():
     )
     api.add_namespace(ping_api)
     api.add_namespace(check_mail)
+    api.add_namespace(sign_up)
 
     cors.init_app(app)
 

@@ -1,6 +1,11 @@
-from pydantic import BaseModel
+from typing import List, Optional
+
+from src.api.v1.models.base import IdModelMixin, ORDJSONModelMixin
+from src.db.db_models import RoleType
 
 
-class UserResponse(BaseModel):
-    id: str
+class UserResponse(IdModelMixin, ORDJSONModelMixin):
     email: str
+    roles: List[RoleType] = list()
+    verified_mail: Optional[bool] = None
+    registered_on: Optional[str] = None
