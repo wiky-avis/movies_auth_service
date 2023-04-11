@@ -8,9 +8,6 @@ class AuthRepository:
     def __init__(self, db: SQLAlchemy):
         self.db = db
 
-    def find_by_email(self, email: str) -> User:
-        return self.db.session.query(User).filter_by(email=email).first()
-
     def create_user(self, email: str) -> None:
         new_user = User(email=email)
         self.db.session.add(new_user)
@@ -64,4 +61,4 @@ class AuthRepository:
             )
             for user_history in login_history
         ]
-        return login_history
+        return login_history if login_history else []

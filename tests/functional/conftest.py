@@ -9,7 +9,8 @@ from src.api.v1.endpoints.auth.get_user import api as check_mail
 from src.api.v1.endpoints.registration.sign_up import api as sign_up
 from src.config import Config
 from src.db.db_factory import db as database, init_db
-from src.db.db_models import Role
+from src.db.db_models import Role, UserRole
+from src.repositories.auth_repository import AuthRepository
 from tests.functional.vars.roles import ROLES
 
 
@@ -82,5 +83,19 @@ def clean_table(request):
 def create_roles(test_db):
     for role in ROLES:
         role = Role(name=role, description="")
-        test_db.session.add(role)
+        test_db.test_db.add(role)
         test_db.session.commit()
+
+
+@pytest.fixture
+def create_list_user_login_history(test_db):
+    email = "test22@test.ru"
+    auth_repository = AuthRepository(db=test_db)
+    auth_repository.create_user(email=email)
+    user = auth_repository.get_user(email=email)
+
+    objects = [
+        UserRole(user_id=user.id) for _ in range(10)
+    ]
+    test_db.session.bulk_save_objects(objects)
+    test_db.session.commit()
