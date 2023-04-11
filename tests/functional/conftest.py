@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import psycopg2
 import pytest
 from flask import Flask, current_app
@@ -5,11 +7,14 @@ from flask_restx import Api
 from psycopg2.extras import DictCursor
 
 from src.api.technical.ping import api as ping_api
+from src.api.v1.endpoints.auth.get_list_login_history import (
+    api as list_login_history,
+)
 from src.api.v1.endpoints.auth.get_user import api as check_mail
 from src.api.v1.endpoints.registration.sign_up import api as sign_up
 from src.config import Config
 from src.db.db_factory import db as database, init_db
-from src.db.db_models import Role, UserRole
+from src.db.db_models import LoginHistory, Role
 from src.repositories.auth_repository import AuthRepository
 from tests.functional.vars.roles import ROLES
 
@@ -28,6 +33,7 @@ def test_app():
     api.add_namespace(ping_api)
     api.add_namespace(check_mail)
     api.add_namespace(sign_up)
+    api.add_namespace(list_login_history)
 
     return app
 
@@ -95,7 +101,8 @@ def create_list_user_login_history(test_db):
     user = auth_repository.get_user(email=email)
 
     objects = [
-        UserRole(user_id=user.id) for _ in range(10)
+        LoginHistory(user_id=user.id, login_dt=datetime.utcnow())
+        for _ in range(10)
     ]
     test_db.session.bulk_save_objects(objects)
     test_db.session.commit()
