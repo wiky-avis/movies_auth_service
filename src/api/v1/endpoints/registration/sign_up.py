@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask import request
 from flask_restx import Namespace, Resource
 
-from src.api.v1.models.dto import InputUserRegisterModel, UserResponseModel
+from src.api.v1.models.dto import InputUserRegisterModel, UserModelResponse
 from src.db.db_factory import db
 from src.repositories.auth_repository import AuthRepository
 from src.services.auth_service import AuthService
@@ -18,7 +18,7 @@ input_user_register_model = api.model(
 
 user_register_model_response = api.model(
     "UserRegisterResponse",
-    UserResponseModel,
+    UserModelResponse,
 )
 
 

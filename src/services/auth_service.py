@@ -16,7 +16,7 @@ class AuthService:
     def __init__(self, repository: AuthRepository):
         self.repository = repository
 
-    def checking_mail(self, email: str):
+    def get_user_by_email(self, email: str):
         if not email:
             logger.error("Email is not valid: %s", email)
             return (

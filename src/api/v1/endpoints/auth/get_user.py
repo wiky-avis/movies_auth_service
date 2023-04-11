@@ -19,12 +19,12 @@ checking_mail_model_response = api.model(
 )
 
 
-@api.route("/checking_mail")
-class CheckingMail(Resource):
+@api.route("")
+class GetUser(Resource):
     @api.doc(
         responses={
             int(HTTPStatus.OK): (
-                "User already exist.",
+                "User exist.",
                 checking_mail_model_response,
             ),
             int(HTTPStatus.NOT_FOUND): "User does not exist.",
@@ -38,4 +38,4 @@ class CheckingMail(Resource):
         email = args.get("email")
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
-        return auth_service.checking_mail(email)
+        return auth_service.get_user_by_email(email)

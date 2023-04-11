@@ -5,7 +5,7 @@ from flask_restx import Api
 from psycopg2.extras import DictCursor
 
 from src.api.technical.ping import api as ping_api
-from src.api.v1.endpoints.auth.checking_mail import api as check_mail
+from src.api.v1.endpoints.auth.get_user import api as check_mail
 from src.api.v1.endpoints.registration.sign_up import api as sign_up
 from src.config import Config
 from src.db.db_factory import db as database, init_db
