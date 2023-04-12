@@ -2,6 +2,7 @@ from typing import Dict
 
 from src.common.generate_auth_token import generate_auth_token
 
+
 TEST_PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDIzi1aV7xG1BGjwf1ZsCxiMO5jdYEPVfdPDLbBQtMD4VZlNb4p
 s2B6bExyLisOUxnlhEqdVn424EHIFRwNAV3eo0GcRrEGT4u57+Esqy9QQmvknJaA

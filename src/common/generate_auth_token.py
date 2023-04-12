@@ -5,14 +5,13 @@ import jwt
 
 from src.config import TEST_PRIVATE_KEY
 
+
 JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))
 JWT_PRIVATE_KEY = TEST_PRIVATE_KEY
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 
 
-def generate_auth_token(
-    expires_in=JWT_EXPIRES_IN, **kwargs
-):
+def generate_auth_token(expires_in=JWT_EXPIRES_IN, **kwargs):
     payload = {
         "UserId": kwargs.get("id"),
         "Email": kwargs.get("email"),

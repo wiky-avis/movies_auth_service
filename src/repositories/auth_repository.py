@@ -49,7 +49,7 @@ class AuthRepository:
         self.db.session.commit()
 
     def get_list_login_history(self, user_id, page, per_page):
-        login_history = (
+        login_history_data = (
             self.db.session.query(LoginHistory)
             .filter_by(user_id=user_id)
             .order_by(LoginHistory.login_dt.desc())
@@ -59,6 +59,6 @@ class AuthRepository:
                 device_type=user_history.device_type,
                 login_dt=str(user_history.login_dt),
             )
-            for user_history in login_history
+            for user_history in login_history_data
         ]
-        return login_history if login_history else []
+        return login_history_data, login_history

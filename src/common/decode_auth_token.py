@@ -3,7 +3,9 @@ import os
 from typing import Optional
 
 import jwt
+
 from src.config import TEST_PUBLIC_KEY
+
 
 logger = logging.getLogger(__name__)
 
