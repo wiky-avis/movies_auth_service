@@ -17,10 +17,3 @@ class Pagination(BaseModel):
     next_page: int = None
     has_next: int = None
     has_prev: int = None
-
-
-class PaginationResponse(BaseModel):
-    success: bool = True
-    error: str | list | dict | None = None
-    result: Any = None
-    pagination: Pagination

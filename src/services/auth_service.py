@@ -3,9 +3,9 @@ from http import HTTPStatus
 
 from sqlalchemy.exc import IntegrityError
 
-from src.api.v1.models.response import UserResponse
+from src.api.v1.models.response import UserResponse, LoginHistoryResponse
 from src.common.pagination import get_pagination
-from src.common.response import BaseResponse, Pagination, PaginationResponse
+from src.common.response import BaseResponse, Pagination
 from src.db.db_models import RoleType
 from src.repositories.auth_repository import AuthRepository
 
@@ -89,7 +89,7 @@ class AuthService:
             **get_pagination(login_history_data, login_history)
         )
         return (
-            PaginationResponse(
+            LoginHistoryResponse(
                 success=True, result=login_history, pagination=pagination
             ).dict(),
             HTTPStatus.OK,

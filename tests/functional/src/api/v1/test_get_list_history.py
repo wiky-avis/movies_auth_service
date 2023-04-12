@@ -35,8 +35,12 @@ def test_get_list_history(
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 @pytest.mark.parametrize(
-    "page, per_page, result",
-    ((1, 3, 3),),
+    "page, per_page, pages, prev_page, next_page, has_next, has_prev, result",
+    (
+        (1, 3, 4, None, 2, 1, 0, 3),
+        (1, 10, 1, None, None, 0, 0, 10),
+        (2, 1, 10, 1, 3, 1, 1, 1),
+    ),
 )
 def test_get_list_history_pagination(
     test_db,
@@ -46,9 +50,15 @@ def test_get_list_history_pagination(
     monkeypatch,
     page,
     per_page,
+    pages,
+    prev_page,
+    next_page,
+    has_next,
+    has_prev,
     result,
 ):
     email = "test22@test.ru"
+    total_count = 10
     auth_repository = AuthRepository(db=test_db)
     user = auth_repository.get_user(email=email)
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
@@ -61,6 +71,14 @@ def test_get_list_history_pagination(
     assert res.status_code == HTTPStatus.OK
     body = res.json
     assert len(body["result"]) == result
+    pagination = body["pagination"]
+    assert pagination["page"] == page
+    assert pagination["pages"] == pages
+    assert pagination["total_count"] == total_count
+    assert pagination["prev_page"] == prev_page
+    assert pagination["next_page"] == next_page
+    assert pagination["has_next"] == has_next
+    assert pagination["has_prev"] == has_prev
 
 
 @pytest.mark.usefixtures("clean_table")
