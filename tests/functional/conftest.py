@@ -96,12 +96,13 @@ def create_roles(test_db):
 @pytest.fixture
 def create_list_user_login_history(test_db):
     email = "test22@test.ru"
+    login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
     auth_repository = AuthRepository(db=test_db)
     auth_repository.create_user(email=email)
     user = auth_repository.get_user(email=email)
 
     objects = [
-        LoginHistory(user_id=user.id, login_dt=datetime.utcnow())
+        LoginHistory(user_id=user.id, login_dt=login_dt)
         for _ in range(10)
     ]
     test_db.session.bulk_save_objects(objects)

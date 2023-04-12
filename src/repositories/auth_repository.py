@@ -48,12 +48,12 @@ class AuthRepository:
         self.db.session.add(user_role)
         self.db.session.commit()
 
-    def get_list_login_history(self, user_id):
+    def get_list_login_history(self, user_id, page, per_page):
         login_history = (
             self.db.session.query(LoginHistory)
             .filter_by(user_id=user_id)
             .order_by(LoginHistory.login_dt.desc())
-        )
+        ).paginate(page=page, per_page=per_page)
         login_history = [
             UserLoginHistory(
                 device_type=user_history.device_type,
