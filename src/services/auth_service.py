@@ -99,15 +99,14 @@ class AuthService:
         if not new_password or not old_password:
             return (
                 BaseResponse(
-                    success=False, error={"msg": "No new password or no old password."}
+                    success=False,
+                    error={"msg": "No new password or no old password."},
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
 
-        check_old_password = check_password(
-            user.password_hash, old_password
-        )
-        if old_password != check_old_password:
+        check_old_password = check_password(user.password_hash, old_password)
+        if not check_old_password:
             return (
                 BaseResponse(
                     success=False, error={"msg": "Invalid password."}
@@ -135,13 +134,13 @@ class AuthService:
         if not new_email:
             return (
                 BaseResponse(
-                    success=False, error={"msg": "No new email or no old email."}
+                    success=False, error={"msg": "No new email."}
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
 
         user_by_email = self.repository.get_user_by_email(email=new_email)
-        if user_by_email:
+        if user_by_email and (user_id != user_by_email.id):
             return (
                 BaseResponse(
                     success=False,

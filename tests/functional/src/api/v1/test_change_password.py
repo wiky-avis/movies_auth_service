@@ -20,7 +20,11 @@ def test_change_password(test_db, test_client, setup_url, monkeypatch):
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user.id))}
 
-    res = test_client.put("/api/v1/users/change_password", json={"old_password": old_password, "new_password": new_password}, headers=headers)
+    res = test_client.put(
+        "/api/v1/users/change_password",
+        json={"old_password": old_password, "new_password": new_password},
+        headers=headers,
+    )
     assert res.status_code == HTTPStatus.OK
     body = res.json
-    print(body)
+    assert body == {'success': True, 'error': None, 'result': 'Ok'}

@@ -10,6 +10,7 @@ from src.db.db_factory import db
 from src.repositories.auth_repository import AuthRepository
 from src.services.auth_service import AuthService
 
+
 logger = logging.getLogger(__name__)
 
 

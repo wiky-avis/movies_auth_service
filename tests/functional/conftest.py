@@ -11,9 +11,9 @@ from src.api.v1.endpoints.auth.get_list_login_history import (
     api as list_login_history,
 )
 from src.api.v1.endpoints.auth.get_user import api as check_mail
-from src.api.v1.endpoints.registration.sign_up import api as sign_up
 from src.api.v1.endpoints.change_data import api as change_data
 from src.api.v1.endpoints.change_password import api as change_password
+from src.api.v1.endpoints.registration.sign_up import api as sign_up
 from src.config import Config
 from src.db.db_factory import db as database, init_db
 from src.db.db_models import LoginHistory, Role
