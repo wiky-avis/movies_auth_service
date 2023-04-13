@@ -1,4 +1,4 @@
-def get_pagination(paginator, data):
+def get_pagination(paginator):
     return {
         "page": paginator.page,
         "pages": paginator.pages,
@@ -7,5 +7,4 @@ def get_pagination(paginator, data):
         "next_page": paginator.next_num,
         "has_next": paginator.has_next,
         "has_prev": paginator.has_prev,
-        "results": data,
     }
