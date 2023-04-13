@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from flask_restx import Namespace, Resource, reqparse
+from flask_restx import Namespace, Resource, fields, reqparse
 
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
@@ -20,8 +20,30 @@ parser.add_argument("page", type=int)
 parser.add_argument("per_page", type=int)
 
 
+login_history_model_response = api.model(
+    "LoginHistoryResponse",
+    {
+        "device_type": fields.String(),
+        "login_dt": fields.DateTime(),
+    },
+)
+
+
 @api.route("/<string:user_id>/login_history")
 class GetListUserLoginHistory(Resource):
+    @api.doc(
+        responses={
+            int(HTTPStatus.OK): (
+                "List user login history.",
+                login_history_model_response,
+            ),
+            int(HTTPStatus.UNAUTHORIZED): "UndefinedUser.",
+            int(HTTPStatus.FORBIDDEN): "Forbidden.",
+        },
+        description="Получение информации о пользователе по email адресу.",
+    )
+    @api.param("page", "Номер страницы")
+    @api.param("per_page", "Количество записей на странице")
     def get(self, user_id):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")

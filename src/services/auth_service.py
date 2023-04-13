@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from sqlalchemy.exc import IntegrityError
 
-from src.api.v1.models.response import UserResponse, LoginHistoryResponse
+from src.api.v1.models.response import LoginHistoryResponse, UserResponse
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
 from src.db.db_models import RoleType

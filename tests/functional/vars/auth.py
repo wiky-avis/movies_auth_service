@@ -36,4 +36,4 @@ def sign_jwt(user_id: str, expires: int = 180) -> Dict[str, str]:
 
 NO_TOKEN = ""
 BAD_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJlbWFpbCI6InBldGEtaG9sZGluZ0B5YW5kZXgucnUiLCJleHAiOjE2Nzc3NTEz"
-EXP_TOKEN = sign_jwt(user_id=str(637925), expires=1)
+EXP_TOKEN = sign_jwt(user_id="d6b792b8-372b-4f46-8a98-e04965844daf", expires=1)

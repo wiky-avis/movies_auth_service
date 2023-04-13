@@ -10,8 +10,8 @@ from src.config import TEST_PUBLIC_KEY
 logger = logging.getLogger(__name__)
 
 
-JWT_SECRET = TEST_PUBLIC_KEY
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
+JWT_SECRET = os.getenv("JWT_SECRET", default=TEST_PUBLIC_KEY)
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
 
 
 def get_user_id(token_header: Optional[str]) -> Optional[str]:

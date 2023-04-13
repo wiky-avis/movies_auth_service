@@ -7,8 +7,8 @@ from src.config import TEST_PRIVATE_KEY
 
 
 JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))
-JWT_PRIVATE_KEY = TEST_PRIVATE_KEY
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
+JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY", default=TEST_PRIVATE_KEY)
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
 
 
 def generate_auth_token(expires_in=JWT_EXPIRES_IN, **kwargs):
