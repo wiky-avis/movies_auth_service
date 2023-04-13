@@ -27,9 +27,28 @@ input_user_change_password_model = api.model(
     },
 )
 
+user_change_password_model_response = api.model(
+    "UserChangePasswordResponse",
+    {
+        "result": fields.String(),
+    },
+)
+
 
 @api.route("/change_password")
 class UserChangeData(Resource):
+    @api.doc(
+        responses={
+            int(HTTPStatus.OK): (
+                "Ok.",
+                user_change_password_model_response,
+            ),
+            int(HTTPStatus.NOT_FOUND): "User does not exist.",
+            int(HTTPStatus.BAD_REQUEST): "No new password or no old password.",
+            int(HTTPStatus.UNAUTHORIZED): "Invalid password.",
+        },
+        description="Изменение пароля.",
+    )
     @api.expect(input_user_change_password_model)
     def put(self):
         args = parser.parse_args()
