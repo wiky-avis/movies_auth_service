@@ -26,9 +26,28 @@ input_user_change_data_model = api.model(
     },
 )
 
+user_change_data_model_response = api.model(
+    "UserChangeDataResponse",
+    {
+        "result": fields.String(),
+    },
+)
+
 
 @api.route("/change_data")
 class UserChangeData(Resource):
+    @api.doc(
+        responses={
+            int(HTTPStatus.OK): (
+                "Ok.",
+                user_change_data_model_response,
+            ),
+            int(HTTPStatus.NOT_FOUND): "User does not exist.",
+            int(HTTPStatus.BAD_REQUEST): "No new email.",
+            int(HTTPStatus.CONFLICT): "User with this email already exists.",
+        },
+        description="Изменение данных.",
+    )
     @api.expect(input_user_change_data_model)
     def put(self):
         args = parser.parse_args()
