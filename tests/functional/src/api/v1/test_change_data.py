@@ -20,7 +20,7 @@ def test_change_data(test_db, test_client, setup_url, monkeypatch):
 
     res = test_client.put(
         "/api/v1/users/change_data",
-        json={"new_email": new_email},
+        json={"email": new_email},
         headers=headers,
     )
     assert res.status_code == HTTPStatus.OK
@@ -36,7 +36,7 @@ def test_change_data_error_404(test_client, setup_url, monkeypatch):
 
     res = test_client.put(
         "/api/v1/users/change_data",
-        json={"new_email": new_email},
+        json={"email": new_email},
         headers=headers,
     )
     assert res.status_code == HTTPStatus.NOT_FOUND
@@ -60,7 +60,7 @@ def test_change_data_error_400(test_db, test_client, setup_url, monkeypatch):
 
     res = test_client.put(
         "/api/v1/users/change_data",
-        json={"new_email": ""},
+        json={"email": ""},
         headers=headers,
     )
     assert res.status_code == HTTPStatus.BAD_REQUEST
@@ -84,7 +84,7 @@ def test_change_data_error_409(test_db, test_client, setup_url, monkeypatch):
 
     res = test_client.put(
         "/api/v1/users/change_data",
-        json={"new_email": email},
+        json={"email": email},
         headers=headers,
     )
     assert res.status_code == HTTPStatus.CONFLICT

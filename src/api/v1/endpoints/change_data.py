@@ -22,7 +22,7 @@ parser.add_argument("X-Auth-Token", location="headers")
 input_user_chancge_data_model = api.model(
     "InputUserChangeData",
     {
-        "new_email": fields.String(description="Почта"),
+        "email": fields.String(description="Почта"),
     },
 )
 
@@ -43,7 +43,7 @@ class UserChangeData(Resource):
                 HTTPStatus.UNAUTHORIZED,
             )
 
-        new_email = request.json.get("new_email")
+        new_email = request.json.get("email")
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
         return auth_service.change_data(
