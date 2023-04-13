@@ -19,7 +19,7 @@ parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
 
 
-input_user_chancge_password_model = api.model(
+input_user_change_password_model = api.model(
     "InputUserChangePassword",
     {
         "old_password": fields.String(description="Пароль"),
@@ -30,7 +30,7 @@ input_user_chancge_password_model = api.model(
 
 @api.route("/change_password")
 class UserChangeData(Resource):
-    @api.expect(input_user_chancge_password_model)
+    @api.expect(input_user_change_password_model)
     def put(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
