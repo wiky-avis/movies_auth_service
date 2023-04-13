@@ -72,11 +72,6 @@ class User(UUIDMixin, db.Model):
             registered_on_utc, use_tz=get_local_utcoffset()
         )
 
-    @property
-    def password(self):
-        raise AttributeError("password: write-only field")
-
-    @password.setter
     def password(self, password):
         log_rounds = current_app.config.get("BCRYPT_LOG_ROUNDS")
         self.password_hash = generate_password_hash(

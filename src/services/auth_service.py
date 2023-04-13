@@ -3,6 +3,9 @@ from http import HTTPStatus
 
 from sqlalchemy.exc import IntegrityError
 
+from src.api.v1.models.response import UserResponse
+from src.common.check_password import check_password
+from src.common.response import BaseResponse
 from src.api.v1.models.response import LoginHistoryResponse, UserResponse
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
@@ -26,7 +29,7 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-        user = self.repository.get_user(email)
+        user = self.repository.get_user_by_email(email)
         if not user:
             return (
                 BaseResponse(
@@ -39,7 +42,7 @@ class AuthService:
 
     def register_user(self, email: str, role: str) -> None:
         self.repository.create_user(email=email)
-        user = self.repository.get_user(email)
+        user = self.repository.get_user_by_email(email=email)
         if not user:
             return
         self.repository.set_role(user, role)
@@ -66,7 +69,7 @@ class AuthService:
                 HTTPStatus.CONFLICT,
             )
 
-        user = self.repository.get_user(email)
+        user = self.repository.get_user_by_email(email=email)
         user_roles = self.get_user_roles(user.id)
         user = UserResponse(
             id=str(user.id),
@@ -79,6 +82,48 @@ class AuthService:
             BaseResponse(success=True, result=user).dict(),
             HTTPStatus.CREATED,
         )
+
+    def change_data_user(
+        self,
+        user_id: str,
+        email: str | None,
+        old_password: str | None,
+        new_password: str | None,
+    ):
+        user = self.repository.get_user_by_user_id(user_id=user_id)
+        if not user:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User does not exist"}
+                ).dict(),
+                HTTPStatus.NOT_FOUND,
+            )
+
+        if email:
+            user_by_email = self.repository.get_user_by_email(email=email)
+            if user_by_email.id != user_id:
+                return (
+                    BaseResponse(
+                        success=False,
+                        error={"msg": "User with this email already exists."},
+                    ).dict(),
+                    HTTPStatus.CONFLICT,
+                )
+            self.repository.set_email(user, email)
+
+        if new_password and old_password:
+            check_old_password = check_password(
+                user.password_hash, old_password
+            )
+            if old_password != check_old_password:
+                return (
+                    BaseResponse(
+                        success=False, error={"msg": "Invalid password."}
+                    ).dict(),
+                    HTTPStatus.UNAUTHORIZED,
+                )
+            self.repository.set_password(user, new_password)
+        return BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
 
     def get_list_user_login_history(self, user_id: str, page, per_page):
         (
