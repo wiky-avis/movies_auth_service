@@ -20,7 +20,7 @@ def test_get_list_history(
 ):
     email = "test22@test.ru"
     auth_repository = AuthRepository(db=test_db)
-    user = auth_repository.get_user(email=email)
+    user = auth_repository.get_user_by_email(email=email)
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user.id))}
 
@@ -60,7 +60,7 @@ def test_get_list_history_pagination(
     email = "test22@test.ru"
     total_count = 10
     auth_repository = AuthRepository(db=test_db)
-    user = auth_repository.get_user(email=email)
+    user = auth_repository.get_user_by_email(email=email)
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user.id))}
 
@@ -97,7 +97,7 @@ def test_get_list_history_undefined_user(
 ):
     email = "test22@test.ru"
     auth_repository = AuthRepository(db=test_db)
-    user = auth_repository.get_user(email=email)
+    user = auth_repository.get_user_by_email(email=email)
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": token_header}
 

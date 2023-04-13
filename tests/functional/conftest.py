@@ -99,7 +99,7 @@ def create_list_user_login_history(test_db):
     login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
     auth_repository = AuthRepository(db=test_db)
     auth_repository.create_user(email=email)
-    user = auth_repository.get_user(email=email)
+    user = auth_repository.get_user_by_email(email=email)
 
     objects = [
         LoginHistory(user_id=user.id, login_dt=login_dt) for _ in range(10)
