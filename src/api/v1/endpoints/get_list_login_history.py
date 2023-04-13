@@ -13,7 +13,7 @@ from src.services.auth_service import AuthService
 logger = logging.getLogger(__name__)
 
 
-api = Namespace(name="auth", path="/api/v1/users")
+api = Namespace(name="v1", path="/api/v1/users")
 parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
 parser.add_argument("page", type=int)
