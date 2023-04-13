@@ -81,14 +81,13 @@ class AuthService:
             HTTPStatus.CREATED,
         )
 
-    def change_data_user(
+    def change_password(
         self,
         user_id: str,
-        email: str | None,
         old_password: str | None,
         new_password: str | None,
     ):
-        user = self.repository.get_user_by_user_id(user_id=user_id)
+        user = self.repository.get_user_by_id(user_id=user_id)
         if not user:
             return (
                 BaseResponse(
@@ -97,30 +96,61 @@ class AuthService:
                 HTTPStatus.NOT_FOUND,
             )
 
-        if email:
-            user_by_email = self.repository.get_user_by_email(email=email)
-            if user_by_email.id != user_id:
-                return (
-                    BaseResponse(
-                        success=False,
-                        error={"msg": "User with this email already exists."},
-                    ).dict(),
-                    HTTPStatus.CONFLICT,
-                )
-            self.repository.set_email(user, email)
-
-        if new_password and old_password:
-            check_old_password = check_password(
-                user.password_hash, old_password
+        if not new_password or not old_password:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "No new password or no old password."}
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
             )
-            if old_password != check_old_password:
-                return (
-                    BaseResponse(
-                        success=False, error={"msg": "Invalid password."}
-                    ).dict(),
-                    HTTPStatus.UNAUTHORIZED,
-                )
-            self.repository.set_password(user, new_password)
+
+        check_old_password = check_password(
+            user.password_hash, old_password
+        )
+        if old_password != check_old_password:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "Invalid password."}
+                ).dict(),
+                HTTPStatus.UNAUTHORIZED,
+            )
+        self.repository.set_password(user, new_password)
+
+        return BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
+
+    def change_data(
+        self,
+        user_id: str,
+        new_email: str | None,
+    ):
+        user = self.repository.get_user_by_id(user_id=user_id)
+        if not user:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User does not exist"}
+                ).dict(),
+                HTTPStatus.NOT_FOUND,
+            )
+
+        if not new_email:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "No new email or no old email."}
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        user_by_email = self.repository.get_user_by_email(email=new_email)
+        if user_by_email:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "User with this email already exists."},
+                ).dict(),
+                HTTPStatus.CONFLICT,
+            )
+        self.repository.set_email(user, new_email)
+
         return BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
 
     def get_list_user_login_history(self, user_id: str, page, per_page):

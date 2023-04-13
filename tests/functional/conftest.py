@@ -12,6 +12,8 @@ from src.api.v1.endpoints.auth.get_list_login_history import (
 )
 from src.api.v1.endpoints.auth.get_user import api as check_mail
 from src.api.v1.endpoints.registration.sign_up import api as sign_up
+from src.api.v1.endpoints.change_data import api as change_data
+from src.api.v1.endpoints.change_password import api as change_password
 from src.config import Config
 from src.db.db_factory import db as database, init_db
 from src.db.db_models import LoginHistory, Role
@@ -34,6 +36,8 @@ def test_app():
     api.add_namespace(check_mail)
     api.add_namespace(sign_up)
     api.add_namespace(list_login_history)
+    api.add_namespace(change_data)
+    api.add_namespace(change_password)
 
     return app
 

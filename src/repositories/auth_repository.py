@@ -32,7 +32,7 @@ class AuthRepository:
         user = self.db.session.query(User).filter_by(email=email).first()
         return user if user else None
 
-    def get_user_by_user_id(self, user_id: str) -> User | None:
+    def get_user_by_id(self, user_id: str) -> User | None:
         user = self.db.session.query(User).filter_by(id=user_id).first()
         return user if user else None
 

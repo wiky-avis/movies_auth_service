@@ -18,17 +18,18 @@ parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
 
 
-input_user_chancge_data_model = api.model(
-    "InputUserChangeData",
+input_user_chancge_password_model = api.model(
+    "InputUserChangePassword",
     {
-        "new_email": fields.String(description="Почта"),
+        "old_password": fields.String(description="Пароль"),
+        "new_password": fields.String(description="Пароль"),
     },
 )
 
 
-@api.route("/change_data")
+@api.route("/change_password")
 class UserChangeData(Resource):
-    @api.expect(input_user_chancge_data_model)
+    @api.expect(input_user_chancge_password_model)
     def put(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
@@ -41,11 +42,12 @@ class UserChangeData(Resource):
                 ).dict(),
                 HTTPStatus.UNAUTHORIZED,
             )
-
-        new_email = request.json.get("new_email")
+        old_password = request.json.get("old_password")
+        new_password = request.json.get("new_password")
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
-        return auth_service.change_data(
+        return auth_service.change_password(
             user_id=auth_user_id,
-            new_email=new_email,
+            old_password=old_password,
+            new_password=new_password,
         )
