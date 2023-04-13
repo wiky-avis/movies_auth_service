@@ -86,7 +86,7 @@ class AuthService:
             login_history,
         ) = self.repository.get_list_login_history(user_id, page, per_page)
         pagination = Pagination(
-            **get_pagination(login_history_data, login_history)
+            **get_pagination(login_history_data)
         )
         return (
             LoginHistoryResponse(
