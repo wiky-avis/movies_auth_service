@@ -27,4 +27,4 @@ def test_change_password(test_db, test_client, setup_url, monkeypatch):
     )
     assert res.status_code == HTTPStatus.OK
     body = res.json
-    assert body == {'success': True, 'error': None, 'result': 'Ok'}
+    assert body == {"success": True, "error": None, "result": "Ok"}
