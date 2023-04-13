@@ -40,7 +40,7 @@ class GetListUserLoginHistory(Resource):
             int(HTTPStatus.UNAUTHORIZED): "UndefinedUser.",
             int(HTTPStatus.FORBIDDEN): "Forbidden.",
         },
-        description="Получение информации о пользователе по email адресу.",
+        description="История входа в систему пользователя.",
     )
     @api.param("page", "Номер страницы")
     @api.param("per_page", "Количество записей на странице")
