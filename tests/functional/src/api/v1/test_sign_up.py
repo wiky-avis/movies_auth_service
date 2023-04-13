@@ -24,7 +24,7 @@ def test_sign_up_temporary_user(test_client, setup_url, create_roles):
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_sign_up_temporary_user_already_exists_error(
+def test_sign_up_temporary_user_error_409(
     test_db, test_client, setup_url, create_roles
 ):
     email = "test@test.ru"

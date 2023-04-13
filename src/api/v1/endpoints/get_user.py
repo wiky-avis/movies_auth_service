@@ -8,7 +8,7 @@ from src.repositories.auth_repository import AuthRepository
 from src.services.auth_service import AuthService
 
 
-api = Namespace(name="auth", path="/api/v1/users")
+api = Namespace(name="v1", path="/api/v1/users")
 parser = reqparse.RequestParser()
 parser.add_argument("email", type=str)
 

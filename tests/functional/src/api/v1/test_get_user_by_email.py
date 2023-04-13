@@ -29,7 +29,7 @@ def test_get_user_by_email(test_db, test_client, setup_url):
     assert body["result"]["email"] == email
 
 
-def test_get_user_by_email_error(test_client, setup_url):
+def test_get_user_by_email_error_400(test_client, setup_url):
     res = test_client.get("/api/v1/users")
     assert res.status_code == HTTPStatus.BAD_REQUEST
     assert res.json == {

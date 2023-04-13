@@ -7,11 +7,13 @@ from flask_restx import Api
 from psycopg2.extras import DictCursor
 
 from src.api.technical.ping import api as ping_api
-from src.api.v1.endpoints.auth.get_list_login_history import (
+from src.api.v1.endpoints.change_data import api as change_data
+from src.api.v1.endpoints.change_password import api as change_password
+from src.api.v1.endpoints.get_list_login_history import (
     api as list_login_history,
 )
-from src.api.v1.endpoints.auth.get_user import api as check_mail
-from src.api.v1.endpoints.registration.sign_up import api as sign_up
+from src.api.v1.endpoints.get_user import api as check_mail
+from src.api.v1.endpoints.sign_up import api as sign_up
 from src.config import Config
 from src.db.db_factory import db as database, init_db
 from src.db.db_models import LoginHistory, Role
@@ -34,6 +36,8 @@ def test_app():
     api.add_namespace(check_mail)
     api.add_namespace(sign_up)
     api.add_namespace(list_login_history)
+    api.add_namespace(change_data)
+    api.add_namespace(change_password)
 
     return app
 
@@ -99,7 +103,7 @@ def create_list_user_login_history(test_db):
     login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
     auth_repository = AuthRepository(db=test_db)
     auth_repository.create_user(email=email)
-    user = auth_repository.get_user(email=email)
+    user = auth_repository.get_user_by_email(email=email)
 
     objects = [
         LoginHistory(user_id=user.id, login_dt=login_dt) for _ in range(10)
