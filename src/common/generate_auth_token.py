@@ -1,12 +1,17 @@
+import os
 import time
 
 import jwt
-from flask import current_app
+
+from src.config import TEST_PRIVATE_KEY
 
 
-def generate_auth_token(
-    expires_in=current_app.config.get("JWT_EXPIRES_IN"), **kwargs
-):
+JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))
+JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY", default=TEST_PRIVATE_KEY)
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
+
+
+def generate_auth_token(expires_in=JWT_EXPIRES_IN, **kwargs):
     payload = {
         "UserId": kwargs.get("id"),
         "Email": kwargs.get("email"),
@@ -15,8 +20,8 @@ def generate_auth_token(
         "exp": time.time() + expires_in,
     }
     token = jwt.encode(
-        payload,
-        current_app.config.get("JWT_PRIVATE_KEY"),
-        algorithm=current_app.config.get("JWT_ALGORITHM"),
+        payload=payload,
+        key=JWT_PRIVATE_KEY,
+        algorithm=JWT_ALGORITHM,
     )
     return token

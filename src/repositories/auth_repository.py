@@ -1,14 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from src.db import Role, User, UserRole
+from src.api.v1.models.login_history import UserLoginHistory
+from src.db import LoginHistory, Role, User, UserRole
 
 
 class AuthRepository:
     def __init__(self, db: SQLAlchemy):
         self.db = db
-
-    def find_by_email(self, email: str) -> User:
-        return self.db.session.query(User).filter_by(email=email).first()
 
     def create_user(self, email: str) -> None:
         new_user = User(email=email)
@@ -49,3 +47,18 @@ class AuthRepository:
         user_role = UserRole(role_id=role_id, user_id=user_id)
         self.db.session.add(user_role)
         self.db.session.commit()
+
+    def get_list_login_history(self, user_id, page, per_page):
+        login_history_data = (
+            self.db.session.query(LoginHistory)
+            .filter_by(user_id=user_id)
+            .order_by(LoginHistory.login_dt.desc())
+        ).paginate(page=page, per_page=per_page)
+        login_history = [
+            UserLoginHistory(
+                device_type=user_history.device_type,
+                login_dt=str(user_history.login_dt),
+            )
+            for user_history in login_history_data
+        ]
+        return login_history_data, login_history

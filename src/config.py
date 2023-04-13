@@ -1,10 +1,5 @@
 import os
 
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
 
 TEST_PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDIzi1aV7xG1BGjwf1ZsCxiMO5jdYEPVfdPDLbBQtMD4VZlNb4p
