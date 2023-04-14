@@ -70,3 +70,7 @@ class AuthRepository:
             for user_history in login_history_data
         ]
         return login_history_data, login_history
+
+    def update_flag_verified_mail(self, user: User):
+        user.verified_mail = True
+        self.db.session.commit()
