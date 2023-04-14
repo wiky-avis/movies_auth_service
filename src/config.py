@@ -50,6 +50,7 @@ class Config:
     HTTP_HOST = os.getenv("HTTP_HOST", default="api")
 
     REDIS_PORT = int(os.getenv("REDIS_PORT", default=6379))
+    REDIS_HOST = os.getenv("REDIS_HOST", default="redis")
 
     FLASK_APP = "src.app.py"
 
