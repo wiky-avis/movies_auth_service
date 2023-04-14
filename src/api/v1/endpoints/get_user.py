@@ -13,8 +13,8 @@ parser = reqparse.RequestParser()
 parser.add_argument("email", type=str)
 
 
-checking_mail_model_response = api.model(
-    "CheckingMailResponse",
+user_model_response = api.model(
+    "UserModelResponse",
     UserModelResponse,
 )
 
@@ -25,7 +25,7 @@ class GetUser(Resource):
         responses={
             int(HTTPStatus.OK): (
                 "User exist.",
-                checking_mail_model_response,
+                user_model_response,
             ),
             int(HTTPStatus.NOT_FOUND): "User does not exist.",
             int(HTTPStatus.BAD_REQUEST): "Email is not valid.",
