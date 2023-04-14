@@ -44,12 +44,13 @@ class SignUp(Resource):
 
     @api.doc(
         responses={
-            int(HTTPStatus.CREATED): (
+            int(HTTPStatus.OK): (
                 "User approved.",
                 user_register_model_response,
             ),
-            int(HTTPStatus.NOT_FOUND): "User's id does not exist.",
-            int(HTTPStatus.BAD_REQUEST): "User's id is not valid.",
+            int(HTTPStatus.BAD_REQUEST): "User does not exist.",
+            int(HTTPStatus.BAD_REQUEST): "Password is required.",
+            int(HTTPStatus.CONFLICT): "User already verified.",
         },
         description="Полноценная регистрация пользователя.",
     )
@@ -58,4 +59,4 @@ class SignUp(Resource):
         password = request.json.get("password")
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
-        return auth_service.approve_user(user_id, password)
+        return auth_service.approve_user(user_id=user_id, password=password)
