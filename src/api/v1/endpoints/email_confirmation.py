@@ -27,7 +27,7 @@ class EmailConfirmation(Resource):
                 "Email confirmed.",
                 email_confirmation_model_response,
             ),
-            int(HTTPStatus.NOT_FOUND): ("Email not found.",),
+            int(HTTPStatus.NOT_FOUND): "Email not found.",
         },
         description="Подтверждение почты.",
     )

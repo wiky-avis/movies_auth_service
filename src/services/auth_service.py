@@ -35,7 +35,14 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.NOT_FOUND,
             )
-        user = UserResponse(id=str(user.id), email=user.email)
+        user_roles = self.get_user_roles(user.id)
+        user = UserResponse(
+            id=str(user.id),
+            email=user.email,
+            roles=user_roles,
+            verified_mail=user.verified_mail,
+            registered_on=str(user.registered_on),
+        )
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
     def register_user(self, email: str, role: str) -> None:
@@ -44,6 +51,47 @@ class AuthService:
         if not user:
             return
         self.repository.set_role(user, role)
+
+    def approve_user(self, user_id: str, password: str):
+        if not user_id or not password:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "User id or password is not valid."},
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
+        try:
+            user = self.repository.get_user_by_id(user_id=user_id)
+        except IntegrityError:
+            logger.error(
+                "User already exists: user %s.", user_id, exc_info=True
+            )
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User already exists."}
+                ).dict(),
+                HTTPStatus.CONFLICT,
+            )
+
+        self.repository.set_role(
+            user=user, role_name=RoleType.ROLE_PORTAL_USER.value
+        )
+        self.repository.set_password(user=user, password=password)
+        self.repository.update_flag_verified_mail(user=user)
+
+        user_roles = self.get_user_roles(user.id)
+        user = UserResponse(
+            id=str(user.id),
+            email=user.email,
+            roles=user_roles,
+            verified_mail=user.verified_mail,
+            registered_on=str(user.registered_on),
+        )
+        return (
+            BaseResponse(success=True, result=user).dict(),
+            HTTPStatus.OK,
+        )
 
     def get_user_roles(self, user_id: str) -> list:
         roles_ids = self.repository.get_ids_roles(user_id)

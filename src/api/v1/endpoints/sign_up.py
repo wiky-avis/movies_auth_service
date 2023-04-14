@@ -22,7 +22,8 @@ user_register_model_response = api.model(
 )
 
 
-@api.route("/sign_up")
+@api.route("/sign_up", methods=["POST"])
+@api.route("/<string:user_id>/sign_up", methods=["PATCH"])
 class SignUp(Resource):
     @api.doc(
         responses={
@@ -40,3 +41,21 @@ class SignUp(Resource):
         auth_repository = AuthRepository(db)
         auth_service = AuthService(repository=auth_repository)
         return auth_service.register_temporary_user(email=email)
+
+    @api.doc(
+        responses={
+            int(HTTPStatus.OK): (
+                "User approved.",
+                user_register_model_response,
+            ),
+            int(HTTPStatus.BAD_REQUEST): "User id or password is not valid.",
+            int(HTTPStatus.CONFLICT): "User already exists.",
+        },
+        description="Полноценная регистрация пользователя.",
+    )
+    @api.expect(input_user_register_model)
+    def patch(self, user_id):
+        password = request.json.get("password")
+        auth_repository = AuthRepository(db)
+        auth_service = AuthService(repository=auth_repository)
+        return auth_service.approve_user(user_id=user_id, password=password)
