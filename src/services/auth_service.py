@@ -18,33 +18,6 @@ class AuthService:
     def __init__(self, repository: AuthRepository):
         self.repository = repository
 
-    def get_user_by_id(self, user_id: str):
-        if not user_id:
-            logger.error("User's id is not valid: %s", user_id)
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "User's id is not valid."}
-                ).dict(),
-                HTTPStatus.BAD_REQUEST,
-            )
-        user = self.repository.get_user_by_id(user_id)
-        if not user:
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "User does not exist"}
-                ).dict(),
-                HTTPStatus.NOT_FOUND,
-            )
-        user_roles = self.get_user_roles(user.id)
-        user = UserResponse(
-            id=str(user.id),
-            email=user.email,
-            roles=user_roles,
-            verified_mail=user.verified_mail,
-            registered_on=str(user.registered_on),
-        )
-        return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
-
     def get_user_by_email(self, email: str):
         if not email:
             logger.error("Email is not valid: %s", email)
@@ -80,17 +53,39 @@ class AuthService:
         self.repository.set_role(user, role)
 
     def approve_user(self, user_id: str, password: str):
-        role = RoleType.ROLE_PORTAL_USER.value
+        user = self.repository.get_user_by_id(user_id=user_id)
+        if not user:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User does not exist."}
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
 
-        user = self.repository.get_user_by_id(user_id)
-        if not user or user.verified_mail:
-            return
+        if not password:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "Password is required."},
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
 
-        self.repository.set_role(user, role)
-        self.repository.set_password(user, password)
-        self.repository.update_flag_verified_mail(user)
+        if user.verified_mail:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "User already verified."},
+                ).dict(),
+                HTTPStatus.CONFLICT,
+            )
 
-        user = self.repository.get_user_by_email(email=user.email)
+        self.repository.set_role(
+            user=user, role_name=RoleType.ROLE_PORTAL_USER.value
+        )
+        self.repository.set_password(user=user, password=password)
+        self.repository.update_flag_verified_mail(user=user)
+
         user_roles = self.get_user_roles(user.id)
         user = UserResponse(
             id=str(user.id),
@@ -101,7 +96,7 @@ class AuthService:
         )
         return (
             BaseResponse(success=True, result=user).dict(),
-            HTTPStatus.CREATED,
+            HTTPStatus.OK,
         )
 
     def get_user_roles(self, user_id: str) -> list:
