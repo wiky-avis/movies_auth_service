@@ -6,14 +6,12 @@ from gevent import monkey
 from src.api.technical.ping import api as ping_api
 from src.api.v1.endpoints.change_data import api as change_data
 from src.api.v1.endpoints.change_password import api as change_password
+from src.api.v1.endpoints.email_confirmation import api as email_confirmation
 from src.api.v1.endpoints.get_list_login_history import (
     api as list_login_history,
 )
 from src.api.v1.endpoints.get_user import api as get_user
 from src.api.v1.endpoints.sign_up import api as sign_up
-from src.api.v1.endpoints.email_confirmation import (
-    api as email_confirmation,
-)
 from src.db.db_factory import init_db
 
 

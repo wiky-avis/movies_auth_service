@@ -1,10 +1,10 @@
 from http import HTTPStatus
 
 from flask_restx import Namespace, Resource, fields, reqparse
-from src.db.db_factory import db
+
+from src.common.response import BaseResponse
 from src.db.redis import redis_client
-from src.repositories.auth_repository import AuthRepository
-from src.services.auth_service import AuthService
+
 
 api = Namespace(name="v1", path="/api/v1/users")
 parser = reqparse.RequestParser()
@@ -27,20 +27,19 @@ class EmailConfirmation(Resource):
                 "Email confirmed.",
                 email_confirmation_model_response,
             ),
+            int(HTTPStatus.NOT_FOUND): ("Email not found.",),
         },
         description="Подтверждение почты.",
     )
     @api.param("code", "Код подтверждения почты")
     def put(self, user_id):
         args = parser.parse_args()
-        code = args.get("code")
-        auth_repository = AuthRepository(db)
-        auth_service = AuthService(repository=auth_repository)
+        secret_code = args.get("code")
 
-        print(redis_client.ping())
-        redis_client.set(user_id, code)
-
-        code = redis_client.get(user_id)
-        print("---CODE", code)
-
-        return "Ok"
+        code_in_redis = redis_client.get(user_id)
+        if code_in_redis and secret_code == code_in_redis:
+            return (
+                BaseResponse(success=True, result="Ok").dict(),
+                HTTPStatus.OK,
+            )
+        return BaseResponse(success=False).dict(), HTTPStatus.NOT_FOUND
