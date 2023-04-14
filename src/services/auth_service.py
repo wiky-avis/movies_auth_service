@@ -53,29 +53,23 @@ class AuthService:
         self.repository.set_role(user, role)
 
     def approve_user(self, user_id: str, password: str):
-        user = self.repository.get_user_by_id(user_id=user_id)
-        if not user:
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "User does not exist."}
-                ).dict(),
-                HTTPStatus.BAD_REQUEST,
-            )
-
-        if not password:
+        if not user_id or not password:
             return (
                 BaseResponse(
                     success=False,
-                    error={"msg": "Password is required."},
+                    error={"msg": "User id or password is not valid."},
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-
-        if user.verified_mail:
+        try:
+            user = self.repository.get_user_by_id(user_id=user_id)
+        except IntegrityError:
+            logger.error(
+                "User already exists: user %s.", user_id, exc_info=True
+            )
             return (
                 BaseResponse(
-                    success=False,
-                    error={"msg": "User already verified."},
+                    success=False, error={"msg": "User already exists."}
                 ).dict(),
                 HTTPStatus.CONFLICT,
             )

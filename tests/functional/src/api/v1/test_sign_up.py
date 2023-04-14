@@ -55,26 +55,7 @@ def test_approve_user(test_db, test_client, setup_url, create_roles):
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_approve_user_does_not_exist_error(
-    test_db, test_client, setup_url, create_roles
-):
-    user_id = "78b80695-3ef9-410a-985e-dce94b4105ca"
-    password = "MyPaSsWoRd123"
-
-    res = test_client.patch(
-        f"/api/v1/users/{user_id}/sign_up", json={"password": password}
-    )
-    assert res.status_code == HTTPStatus.BAD_REQUEST
-    body = res.json
-    assert body["error"]["msg"] == "User does not exist."
-
-
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_approve_user_password_is_required_error(
-    test_db, test_client, setup_url, create_roles
-):
-    password = ""
+def test_approve_user_error_400(test_db, test_client, setup_url, create_roles):
     email = "test@test.ru"
 
     res = test_client.post("/api/v1/users/sign_up", json={"email": email})
@@ -82,11 +63,16 @@ def test_approve_user_password_is_required_error(
     user_id = res.json["result"]["id"]
 
     res = test_client.patch(
-        f"/api/v1/users/{user_id}/sign_up", json={"password": password}
+        f"/api/v1/users/{user_id}/sign_up", json={"password": None}
     )
     assert res.status_code == HTTPStatus.BAD_REQUEST
     body = res.json
-    assert body["error"]["msg"] == "Password is required."
+    assert body["error"]["msg"] == "User id or password is not valid."
+
+    res = test_client.patch("/api/v1/users/123456/sign_up", json={})
+    assert res.status_code == HTTPStatus.BAD_REQUEST
+    body = res.json
+    assert body["error"]["msg"] == "User id or password is not valid."
 
 
 @pytest.mark.usefixtures("clean_table")

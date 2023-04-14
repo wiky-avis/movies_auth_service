@@ -48,9 +48,8 @@ class SignUp(Resource):
                 "User approved.",
                 user_register_model_response,
             ),
-            int(HTTPStatus.BAD_REQUEST): "User does not exist.",
-            int(HTTPStatus.BAD_REQUEST): "Password is required.",
-            int(HTTPStatus.CONFLICT): "User already verified.",
+            int(HTTPStatus.BAD_REQUEST): "User id or password is not valid.",
+            int(HTTPStatus.CONFLICT): "User already exists.",
         },
         description="Полноценная регистрация пользователя.",
     )
