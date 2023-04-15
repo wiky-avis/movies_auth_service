@@ -3,11 +3,7 @@ from http import HTTPStatus
 
 from sqlalchemy.exc import IntegrityError
 
-from src.api.v1.models.response import (
-    DeleteAccountResponse,
-    LoginHistoryResponse,
-    UserResponse,
-)
+from src.api.v1.models.response import LoginHistoryResponse, UserResponse
 from src.common.check_password import check_password
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
@@ -218,8 +214,7 @@ class AuthService:
             )
 
         self.repository.delete_user(user=user)
-        result = DeleteAccountResponse(user_id=user_id, deleted=True)
         return (
-            BaseResponse(success=True, result=result).dict(),
+            BaseResponse(success=True).dict(),
             HTTPStatus.NO_CONTENT,
         )

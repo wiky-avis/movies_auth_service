@@ -3,15 +3,7 @@ from http import HTTPStatus
 
 from flask_restx import Namespace, Resource, reqparse
 
-from src.api.v1.dto.base import (
-    BaseModelResponse,
-    ErrorModel,
-    ErrorModelResponse,
-)
-from src.api.v1.dto.delete_account import (
-    DeleteAccountModel,
-    DeleteAccountResponse,
-)
+from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
@@ -23,9 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 api = Namespace(name="v1", path="/api/v1/users")
-api.models[BaseModelResponse.name] = BaseModelResponse
-api.models[DeleteAccountModel.name] = DeleteAccountModel
-api.models[DeleteAccountResponse.name] = DeleteAccountResponse
 api.models[ErrorModel.name] = ErrorModel
 api.models[ErrorModelResponse.name] = ErrorModelResponse
 parser = reqparse.RequestParser()
@@ -36,10 +25,7 @@ parser.add_argument("X-Auth-Token", location="headers")
 class DeleteAccount(Resource):
     @api.doc(
         responses={
-            int(HTTPStatus.NO_CONTENT): (
-                "Account is deleted.",
-                DeleteAccountResponse,
-            ),
+            int(HTTPStatus.NO_CONTENT): "Account is deleted.",
             int(HTTPStatus.NOT_FOUND): (
                 "User does not exist.",
                 ErrorModelResponse,
