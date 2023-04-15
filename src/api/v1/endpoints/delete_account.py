@@ -1,8 +1,9 @@
 import logging
 from http import HTTPStatus
 
-from flask_restx import Namespace, Resource, reqparse
+from flask_restx import Namespace, Resource, fields, reqparse, Model
 
+from src.api.v1.models.dto import base_model_response
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
@@ -18,8 +19,35 @@ parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
 
 
+user_delete_account_model = api.model(
+    "DeleteAccountModel",
+    {
+        "user_id": fields.String(),
+        "deleted": fields.Boolean(example=True),
+    },
+)
+
+api.models[base_model_response.name] = base_model_response
+
+user_delete_account_model_response = api.inherit(
+    "DeleteAccountResponse",
+    base_model_response,
+    {"result": fields.Nested(user_delete_account_model)},
+)
+
+
 @api.route("/delete_account", methods=["DELETE"])
 class DeleteAccount(Resource):
+    @api.doc(
+        responses={
+            int(HTTPStatus.NO_CONTENT): (
+                "Account is deleted.",
+                user_delete_account_model_response,
+            ),
+            int(HTTPStatus.NOT_FOUND): "User does not exist.",
+        },
+        description="Удаление аккаунта.",
+    )
     def delete(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")

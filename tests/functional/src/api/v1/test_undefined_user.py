@@ -32,33 +32,11 @@ def create_list_user_login_history(test_db):
 
 
 @pytest.mark.parametrize(
-    "token_header",
-    (NO_TOKEN, BAD_TOKEN, EXP_TOKEN),
-)
-def test_undefined_user_method_get(
-    test_db,
-    test_client,
-    setup_url,
-    monkeypatch,
-    token_header,
-):
-    monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
-    headers = {"X-Auth-Token": token_header}
-
-    res = test_client.get("/api/v1/users/login_history", headers=headers)
-    assert res.status_code == HTTPStatus.UNAUTHORIZED
-    assert res.json == {
-        "success": False,
-        "error": {"msg": "UndefinedUser."},
-        "result": None,
-    }
-
-
-@pytest.mark.parametrize(
     "endpoint",
     (
-        ("/api/v1/users/change_data"),
-        ("/api/v1/users/change_password"),
+        "/api/v1/users/change_data",
+        "/api/v1/users/change_password",
+        "/api/v1/users/login_history",
     ),
 )
 @pytest.mark.parametrize(

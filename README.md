@@ -1,6 +1,8 @@
 # Проектная работа 6 спринта
 
 ###  Сборка и запуск в контейнере
+- создание .env файла (.env.example)
+
 - prod
 ```bash
 make up
@@ -34,11 +36,16 @@ flask db revision --message "message"
 pip3 install poetry
 poetry install --no-root && poetry shell
 ```
+- создание .env файла (.env.example)
+```bash
+cp .env.example .env
+```
+
 - сборка контейнеров
 ```bash
 make up_local_compose
 ```
-- создание .env файла
+- создание .env файла (для локального запуска api и тестов)
 ```bash
 cp .env.test .env
 ```

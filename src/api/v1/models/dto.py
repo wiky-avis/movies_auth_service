@@ -1,4 +1,12 @@
-from flask_restx import fields
+from flask_restx import fields, Model
+
+base_model_response = Model(
+    "BaseResponse",
+    {
+        "success": fields.Boolean(example=True),
+        "error": fields.String(example="null"),
+    },
+)
 
 
 InputUserRegisterModel = {

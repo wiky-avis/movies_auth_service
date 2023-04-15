@@ -9,6 +9,7 @@ from psycopg2.extras import DictCursor
 from src.api.technical.ping import api as ping_api
 from src.api.v1.endpoints.change_data import api as change_data
 from src.api.v1.endpoints.change_password import api as change_password
+from src.api.v1.endpoints.delete_account import api as delete_account
 from src.api.v1.endpoints.email_confirmation import api as email_confirmation
 from src.api.v1.endpoints.get_list_login_history import (
     api as list_login_history,
@@ -40,6 +41,7 @@ def test_app():
     api.add_namespace(change_data)
     api.add_namespace(change_password)
     api.add_namespace(email_confirmation)
+    api.add_namespace(delete_account)
 
     return app
 

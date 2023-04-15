@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask import request
 from flask_restx import Namespace, Resource, fields, reqparse
 
+from src.api.v1.models.dto import base_model_response
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
@@ -18,6 +19,8 @@ api = Namespace(name="v1", path="/api/v1/users")
 parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
 
+api.models[base_model_response.name] = base_model_response
+
 
 input_user_change_data_model = api.model(
     "InputUserChangeData",
@@ -26,10 +29,11 @@ input_user_change_data_model = api.model(
     },
 )
 
-user_change_data_model_response = api.model(
+user_change_data_model_response = api.inherit(
     "UserChangeDataResponse",
+    base_model_response,
     {
-        "result": fields.String(),
+        "result": fields.String(example="Ok"),
     },
 )
 
@@ -39,7 +43,7 @@ class UserChangeData(Resource):
     @api.doc(
         responses={
             int(HTTPStatus.OK): (
-                "Ok.",
+                "Data is changed.",
                 user_change_data_model_response,
             ),
             int(HTTPStatus.NOT_FOUND): "User does not exist.",
