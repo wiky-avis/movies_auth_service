@@ -61,18 +61,7 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-        try:
-            user = self.repository.get_user_by_id(user_id=user_id)
-        except IntegrityError:
-            logger.error(
-                "User already exists: user %s.", user_id, exc_info=True
-            )
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "User already exists."}
-                ).dict(),
-                HTTPStatus.CONFLICT,
-            )
+        user = self.repository.get_user_by_id(user_id=user_id)
 
         self.repository.set_role(
             user=user, role_name=RoleType.ROLE_PORTAL_USER.value

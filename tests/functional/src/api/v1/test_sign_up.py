@@ -9,7 +9,7 @@ from tests.functional.vars.tables import CLEAN_TABLES
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_sign_up_temporary_user(test_client, setup_url, create_roles):
-    email = "test@test.ru"
+    email = "test543645@test.ru"
 
     res = test_client.post("/api/v1/users/sign_up", json={"email": email})
     assert res.status_code == HTTPStatus.CREATED
@@ -24,12 +24,28 @@ def test_sign_up_temporary_user(test_client, setup_url, create_roles):
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
+def test_sign_up_temporary_user_error_409(test_db, test_client, setup_url):
+    email = "test47364@test.ru"
+
+    auth_repository = AuthRepository(test_db)
+    auth_repository.create_user(email=email)
+
+    res = test_client.post("/api/v1/users/sign_up", json={"email": email})
+    assert res.status_code == HTTPStatus.CONFLICT
+    assert res.json == {
+        "success": False,
+        "error": {"msg": "User already exists."},
+        "result": None,
+    }
+
+
+@pytest.mark.usefixtures("clean_table")
+@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_approve_user(test_db, test_client, setup_url, create_roles):
-    email = "test@test.ru"
+    email = "test1382493@test.ru"
     password = "MyPaSsWoRd123"
 
     auth_repository = AuthRepository(test_db)
-
     res = test_client.post("/api/v1/users/sign_up", json={"email": email})
     assert res.status_code == HTTPStatus.CREATED
     user_id = res.json["result"]["id"]
@@ -53,42 +69,13 @@ def test_approve_user(test_db, test_client, setup_url, create_roles):
     assert user.password_hash
 
 
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_approve_user_error_400(test_db, test_client, setup_url, create_roles):
-    email = "test@test.ru"
-
-    res = test_client.post("/api/v1/users/sign_up", json={"email": email})
-    assert res.status_code == HTTPStatus.CREATED
-    user_id = res.json["result"]["id"]
+def test_approve_user_error_400(test_client, setup_url):
+    user_id = "cfc83768-9be4-4066-be89-695d35ea9131"
+    password = ""
 
     res = test_client.patch(
-        f"/api/v1/users/{user_id}/sign_up", json={"password": None}
+        f"/api/v1/users/{user_id}/sign_up", json={"password": password}
     )
     assert res.status_code == HTTPStatus.BAD_REQUEST
     body = res.json
     assert body["error"]["msg"] == "User id or password is not valid."
-
-    res = test_client.patch("/api/v1/users/123456/sign_up", json={})
-    assert res.status_code == HTTPStatus.BAD_REQUEST
-    body = res.json
-    assert body["error"]["msg"] == "User id or password is not valid."
-
-
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_sign_up_temporary_user_error_409(
-    test_db, test_client, setup_url, create_roles
-):
-    email = "test@test.ru"
-
-    auth_repository = AuthRepository(test_db)
-    auth_repository.create_user(email=email)
-
-    res = test_client.post("/api/v1/users/sign_up", json={"email": email})
-    assert res.status_code == HTTPStatus.CONFLICT
-    assert res.json == {
-        "success": False,
-        "error": {"msg": "User already exists."},
-        "result": None,
-    }

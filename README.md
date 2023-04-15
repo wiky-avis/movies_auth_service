@@ -61,30 +61,46 @@ pytest
 Примерный флоу регистрации пользователя:
 ```
 1. Проверка, существует ли такой пользователь:
-GET /api/v1/users?email=sgsf@sgfg.ru
+GET /api/v1/users?email=sgsf@sgfg.ru
+
+Ответ:
+{
+    "success": true,
+    "result": {
+      "id": "string",
+      "email": "string",
+      "roles": [
+        "string"
+      ],
+      "verified_mail": false,
+      "registered_on": "string"
+    }
+}
 
 В случае, если не существует, вернет ошибку 404 (значит такого пользователя не найдено)
 Если вернулся код 404 создаем временного пользователя.
-Если такой пользователь существует и вернулся код 200 и флаг verified_mail=true(смотрит фронт), открываем окно ввода пароля(Аутентификация /api/v1/users/sign_in). 
-Если код 200 и флаг verified_mail=false, просим пользователя подтвердить почту, ппересылаем ему код подтверждения /api/v1/users/308645/resend_code
+Если такой пользователь существует и вернулся код 200 и флаг verified_mail=true(смотрит фронт), 
+открываем окно ввода пароля(Аутентификация /api/v1/users/sign_in). 
+Если код 200 и флаг verified_mail=false, просим пользователя подтвердить почту, 
+ппересылаем ему код подтверждения /api/v1/users/308645/resend_code.
 
 2. Создание временного пользователя.
 POST /api/v1/users/sign_up
 body:
 {
-"email":"sgsf@sgfg.ru"
+    "email":"sgsf@sgfg.ru"
 }
 
 Ответ:
 {
-  "success": true,
-  "data": {
-    "id": 308866, 
-    "email": "sds@sdfsdf.ru",
-    "roles": [
-      "ROLE_TEMPORARY_USER"
-    ],
-  }
+    "success": true,
+    "result": {
+        "id": 308866,
+        "email": "sds@sdfsdf.ru",
+        "roles": ["ROLE_TEMPORARY_USER"],
+        "verified_mail": false,
+        "registered_on": "string"
+    }
 }
 
 3. Отправить код пользователю с id пользователя для подтверждения почты.
@@ -101,34 +117,40 @@ PUT /api/v1/users/308645/mail?code=7505
 
 *Проверяем в редисе есть ли такой код 7505
 
-- Если есть ответ  {
-  "success":true,
-  «result»: "Ok"
+- Если есть, ответ:
+{
+    "success":true,
+    "result": "Ok"
 }
-- Если такого нет {
-  "success":false,
-  «result»: null
+- Если такого нет, ответ:
+{
+    "success":false,
+    "result": null
 }
-5. Если ответ ручки /api/v1/users/308645/mail отрицательный. Отправить повторно код пользователю с id пользователя для подтверждения почты.
-POST /api/v1/users/308645/resend_code
+- Если ответ ручки /api/v1/users/308645/mail отрицательный. Отправить повторно код пользователю 
+с id пользователя для подтверждения почты.
+POST /api/v1/users/308645/send_code
 Body:
 {
 	"code": 7506
 }
 
-6. Если ответ ручки /api/v1/users/308645/mail положительный. Регистрируем полноценно пользователя, проставляем флаг verified_mail в True и обновляем роль ROLE_PORTAL_USER.
+6. Если ответ ручки /api/v1/users/308645/mail положительный. Регистрируем полноценно пользователя, 
+проставляем флаг verified_mail в True и обновляем роль ROLE_PORTAL_USER.
 
 PATCH /api/v1/users/308645/sign_up
 
 Ответ:
 {
-  "success": true,
-  "data": {
-    "id": 308866, 
-    "email": "sds@sdfsdf.ru",
-    "roles": [
-      "ROLE_PORTAL_USER"
-    ],
-  }
+    "success": true,
+    "result": {
+        "id": 308866,
+        "email": "sds@sdfsdf.ru",
+        "roles": [
+            "ROLE_PORTAL_USER",
+            "ROLE_TEMPORARY_USER"
+        ],
+        "verified_mail": true,
+        "registered_on": "string"
 }
 ```
