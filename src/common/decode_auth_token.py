@@ -3,8 +3,12 @@ import os
 from typing import Optional
 
 import jwt
+from dotenv import load_dotenv
 
 from src.config import TEST_PUBLIC_KEY
+
+
+load_dotenv()
 
 
 logger = logging.getLogger(__name__)

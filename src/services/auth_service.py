@@ -201,3 +201,20 @@ class AuthService:
             ).dict(),
             HTTPStatus.OK,
         )
+
+    def delete_account(self, user_id: str):
+        user = self.repository.get_user_by_id(user_id=user_id)
+        if not user:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "User not found."},
+                ).dict(),
+                HTTPStatus.NOT_FOUND,
+            )
+
+        self.repository.delete_user(user=user)
+        return (
+            BaseResponse(success=True).dict(),
+            HTTPStatus.NO_CONTENT,
+        )

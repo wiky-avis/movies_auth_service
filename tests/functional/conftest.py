@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import psycopg2
 import pytest
 from flask import Flask, current_app
@@ -9,6 +7,7 @@ from psycopg2.extras import DictCursor
 from src.api.technical.ping import api as ping_api
 from src.api.v1.endpoints.change_data import api as change_data
 from src.api.v1.endpoints.change_password import api as change_password
+from src.api.v1.endpoints.delete_account import api as delete_account
 from src.api.v1.endpoints.email_confirmation import api as email_confirmation
 from src.api.v1.endpoints.get_list_login_history import (
     api as list_login_history,
@@ -17,9 +16,6 @@ from src.api.v1.endpoints.get_user import api as check_mail
 from src.api.v1.endpoints.sign_up import api as sign_up
 from src.config import Config
 from src.db.db_factory import db as database, init_db
-from src.db.db_models import LoginHistory, Role
-from src.repositories.auth_repository import AuthRepository
-from tests.functional.vars.roles import ROLES
 
 
 @pytest.fixture(scope="session")
@@ -40,6 +36,7 @@ def test_app():
     api.add_namespace(change_data)
     api.add_namespace(change_password)
     api.add_namespace(email_confirmation)
+    api.add_namespace(delete_account)
 
     return app
 
@@ -50,7 +47,6 @@ def test_db(test_app):
     database.session.commit()
     yield database
     database.session.remove()
-    database.drop_all()
 
 
 @pytest.fixture
@@ -89,26 +85,3 @@ def clean_table(request):
         clean_tables(*request.param)
 
     request.addfinalizer(teardown)
-
-
-@pytest.fixture
-def create_roles(test_db):
-    for role in ROLES:
-        role = Role(name=role, description="")
-        test_db.session.add(role)
-        test_db.session.commit()
-
-
-@pytest.fixture
-def create_list_user_login_history(test_db):
-    email = "test22@test.ru"
-    login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
-    auth_repository = AuthRepository(db=test_db)
-    auth_repository.create_user(email=email)
-    user = auth_repository.get_user_by_email(email=email)
-
-    objects = [
-        LoginHistory(user_id=user.id, login_dt=login_dt) for _ in range(10)
-    ]
-    test_db.session.bulk_save_objects(objects)
-    test_db.session.commit()

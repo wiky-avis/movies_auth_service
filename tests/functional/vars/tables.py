@@ -1,6 +1,6 @@
 CLEAN_TABLES = [
-    "users",
-    "login_history",
-    "roles",
     "user_role",
+    "login_history",
+    "users",
+    "roles",
 ]

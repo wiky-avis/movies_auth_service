@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, fields
 
 
 class BaseResponse(BaseModel):
@@ -10,9 +10,9 @@ class BaseResponse(BaseModel):
 
 
 class Pagination(BaseModel):
-    page: int = None
-    pages: int = None
-    total_count: int = None
+    page: int = fields.Field(default=1, ge=1)
+    pages: int = fields.Field(default=1, ge=1)
+    total_count: int = fields.Field(default=1, ge=1, le=50)
     prev_page: int = None
     next_page: int = None
     has_next: int = None

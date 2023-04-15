@@ -13,6 +13,10 @@ class AuthRepository:
         self.db.session.add(new_user)
         self.db.session.commit()
 
+    def delete_user(self, user: User) -> None:
+        self.db.session.delete(user)
+        self.db.session.commit()
+
     def set_password(self, user: User, password: str) -> None:
         user.password(password)
         self.db.session.commit()
@@ -30,16 +34,16 @@ class AuthRepository:
 
     def get_user_by_email(self, email: str) -> User | None:
         user = self.db.session.query(User).filter_by(email=email).first()
-        return user if user else None
+        return user
 
     def get_user_by_id(self, user_id: str) -> User | None:
         user = self.db.session.query(User).filter_by(id=user_id).first()
-        return user if user else None
+        return user
 
     def get_ids_roles(self, user_id) -> list[str] | None:
         roles = self.db.session.query(UserRole).filter_by(user_id=user_id)
         roles_ids = [user_role.role_id for user_role in roles]
-        return roles_ids if roles_ids else None
+        return roles_ids
 
     def get_roles(self, roles_ids: list[str]) -> list[str]:
         roles = []
@@ -49,7 +53,7 @@ class AuthRepository:
             )
 
         roles = [role.name for role in roles]
-        return roles if roles else []
+        return roles
 
     def create_role(self, role_id: str, user_id: str) -> None:
         user_role = UserRole(role_id=role_id, user_id=user_id)

@@ -1,8 +1,14 @@
 import logging
 from http import HTTPStatus
 
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import Namespace, Resource, reqparse
 
+from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
+from src.api.v1.dto.login_history import (
+    LoginHistoryModel,
+    LoginHistoryResponse,
+    PaginationModel,
+)
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
@@ -14,30 +20,30 @@ logger = logging.getLogger(__name__)
 
 
 api = Namespace(name="v1", path="/api/v1/users")
+api.models[LoginHistoryModel.name] = LoginHistoryModel
+api.models[PaginationModel.name] = PaginationModel
+api.models[LoginHistoryResponse.name] = LoginHistoryResponse
+api.models[ErrorModel.name] = ErrorModel
+api.models[ErrorModelResponse.name] = ErrorModelResponse
 parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
 parser.add_argument("page", type=int)
 parser.add_argument("per_page", type=int)
 
 
-login_history_model_response = api.model(
-    "LoginHistoryResponse",
-    {
-        "device_type": fields.String(),
-        "login_dt": fields.DateTime(),
-    },
-)
-
-
 @api.route("/login_history")
 class GetListUserLoginHistory(Resource):
+    @api.param("X-Auth-Token", "JWT токен")
     @api.doc(
         responses={
             int(HTTPStatus.OK): (
                 "List user login history.",
-                login_history_model_response,
+                LoginHistoryResponse,
             ),
-            int(HTTPStatus.UNAUTHORIZED): "UndefinedUser.",
+            int(HTTPStatus.UNAUTHORIZED): (
+                "UndefinedUser.",
+                ErrorModelResponse,
+            ),
         },
         description="История входов пользователя в систему.",
     )
