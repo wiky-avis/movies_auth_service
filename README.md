@@ -66,7 +66,7 @@ GET /api/v1/users?email=sgsf@sgfg.ru
 Ответ:
 {
     "success": true,
-    "data": {
+    "result": {
       "id": "string",
       "email": "string",
       "roles": [
@@ -94,7 +94,7 @@ body:
 Ответ:
 {
     "success": true,
-    "data": {
+    "result": {
         "id": 308866,
         "email": "sds@sdfsdf.ru",
         "roles": ["ROLE_TEMPORARY_USER"],
@@ -120,7 +120,7 @@ PUT /api/v1/users/308645/mail?code=7505
 - Если есть, ответ:
 {
     "success":true,
-    «result»: "Ok"
+    "result": "Ok"
 }
 - Если такого нет, ответ:
 {
@@ -143,7 +143,7 @@ PATCH /api/v1/users/308645/sign_up
 Ответ:
 {
     "success": true,
-    "data": {
+    "result": {
         "id": 308866,
         "email": "sds@sdfsdf.ru",
         "roles": [
