@@ -11,6 +11,9 @@ from src.api.v1.endpoints.get_list_login_history import (
 )
 from src.api.v1.endpoints.get_user import api as get_user
 from src.api.v1.endpoints.sign_up import api as sign_up
+from src.api.v2.endpoints.add_role import api as add_role
+from src.api.v2.endpoints.checking_rights import api as checking_rights
+from src.api.v2.endpoints.delete_role import api as delete_role
 
 
 def attach_routes(app: Flask):
@@ -21,6 +24,7 @@ def attach_routes(app: Flask):
         doc="/api/swagger/",
         version="1.0.0",
     )
+    # v1
     api.add_namespace(ping_api)
     api.add_namespace(get_user)
     api.add_namespace(sign_up)
@@ -29,3 +33,7 @@ def attach_routes(app: Flask):
     api.add_namespace(change_password)
     api.add_namespace(email_confirmation)
     api.add_namespace(delete_account)
+    # v2
+    api.add_namespace(add_role)
+    api.add_namespace(checking_rights)
+    api.add_namespace(delete_role)
