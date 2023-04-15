@@ -4,7 +4,6 @@ from flask_restx import fields
 InputUserRegisterModel = {
     "email": fields.String(required=True, description="Почта"),
     "password": fields.String(required=False, description="Пароль"),
-    "role": fields.String(required=False, description="Роль пользователя"),
 }
 
 
