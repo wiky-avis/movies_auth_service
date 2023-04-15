@@ -2,8 +2,14 @@ import logging
 from http import HTTPStatus
 
 from flask import request
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import Namespace, Resource, reqparse
 
+from src.api.v1.models.dto import (
+    ErrorModel,
+    ErrorModelResponse,
+    InputUserChangePassword,
+    UserChangePasswordResponse,
+)
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
@@ -15,24 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 api = Namespace(name="v1", path="/api/v1/users")
+api.models[InputUserChangePassword.name] = InputUserChangePassword
+api.models[UserChangePasswordResponse.name] = UserChangePasswordResponse
+api.models[ErrorModel.name] = ErrorModel
+api.models[ErrorModelResponse.name] = ErrorModelResponse
 parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
-
-
-input_user_change_password_model = api.model(
-    "InputUserChangePassword",
-    {
-        "old_password": fields.String(description="Пароль"),
-        "new_password": fields.String(description="Пароль"),
-    },
-)
-
-user_change_password_model_response = api.model(
-    "UserChangePasswordResponse",
-    {
-        "result": fields.String(),
-    },
-)
 
 
 @api.route("/change_password")
@@ -40,16 +34,26 @@ class UserChangeData(Resource):
     @api.doc(
         responses={
             int(HTTPStatus.OK): (
-                "Ok.",
-                user_change_password_model_response,
+                "Password is changed.",
+                UserChangePasswordResponse,
             ),
-            int(HTTPStatus.NOT_FOUND): "User does not exist.",
-            int(HTTPStatus.BAD_REQUEST): "No new password or no old password.",
-            int(HTTPStatus.UNAUTHORIZED): "Invalid password.",
+            int(HTTPStatus.NOT_FOUND): (
+                "User does not exist.",
+                ErrorModelResponse,
+            ),
+            int(HTTPStatus.BAD_REQUEST): (
+                "No new password or no old password.",
+                ErrorModelResponse,
+            ),
+            int(HTTPStatus.UNAUTHORIZED): (
+                "Invalid password.",
+                ErrorModelResponse,
+            ),
         },
         description="Изменение пароля.",
     )
-    @api.expect(input_user_change_password_model)
+    @api.param("X-Auth-Token", "JWT токен")
+    @api.expect(InputUserChangePassword)
     def put(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")

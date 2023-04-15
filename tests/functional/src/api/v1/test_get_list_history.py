@@ -1,24 +1,42 @@
+from datetime import datetime
 from http import HTTPStatus
 
 import pytest
 
 from src.config import TEST_PUBLIC_KEY
+from src.db import LoginHistory
 from src.repositories.auth_repository import AuthRepository
 from tests.functional.vars.auth import sign_jwt
 from tests.functional.vars.login_history import USER_LOGIN_HISTORY
 from tests.functional.vars.tables import CLEAN_TABLES
 
 
+email = "test77@test.ru"
+
+
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
+@pytest.fixture(scope="module")
+def create_list_user_login_history(test_db):
+    login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
+    auth_repository = AuthRepository(db=test_db)
+    auth_repository.create_user(email=email)
+    user = auth_repository.get_user_by_email(email=email)
+
+    objects = [
+        LoginHistory(user_id=user.id, login_dt=login_dt) for _ in range(10)
+    ]
+    test_db.session.bulk_save_objects(objects)
+    test_db.session.commit()
+
+
 def test_get_list_history(
     test_db,
     test_client,
     setup_url,
-    create_list_user_login_history,
     monkeypatch,
+    create_list_user_login_history,
 ):
-    email = "test22@test.ru"
     auth_repository = AuthRepository(db=test_db)
     user = auth_repository.get_user_by_email(email=email)
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
@@ -30,8 +48,6 @@ def test_get_list_history(
     assert body == USER_LOGIN_HISTORY
 
 
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 @pytest.mark.parametrize(
     "page, per_page, pages, prev_page, next_page, has_next, has_prev, result",
     (
@@ -44,7 +60,6 @@ def test_get_list_history_pagination(
     test_db,
     test_client,
     setup_url,
-    create_list_user_login_history,
     monkeypatch,
     page,
     per_page,
@@ -54,8 +69,8 @@ def test_get_list_history_pagination(
     has_next,
     has_prev,
     result,
+    create_list_user_login_history,
 ):
-    email = "test22@test.ru"
     total_count = 10
     auth_repository = AuthRepository(db=test_db)
     user = auth_repository.get_user_by_email(email=email)

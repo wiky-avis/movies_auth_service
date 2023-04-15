@@ -4,6 +4,9 @@ import time
 import jwt
 
 from src.config import TEST_PRIVATE_KEY
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))

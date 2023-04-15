@@ -1,9 +1,8 @@
 from http import HTTPStatus
 
 import pytest
-
-from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
+from tests.functional.conftest import test_redis_client
 from tests.functional.vars.tables import CLEAN_TABLES
 
 
@@ -15,7 +14,7 @@ def test_email_confirmation(test_db, test_client, setup_url):
     auth_repository = AuthRepository(db=test_db)
     auth_repository.create_user(email=email)
     user = auth_repository.get_user_by_email(email=email)
-    redis_client.set(name=str(user.id), value=secret_code, ex=10)
+    test_redis_client.set(name=str(user.id), value=secret_code, ex=10)
 
     res = test_client.put(f"/api/v1/users/{user.id}/mail?code={secret_code}")
     assert res.status_code == HTTPStatus.OK

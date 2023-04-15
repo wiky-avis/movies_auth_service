@@ -1,9 +1,15 @@
 import logging
 from http import HTTPStatus
 
-from flask_restx import Namespace, Resource, fields, reqparse, Model
+from flask_restx import Namespace, Resource, reqparse
 
-from src.api.v1.models.dto import base_model_response
+from src.api.v1.models.dto import (
+    BaseModelResponse,
+    DeleteAccountModel,
+    DeleteAccountResponse,
+    ErrorModel,
+    ErrorModelResponse,
+)
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
@@ -15,25 +21,13 @@ logger = logging.getLogger(__name__)
 
 
 api = Namespace(name="v1", path="/api/v1/users")
+api.models[BaseModelResponse.name] = BaseModelResponse
+api.models[DeleteAccountModel.name] = DeleteAccountModel
+api.models[DeleteAccountResponse.name] = DeleteAccountResponse
+api.models[ErrorModel.name] = ErrorModel
+api.models[ErrorModelResponse.name] = ErrorModelResponse
 parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
-
-
-user_delete_account_model = api.model(
-    "DeleteAccountModel",
-    {
-        "user_id": fields.String(),
-        "deleted": fields.Boolean(example=True),
-    },
-)
-
-api.models[base_model_response.name] = base_model_response
-
-user_delete_account_model_response = api.inherit(
-    "DeleteAccountResponse",
-    base_model_response,
-    {"result": fields.Nested(user_delete_account_model)},
-)
 
 
 @api.route("/delete_account", methods=["DELETE"])
@@ -42,12 +36,16 @@ class DeleteAccount(Resource):
         responses={
             int(HTTPStatus.NO_CONTENT): (
                 "Account is deleted.",
-                user_delete_account_model_response,
+                DeleteAccountResponse,
             ),
-            int(HTTPStatus.NOT_FOUND): "User does not exist.",
+            int(HTTPStatus.NOT_FOUND): (
+                "User does not exist.",
+                ErrorModelResponse,
+            ),
         },
         description="Удаление аккаунта.",
     )
+    @api.param("X-Auth-Token", "JWT токен")
     def delete(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")

@@ -1,22 +1,22 @@
 from http import HTTPStatus
 
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import Namespace, Resource, reqparse
 
+from src.api.v1.models.dto import (
+    EmailConfirmationResponse,
+    ErrorModel,
+    ErrorModelResponse,
+)
 from src.common.response import BaseResponse
 from src.db.redis import redis_client
 
 
 api = Namespace(name="v1", path="/api/v1/users")
+api.models[EmailConfirmationResponse.name] = EmailConfirmationResponse
+api.models[ErrorModel.name] = ErrorModel
+api.models[ErrorModelResponse.name] = ErrorModelResponse
 parser = reqparse.RequestParser()
 parser.add_argument("code", type=str)
-
-
-email_confirmation_model_response = api.model(
-    "EmailConfirmationResponse",
-    {
-        "result": fields.String(example="Ok"),
-    },
-)
 
 
 @api.route("/<string:user_id>/mail")
@@ -25,9 +25,12 @@ class EmailConfirmation(Resource):
         responses={
             int(HTTPStatus.OK): (
                 "Email confirmed.",
-                email_confirmation_model_response,
+                EmailConfirmationResponse,
             ),
-            int(HTTPStatus.NOT_FOUND): "Email not found.",
+            int(HTTPStatus.NOT_FOUND): (
+                "Email not found.",
+                ErrorModelResponse,
+            ),
         },
         description="Подтверждение почты.",
     )

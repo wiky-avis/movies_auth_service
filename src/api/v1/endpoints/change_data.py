@@ -2,9 +2,14 @@ import logging
 from http import HTTPStatus
 
 from flask import request
-from flask_restx import Namespace, Resource, fields, reqparse
+from flask_restx import Namespace, Resource, reqparse
 
-from src.api.v1.models.dto import base_model_response
+from src.api.v1.models.dto import (
+    ErrorModel,
+    ErrorModelResponse,
+    InputUserChangeData,
+    UserChangeDataResponse,
+)
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
@@ -16,26 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 api = Namespace(name="v1", path="/api/v1/users")
+api.models[InputUserChangeData.name] = InputUserChangeData
+api.models[UserChangeDataResponse.name] = UserChangeDataResponse
+api.models[ErrorModel.name] = ErrorModel
+api.models[ErrorModelResponse.name] = ErrorModelResponse
 parser = reqparse.RequestParser()
 parser.add_argument("X-Auth-Token", location="headers")
-
-api.models[base_model_response.name] = base_model_response
-
-
-input_user_change_data_model = api.model(
-    "InputUserChangeData",
-    {
-        "email": fields.String(description="Почта"),
-    },
-)
-
-user_change_data_model_response = api.inherit(
-    "UserChangeDataResponse",
-    base_model_response,
-    {
-        "result": fields.String(example="Ok"),
-    },
-)
 
 
 @api.route("/change_data")
@@ -44,15 +35,22 @@ class UserChangeData(Resource):
         responses={
             int(HTTPStatus.OK): (
                 "Data is changed.",
-                user_change_data_model_response,
+                UserChangeDataResponse,
             ),
-            int(HTTPStatus.NOT_FOUND): "User does not exist.",
-            int(HTTPStatus.BAD_REQUEST): "No new email.",
-            int(HTTPStatus.CONFLICT): "User with this email already exists.",
+            int(HTTPStatus.NOT_FOUND): (
+                "User does not exist.",
+                ErrorModelResponse,
+            ),
+            int(HTTPStatus.BAD_REQUEST): ("No new email.", ErrorModelResponse),
+            int(HTTPStatus.CONFLICT): (
+                "User with this email already exists.",
+                ErrorModelResponse,
+            ),
         },
         description="Изменение данных.",
     )
-    @api.expect(input_user_change_data_model)
+    @api.param("X-Auth-Token", "JWT токен")
+    @api.expect(InputUserChangeData)
     def put(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
