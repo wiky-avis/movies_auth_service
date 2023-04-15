@@ -3,19 +3,19 @@ version: "3.8"
 services:
   db:
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - "6666:5432"
     networks:
       - "test-app"
 
   redis:
     ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
+      - "8030:6379"
     networks:
       - "test-app"
 
   api:
     ports:
-      - "${HTTP_PORT}:${HTTP_PORT}"
+      - "8000:5000"
     networks:
       - "test-app"
 

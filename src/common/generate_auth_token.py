@@ -2,9 +2,10 @@ import os
 import time
 
 import jwt
+from dotenv import load_dotenv
 
 from src.config import TEST_PRIVATE_KEY
-from dotenv import load_dotenv
+
 
 load_dotenv()
 

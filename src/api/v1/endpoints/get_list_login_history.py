@@ -3,9 +3,8 @@ from http import HTTPStatus
 
 from flask_restx import Namespace, Resource, reqparse
 
-from src.api.v1.models.dto import (
-    ErrorModel,
-    ErrorModelResponse,
+from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
+from src.api.v1.dto.login_history import (
     LoginHistoryModel,
     LoginHistoryResponse,
     PaginationModel,

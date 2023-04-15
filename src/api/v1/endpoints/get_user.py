@@ -2,11 +2,13 @@ from http import HTTPStatus
 
 from flask_restx import Namespace, Resource, reqparse
 
-from src.api.v1.models.dto import (
+from src.api.v1.dto.base import (
     BaseModelResponse,
-    BaseUserModel,
     ErrorModel,
     ErrorModelResponse,
+)
+from src.api.v1.dto.user import (
+    BaseUserModel,
     RegisteredUserModel,
     RegisteredUserModelResponse,
 )

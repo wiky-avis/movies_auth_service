@@ -3,12 +3,14 @@ from http import HTTPStatus
 
 from flask_restx import Namespace, Resource, reqparse
 
-from src.api.v1.models.dto import (
+from src.api.v1.dto.base import (
     BaseModelResponse,
-    DeleteAccountModel,
-    DeleteAccountResponse,
     ErrorModel,
     ErrorModelResponse,
+)
+from src.api.v1.dto.delete_account import (
+    DeleteAccountModel,
+    DeleteAccountResponse,
 )
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse

@@ -3,11 +3,13 @@ from http import HTTPStatus
 from flask import request
 from flask_restx import Namespace, Resource
 
-from src.api.v1.models.dto import (
+from src.api.v1.dto.base import (
     BaseModelResponse,
-    BaseUserModel,
     ErrorModel,
     ErrorModelResponse,
+)
+from src.api.v1.dto.user import (
+    BaseUserModel,
     InputUserRegisterModel,
     RegisteredUserModel,
     RegisteredUserModelResponse,

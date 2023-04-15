@@ -2,11 +2,8 @@ from http import HTTPStatus
 
 from flask_restx import Namespace, Resource, reqparse
 
-from src.api.v1.models.dto import (
-    EmailConfirmationResponse,
-    ErrorModel,
-    ErrorModelResponse,
-)
+from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
+from src.api.v1.dto.email_confirmation import EmailConfirmationResponse
 from src.common.response import BaseResponse
 from src.db.redis import redis_client
 
