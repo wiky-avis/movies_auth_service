@@ -14,3 +14,8 @@ class UserResponse(IdModelMixin, ORDJSONModelMixin):
 
 class LoginHistoryResponse(BaseResponse):
     pagination: Pagination
+
+
+class DeleteAccountResponse(ORDJSONModelMixin):
+    user_id: str
+    deleted: bool

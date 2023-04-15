@@ -3,7 +3,11 @@ from http import HTTPStatus
 
 from sqlalchemy.exc import IntegrityError
 
-from src.api.v1.models.response import LoginHistoryResponse, UserResponse
+from src.api.v1.models.response import (
+    DeleteAccountResponse,
+    LoginHistoryResponse,
+    UserResponse,
+)
 from src.common.check_password import check_password
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
@@ -200,4 +204,22 @@ class AuthService:
                 success=True, result=login_history, pagination=pagination
             ).dict(),
             HTTPStatus.OK,
+        )
+
+    def delete_account(self, user_id: str):
+        user = self.repository.get_user_by_id(user_id=user_id)
+        if not user:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "User not found."},
+                ).dict(),
+                HTTPStatus.NOT_FOUND,
+            )
+
+        self.repository.delete_user(user=user)
+        result = DeleteAccountResponse(user_id=user_id, deleted=True)
+        return (
+            BaseResponse(success=True, result=result).dict(),
+            HTTPStatus.NO_CONTENT,
         )
