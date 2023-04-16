@@ -7,7 +7,7 @@ InputUserRegisterModel = Model(
     "InputUserRegister",
     {
         "email": fields.String(required=True, description="Почта"),
-        "password": fields.String(required=False, description="Пароль"),
+        "password": fields.String(required=True, description="Пароль"),
     },
 )
 

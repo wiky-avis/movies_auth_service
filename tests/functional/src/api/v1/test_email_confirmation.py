@@ -20,6 +20,7 @@ def test_email_confirmation(test_db, test_client, setup_url):
     res = test_client.put(f"/api/v1/users/{user.id}/mail?code={secret_code}")
     assert res.status_code == HTTPStatus.OK
     assert res.json == {"error": None, "result": "Ok", "success": True}
+    assert user.verified_mail is True
 
 
 @pytest.mark.usefixtures("clean_table")
