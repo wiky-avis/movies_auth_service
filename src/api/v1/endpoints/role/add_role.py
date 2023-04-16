@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 
 
-api = Namespace(name="v2", path="/api/v2/roles")
+api = Namespace(name="v1", path="/api/v1/roles")
 
 
 @api.route("/add_role")

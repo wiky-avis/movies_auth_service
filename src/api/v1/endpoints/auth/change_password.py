@@ -51,7 +51,7 @@ class UserChangeData(Resource):
         },
         description="Изменение пароля.",
     )
-    @api.param("X-Auth-Token", "JWT токен")
+    @api.header("X-Auth-Token", "JWT токен")
     @api.expect(InputUserChangePassword)
     def patch(self):
         args = parser.parse_args()

@@ -33,7 +33,7 @@ class EmailConfirmation(Resource):
         description="Подтверждение почты.",
     )
     @api.param("code", "Код подтверждения почты")
-    def put(self, user_id):
+    def post(self, user_id):
         args = parser.parse_args()
         secret_code = args.get("code")
 

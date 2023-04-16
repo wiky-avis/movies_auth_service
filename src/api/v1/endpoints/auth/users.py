@@ -42,7 +42,7 @@ parser.add_argument("email", type=str)
 
 
 @api.route("", methods=["GET", "DELETE", "PATCH"])
-class GetUser(Resource):
+class Users(Resource):
     @api.doc(
         responses={
             int(HTTPStatus.OK): (

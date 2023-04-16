@@ -10,7 +10,7 @@ from src.api.v1.endpoints.auth.get_list_login_history import (
     api as list_login_history,
 )
 from src.api.v1.endpoints.auth.sign_up import api as sign_up
-from src.api.v1.endpoints.auth.user import api as user
+from src.api.v1.endpoints.auth.users import api as users
 from src.api.v1.endpoints.role.add_role import api as add_role
 from src.api.v1.endpoints.role.check_permissions import (
     api as check_permissions,
@@ -28,7 +28,7 @@ def attach_routes(app: Flask):
     )
     # auth
     api.add_namespace(ping_api)
-    api.add_namespace(user)
+    api.add_namespace(users)
     api.add_namespace(sign_up)
     api.add_namespace(list_login_history)
     api.add_namespace(change_password)
