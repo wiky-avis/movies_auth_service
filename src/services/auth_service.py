@@ -8,6 +8,7 @@ from src.common.check_password import check_password
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
 from src.db.db_models import RoleType
+from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
 
 
@@ -52,45 +53,22 @@ class AuthService:
             return
         self.repository.set_role(user, role)
 
-    def approve_user(self, user_id: str, password: str):
-        if not user_id or not password:
-            return (
-                BaseResponse(
-                    success=False,
-                    error={"msg": "User id or password is not valid."},
-                ).dict(),
-                HTTPStatus.BAD_REQUEST,
-            )
-        user = self.repository.get_user_by_id(user_id=user_id)
-
-        self.repository.set_role(
-            user=user, role_name=RoleType.ROLE_PORTAL_USER.value
-        )
-        self.repository.set_password(user=user, password=password)
-        self.repository.update_flag_verified_mail(user=user)
-
-        user_roles = self.get_user_roles(user.id)
-        user = UserResponse(
-            id=str(user.id),
-            email=user.email,
-            roles=user_roles,
-            verified_mail=user.verified_mail,
-            registered_on=str(user.registered_on),
-        )
-        return (
-            BaseResponse(success=True, result=user).dict(),
-            HTTPStatus.OK,
-        )
-
     def get_user_roles(self, user_id: str) -> list:
         roles_ids = self.repository.get_ids_roles(user_id)
         roles = self.repository.get_roles(roles_ids)
         return roles
 
-    def register_temporary_user(self, **kwargs):
-        email = kwargs.get("email")
-        role = RoleType.ROLE_TEMPORARY_USER.value
+    def register_temporary_user(self, email: str, password: str):
+        if not email or not password:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "No email or no password."},
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
 
+        role = RoleType.ROLE_PORTAL_USER.value
         try:
             self.register_user(email=email, role=role)
         except IntegrityError:
@@ -105,6 +83,7 @@ class AuthService:
             )
 
         user = self.repository.get_user_by_email(email=email)
+        self.repository.set_password(user=user, password=password)
         user_roles = self.get_user_roles(user.id)
         user = UserResponse(
             id=str(user.id),
@@ -218,3 +197,14 @@ class AuthService:
             BaseResponse(success=True).dict(),
             HTTPStatus.NO_CONTENT,
         )
+
+    def email_confirmation(self, secret_code: str, user_id: str):
+        code_in_redis = redis_client.get(user_id)
+        if code_in_redis and secret_code == code_in_redis:
+            user = self.repository.get_user_by_id(user_id=user_id)
+            self.repository.update_flag_verified_mail(user=user)
+            return (
+                BaseResponse(success=True, result="Ok").dict(),
+                HTTPStatus.OK,
+            )
+        return BaseResponse(success=False).dict(), HTTPStatus.NOT_FOUND

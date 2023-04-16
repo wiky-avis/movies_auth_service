@@ -4,8 +4,9 @@ from flask_restx import Namespace, Resource, reqparse
 
 from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
 from src.api.v1.dto.email_confirmation import EmailConfirmationResponse
-from src.common.response import BaseResponse
-from src.db.redis import redis_client
+from src.db.db_factory import db
+from src.repositories.auth_repository import AuthRepository
+from src.services.auth_service import AuthService
 
 
 api = Namespace(name="v1", path="/api/v1/users")
@@ -36,10 +37,8 @@ class EmailConfirmation(Resource):
         args = parser.parse_args()
         secret_code = args.get("code")
 
-        code_in_redis = redis_client.get(user_id)
-        if code_in_redis and secret_code == code_in_redis:
-            return (
-                BaseResponse(success=True, result="Ok").dict(),
-                HTTPStatus.OK,
-            )
-        return BaseResponse(success=False).dict(), HTTPStatus.NOT_FOUND
+        auth_repository = AuthRepository(db)
+        auth_service = AuthService(repository=auth_repository)
+        return auth_service.email_confirmation(
+            secret_code=secret_code, user_id=user_id
+        )

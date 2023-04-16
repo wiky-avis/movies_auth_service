@@ -77,7 +77,7 @@ GET /api/v1/users?email=sgsf@sgfg.ru
       "id": "string",
       "email": "string",
       "roles": [
-        "string"
+        "ROLE_PORTAL_USER"
       ],
       "verified_mail": false,
       "registered_on": "string"
@@ -89,7 +89,7 @@ GET /api/v1/users?email=sgsf@sgfg.ru
 Если такой пользователь существует и вернулся код 200 и флаг verified_mail=true(смотрит фронт), 
 открываем окно ввода пароля(Аутентификация /api/v1/users/sign_in). 
 Если код 200 и флаг verified_mail=false, просим пользователя подтвердить почту, 
-ппересылаем ему код подтверждения /api/v1/users/308645/resend_code.
+пересылаем ему код подтверждения /api/v1/users/308645/send_code.
 
 2. Создание временного пользователя.
 POST /api/v1/users/sign_up
@@ -124,7 +124,9 @@ PUT /api/v1/users/308645/mail?code=7505
 
 *Проверяем в редисе есть ли такой код 7505
 
-- Если есть, ответ:
+- Если есть, проставляем флаг verified_mail в True
+Ответ:
+
 {
     "success":true,
     "result": "Ok"
@@ -140,24 +142,5 @@ POST /api/v1/users/308645/send_code
 Body:
 {
 	"code": 7506
-}
-
-6. Если ответ ручки /api/v1/users/308645/mail положительный. Регистрируем полноценно пользователя, 
-проставляем флаг verified_mail в True и обновляем роль ROLE_PORTAL_USER.
-
-PATCH /api/v1/users/308645/sign_up
-
-Ответ:
-{
-    "success": true,
-    "result": {
-        "id": 308866,
-        "email": "sds@sdfsdf.ru",
-        "roles": [
-            "ROLE_PORTAL_USER",
-            "ROLE_TEMPORARY_USER"
-        ],
-        "verified_mail": true,
-        "registered_on": "string"
 }
 ```
