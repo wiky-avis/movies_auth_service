@@ -96,6 +96,7 @@ POST /api/v1/users/sign_up
 body:
 {
     "email":"sgsf@sgfg.ru"
+    "password": "password"
 }
 
 Ответ:
@@ -104,7 +105,7 @@ body:
     "result": {
         "id": 308866,
         "email": "sds@sdfsdf.ru",
-        "roles": ["ROLE_TEMPORARY_USER"],
+        "roles": ["ROLE_PORTAL_USER"],
         "verified_mail": false,
         "registered_on": "string"
     }
