@@ -2,18 +2,20 @@ from flask import Flask
 from flask_restx import Api
 
 from src.api.technical.ping import api as ping_api
-from src.api.v1.endpoints.change_data import api as change_data
-from src.api.v1.endpoints.change_password import api as change_password
-from src.api.v1.endpoints.delete_account import api as delete_account
-from src.api.v1.endpoints.email_confirmation import api as email_confirmation
-from src.api.v1.endpoints.get_list_login_history import (
+from src.api.v1.endpoints.auth.change_password import api as change_password
+from src.api.v1.endpoints.auth.email_confirmation import (
+    api as email_confirmation,
+)
+from src.api.v1.endpoints.auth.get_list_login_history import (
     api as list_login_history,
 )
-from src.api.v1.endpoints.get_user import api as get_user
-from src.api.v1.endpoints.sign_up import api as sign_up
-from src.api.v2.endpoints.add_role import api as add_role
-from src.api.v2.endpoints.checking_rights import api as checking_rights
-from src.api.v2.endpoints.delete_role import api as delete_role
+from src.api.v1.endpoints.auth.sign_up import api as sign_up
+from src.api.v1.endpoints.auth.user import api as user
+from src.api.v1.endpoints.role.add_role import api as add_role
+from src.api.v1.endpoints.role.check_permissions import (
+    api as check_permissions,
+)
+from src.api.v1.endpoints.role.delete_role import api as delete_role
 
 
 def attach_routes(app: Flask):
@@ -24,16 +26,14 @@ def attach_routes(app: Flask):
         doc="/api/swagger/",
         version="1.0.0",
     )
-    # v1
+    # auth
     api.add_namespace(ping_api)
-    api.add_namespace(get_user)
+    api.add_namespace(user)
     api.add_namespace(sign_up)
     api.add_namespace(list_login_history)
-    api.add_namespace(change_data)
     api.add_namespace(change_password)
     api.add_namespace(email_confirmation)
-    api.add_namespace(delete_account)
-    # v2
+    # role
     api.add_namespace(add_role)
-    api.add_namespace(checking_rights)
+    api.add_namespace(check_permissions)
     api.add_namespace(delete_role)

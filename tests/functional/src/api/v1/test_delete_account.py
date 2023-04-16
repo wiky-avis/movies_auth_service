@@ -17,7 +17,7 @@ def test_delete_account(test_db, test_client, setup_url, monkeypatch):
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user.id))}
 
-    res = test_client.delete("/api/v1/users/delete_account", headers=headers)
+    res = test_client.delete("/api/v1/users", headers=headers)
     assert res.status_code == HTTPStatus.NO_CONTENT
 
 
@@ -26,7 +26,7 @@ def test_delete_account_error_404(test_client, setup_url, monkeypatch):
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user_id))}
 
-    res = test_client.delete("/api/v1/users/delete_account", headers=headers)
+    res = test_client.delete("/api/v1/users", headers=headers)
     assert res.status_code == HTTPStatus.NOT_FOUND
     body = res.json
     assert body == {
