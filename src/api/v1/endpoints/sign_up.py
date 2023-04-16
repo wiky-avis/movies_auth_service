@@ -11,8 +11,6 @@ from src.api.v1.dto.base import (
 from src.api.v1.dto.user import (
     BaseUserModel,
     InputUserRegisterModel,
-    RegisteredUserModel,
-    RegisteredUserModelResponse,
     TemporaryUserModel,
     TemporaryUserModelResponse,
 )
@@ -25,16 +23,13 @@ api = Namespace(name="v1", path="/api/v1/users")
 api.models[InputUserRegisterModel.name] = InputUserRegisterModel
 api.models[BaseModelResponse.name] = BaseModelResponse
 api.models[BaseUserModel.name] = BaseUserModel
-api.models[RegisteredUserModel.name] = RegisteredUserModel
 api.models[TemporaryUserModel.name] = TemporaryUserModel
-api.models[RegisteredUserModelResponse.name] = RegisteredUserModelResponse
 api.models[TemporaryUserModelResponse.name] = TemporaryUserModelResponse
 api.models[ErrorModel.name] = ErrorModel
 api.models[ErrorModelResponse.name] = ErrorModelResponse
 
 
 @api.route("/sign_up", methods=["POST"])
-@api.route("/<string:user_id>/sign_up", methods=["PATCH"])
 class SignUp(Resource):
     @api.doc(
         responses={
