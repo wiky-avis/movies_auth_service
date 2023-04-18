@@ -35,7 +35,7 @@ def test_get_user_by_email(test_db, test_client, setup_url, create_roles):
     auth_repository.create_user(email=email)
     user = auth_repository.get_user_by_email(email=email)
     auth_repository.set_role(
-        user=user, role_name=RoleType.ROLE_TEMPORARY_USER.value
+        user=user, role_name=RoleType.ROLE_PORTAL_USER.value
     )
     res = test_client.get(f"/api/v1/users?email={email}")
     assert res.status_code == HTTPStatus.OK
@@ -43,7 +43,7 @@ def test_get_user_by_email(test_db, test_client, setup_url, create_roles):
     assert body["success"] is True
     assert body["result"]["id"]
     assert body["result"]["email"] == email
-    assert body["result"]["roles"] == [RoleType.ROLE_TEMPORARY_USER]
+    assert body["result"]["roles"] == [RoleType.ROLE_PORTAL_USER]
     assert body["result"]["verified_mail"] is False
     assert body["result"]["registered_on"]
 

@@ -31,7 +31,7 @@ class UUIDMixin(BaseMixin):
 
 
 class RoleType(str, enum.Enum):
-    ROLE_TEMPORARY_USER = "ROLE_TEMPORARY_USER"
+    ROLE_PORTAL_ADMIN = "ROLE_PORTAL_ADMIN"
     ROLE_PORTAL_USER = "ROLE_PORTAL_USER"
 
 
