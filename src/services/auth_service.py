@@ -10,14 +10,15 @@ from src.common.response import BaseResponse, Pagination
 from src.db.db_models import RoleType
 from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
-
+from src.repositories.role_repository import RolesRepository
 
 logger = logging.getLogger(__name__)
 
 
 class AuthService:
-    def __init__(self, repository: AuthRepository):
-        self.repository = repository
+    def __init__(self, auth_repository: AuthRepository, roles_repository: RolesRepository):
+        self.auth_repository = auth_repository
+        self.roles_repository = roles_repository
 
     def get_user_by_email(self, email: str):
         if not email:
@@ -28,7 +29,7 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-        user = self.repository.get_user_by_email(email)
+        user = self.auth_repository.get_user_by_email(email)
         if not user:
             return (
                 BaseResponse(
@@ -47,15 +48,15 @@ class AuthService:
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
     def register_user(self, email: str, role: str) -> None:
-        self.repository.create_user(email=email)
-        user = self.repository.get_user_by_email(email=email)
+        self.auth_repository.create_user(email=email)
+        user = self.auth_repository.get_user_by_email(email=email)
         if not user:
             return
-        self.repository.set_role(user, role)
+        self.roles_repository.set_role(user, role)
 
     def get_user_roles(self, user_id: str) -> list:
-        roles_ids = self.repository.get_ids_roles(user_id)
-        roles = self.repository.get_roles(roles_ids)
+        roles_ids = self.roles_repository.get_ids_roles(user_id)
+        roles = self.roles_repository.get_roles(roles_ids)
         return roles
 
     def register_temporary_user(self, email: str, password: str):
@@ -82,8 +83,8 @@ class AuthService:
                 HTTPStatus.CONFLICT,
             )
 
-        user = self.repository.get_user_by_email(email=email)
-        self.repository.set_password(user=user, password=password)
+        user = self.auth_repository.get_user_by_email(email=email)
+        self.auth_repository.set_password(user=user, password=password)
         user_roles = self.get_user_roles(user.id)
         user = UserResponse(
             id=str(user.id),
@@ -103,7 +104,7 @@ class AuthService:
         old_password: str | None,
         new_password: str | None,
     ):
-        user = self.repository.get_user_by_id(user_id=user_id)
+        user = self.auth_repository.get_user_by_id(user_id=user_id)
         if not user:
             return (
                 BaseResponse(
@@ -129,7 +130,7 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.UNAUTHORIZED,
             )
-        self.repository.set_password(user, new_password)
+        self.auth_repository.set_password(user, new_password)
 
         return BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
 
@@ -138,7 +139,7 @@ class AuthService:
         user_id: str,
         new_email: str | None,
     ):
-        user = self.repository.get_user_by_id(user_id=user_id)
+        user = self.auth_repository.get_user_by_id(user_id=user_id)
         if not user:
             return (
                 BaseResponse(
@@ -155,7 +156,7 @@ class AuthService:
                 HTTPStatus.BAD_REQUEST,
             )
 
-        user_by_email = self.repository.get_user_by_email(email=new_email)
+        user_by_email = self.auth_repository.get_user_by_email(email=new_email)
         if user_by_email and (user_id != user_by_email.id):
             return (
                 BaseResponse(
@@ -164,7 +165,7 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.CONFLICT,
             )
-        self.repository.set_email(user, new_email)
+        self.auth_repository.set_email(user, new_email)
 
         return BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
 
@@ -172,7 +173,7 @@ class AuthService:
         (
             login_history_data,
             login_history,
-        ) = self.repository.get_list_login_history(user_id, page, per_page)
+        ) = self.auth_repository.get_list_login_history(user_id, page, per_page)
         pagination = Pagination(**get_pagination(login_history_data))
         return (
             LoginHistoryResponse(
@@ -182,7 +183,7 @@ class AuthService:
         )
 
     def delete_account(self, user_id: str):
-        user = self.repository.get_user_by_id(user_id=user_id)
+        user = self.auth_repository.get_user_by_id(user_id=user_id)
         if not user:
             return (
                 BaseResponse(
@@ -192,7 +193,7 @@ class AuthService:
                 HTTPStatus.NOT_FOUND,
             )
 
-        self.repository.delete_user(user=user)
+        self.auth_repository.delete_user(user=user)
         return (
             BaseResponse(success=True).dict(),
             HTTPStatus.NO_CONTENT,
@@ -201,8 +202,8 @@ class AuthService:
     def email_confirmation(self, secret_code: str, user_id: str):
         code_in_redis = redis_client.get(user_id)
         if code_in_redis and secret_code == code_in_redis:
-            user = self.repository.get_user_by_id(user_id=user_id)
-            self.repository.update_flag_verified_mail(user=user)
+            user = self.auth_repository.get_user_by_id(user_id=user_id)
+            self.auth_repository.update_flag_verified_mail(user=user)
             return (
                 BaseResponse(success=True, result="Ok").dict(),
                 HTTPStatus.OK,

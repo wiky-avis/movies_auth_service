@@ -22,6 +22,7 @@ from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
 from src.repositories.auth_repository import AuthRepository
+from src.repositories.role_repository import RolesRepository
 from src.services.auth_service import AuthService
 
 
@@ -65,7 +66,8 @@ class Users(Resource):
         args = parser.parse_args()
         email = args.get("email")
         auth_repository = AuthRepository(db)
-        auth_service = AuthService(repository=auth_repository)
+        roles_repository = RolesRepository(db)
+        auth_service = AuthService(auth_repository=auth_repository, roles_repository=roles_repository)
         return auth_service.get_user_by_email(email)
 
     @api.doc(
@@ -93,7 +95,8 @@ class Users(Resource):
             )
 
         auth_repository = AuthRepository(db)
-        auth_service = AuthService(repository=auth_repository)
+        roles_repository = RolesRepository(db)
+        auth_service = AuthService(auth_repository=auth_repository, roles_repository=roles_repository)
         return auth_service.delete_account(user_id=auth_user_id)
 
     @api.doc(
@@ -131,7 +134,8 @@ class Users(Resource):
 
         new_email = request.json.get("email")
         auth_repository = AuthRepository(db)
-        auth_service = AuthService(repository=auth_repository)
+        roles_repository = RolesRepository(db)
+        auth_service = AuthService(auth_repository=auth_repository, roles_repository=roles_repository)
         return auth_service.change_data(
             user_id=auth_user_id,
             new_email=new_email,

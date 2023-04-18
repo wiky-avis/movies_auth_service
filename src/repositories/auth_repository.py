@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
 from src.api.v1.models.login_history import UserLoginHistory
-from src.db import LoginHistory, Role, User, UserRole
+from src.db import LoginHistory, User
 
 
 class AuthRepository:
@@ -25,13 +25,6 @@ class AuthRepository:
         user.email = email
         self.db.session.commit()
 
-    def set_role(self, user: User, role_name: str) -> None:
-        user_role = (
-            self.db.session.query(Role).filter_by(name=role_name).first()
-        )
-        user.roles.append(user_role)
-        self.db.session.commit()
-
     def get_user_by_email(self, email: str) -> User | None:
         user = self.db.session.query(User).filter_by(email=email).first()
         return user
@@ -39,26 +32,6 @@ class AuthRepository:
     def get_user_by_id(self, user_id: str) -> User | None:
         user = self.db.session.query(User).filter_by(id=user_id).first()
         return user
-
-    def get_ids_roles(self, user_id) -> list[str] | None:
-        roles = self.db.session.query(UserRole).filter_by(user_id=user_id)
-        roles_ids = [user_role.role_id for user_role in roles]
-        return roles_ids
-
-    def get_roles(self, roles_ids: list[str]) -> list[str]:
-        roles = []
-        for role_id in roles_ids:
-            roles.append(
-                self.db.session.query(Role).filter_by(id=role_id).first()
-            )
-
-        roles = [role.name for role in roles]
-        return roles
-
-    def create_role(self, role_id: str, user_id: str) -> None:
-        user_role = UserRole(role_id=role_id, user_id=user_id)
-        self.db.session.add(user_role)
-        self.db.session.commit()
 
     def get_list_login_history(self, user_id, page, per_page):
         login_history_data = (

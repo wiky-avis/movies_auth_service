@@ -4,6 +4,7 @@ import pytest
 
 from src.db.db_models import Role, RoleType
 from src.repositories.auth_repository import AuthRepository
+from src.repositories.role_repository import RolesRepository
 from tests.functional.vars.roles import ROLES
 from tests.functional.vars.tables import CLEAN_TABLES
 
@@ -34,7 +35,8 @@ def test_get_user_by_email(test_db, test_client, setup_url, create_roles):
     auth_repository = AuthRepository(test_db)
     auth_repository.create_user(email=email)
     user = auth_repository.get_user_by_email(email=email)
-    auth_repository.set_role(
+    roles_repository = RolesRepository(test_db)
+    roles_repository.set_role(
         user=user, role_name=RoleType.ROLE_PORTAL_USER.value
     )
     res = test_client.get(f"/api/v1/users?email={email}")

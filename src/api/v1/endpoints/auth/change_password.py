@@ -13,6 +13,7 @@ from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
 from src.db.db_factory import db
 from src.repositories.auth_repository import AuthRepository
+from src.repositories.role_repository import RolesRepository
 from src.services.auth_service import AuthService
 
 
@@ -68,7 +69,8 @@ class UserChangeData(Resource):
         old_password = request.json.get("old_password")
         new_password = request.json.get("new_password")
         auth_repository = AuthRepository(db)
-        auth_service = AuthService(repository=auth_repository)
+        roles_repository = RolesRepository(db)
+        auth_service = AuthService(auth_repository=auth_repository, roles_repository=roles_repository)
         return auth_service.change_password(
             user_id=auth_user_id,
             old_password=old_password,
