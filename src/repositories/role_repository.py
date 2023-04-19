@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+
 from src.db import Role, User, UserRole
 
 
@@ -34,6 +35,10 @@ class RolesRepository:
         self.db.session.commit()
 
     def delete_user_role_by_id(self, role_id: str, user_id: str) -> None:
-        user_role = self.db.session.query(UserRole).filter_by(role_id=role_id, user_id=user_id).first()
+        user_role = (
+            self.db.session.query(UserRole)
+            .filter_by(role_id=role_id, user_id=user_id)
+            .first()
+        )
         self.db.session.delete(user_role)
         self.db.session.commit()

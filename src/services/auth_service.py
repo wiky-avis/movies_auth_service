@@ -12,11 +12,16 @@ from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
 
+
 logger = logging.getLogger(__name__)
 
 
 class AuthService:
-    def __init__(self, auth_repository: AuthRepository, roles_repository: RolesRepository):
+    def __init__(
+        self,
+        auth_repository: AuthRepository,
+        roles_repository: RolesRepository,
+    ):
         self.auth_repository = auth_repository
         self.roles_repository = roles_repository
 
@@ -173,7 +178,9 @@ class AuthService:
         (
             login_history_data,
             login_history,
-        ) = self.auth_repository.get_list_login_history(user_id, page, per_page)
+        ) = self.auth_repository.get_list_login_history(
+            user_id, page, per_page
+        )
         pagination = Pagination(**get_pagination(login_history_data))
         return (
             LoginHistoryResponse(

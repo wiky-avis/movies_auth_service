@@ -94,6 +94,7 @@ class DeviceType(str, enum.Enum):
     WEB = "web"
     MOBILE = "mobile"
     TABLET = "tablet"
+    UNKNOWN = "unknown"
 
 
 class LoginHistory(UUIDMixin, db.Model):
@@ -103,11 +104,12 @@ class LoginHistory(UUIDMixin, db.Model):
         UUID(as_uuid=True), db.ForeignKey(User.id, ondelete="CASCADE")
     )
     device_type = db.Column(
-        db.Enum(DeviceType, name="device_type"),
+        db.String,
         nullable=False,
-        default=DeviceType.WEB,
+        default=DeviceType.WEB.value,
     )
-    login_dt = db.Column(db.DateTime, nullable=False)
+    user_agent = db.Column(db.Text)
+    created_dt = db.Column(db.DateTime, nullable=False, default=utc_now)
 
     def __repr__(self):
-        return f"<LoginHistory: (User: {self.user_id}, {self.login_dt}>"
+        return f"<LoginHistory: (User: {self.user_id}, {self.created_dt}>"

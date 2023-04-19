@@ -37,12 +37,12 @@ class AuthRepository:
         login_history_data = (
             self.db.session.query(LoginHistory)
             .filter_by(user_id=user_id)
-            .order_by(LoginHistory.login_dt.desc())
+            .order_by(LoginHistory.created_dt.desc())
         ).paginate(page=page, per_page=per_page)
         login_history = [
             UserLoginHistory(
                 device_type=user_history.device_type,
-                login_dt=str(user_history.login_dt),
+                login_dt=str(user_history.created_dt),
             )
             for user_history in login_history_data
         ]

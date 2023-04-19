@@ -24,7 +24,7 @@ def create_list_user_login_history(test_db):
     user = auth_repository.get_user_by_email(email=email)
 
     objects = [
-        LoginHistory(user_id=user.id, login_dt=login_dt) for _ in range(10)
+        LoginHistory(user_id=user.id, created_dt=login_dt) for _ in range(10)
     ]
     test_db.session.bulk_save_objects(objects)
     test_db.session.commit()

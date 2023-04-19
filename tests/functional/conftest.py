@@ -4,7 +4,8 @@ from flask import Flask, current_app
 from psycopg2.extras import DictCursor
 
 from src.config import Config
-from src.db.db_factory import db as database, init_db
+from src.db import db_models
+from src.db.db_factory import init_db
 from src.routes import attach_routes
 
 
@@ -24,10 +25,10 @@ def test_app():
 
 @pytest.fixture(scope="session")
 def test_db(test_app):
-    database.create_all()
-    database.session.commit()
-    yield database
-    database.session.remove()
+    db_models.db.create_all()
+    db_models.db.session.commit()
+    yield db_models.db
+    db_models.db.session.remove()
 
 
 @pytest.fixture

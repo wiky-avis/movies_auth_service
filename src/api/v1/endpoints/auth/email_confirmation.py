@@ -4,7 +4,7 @@ from flask_restx import Namespace, Resource, reqparse
 
 from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
 from src.api.v1.dto.email_confirmation import EmailConfirmationResponse
-from src.db.db_factory import db
+from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
 from src.services.auth_service import AuthService
@@ -38,9 +38,11 @@ class EmailConfirmation(Resource):
         args = parser.parse_args()
         secret_code = args.get("code")
 
-        auth_repository = AuthRepository(db)
-        roles_repository = RolesRepository(db)
-        auth_service = AuthService(auth_repository=auth_repository, roles_repository=roles_repository)
+        auth_repository = AuthRepository(db_models.db)
+        roles_repository = RolesRepository(db_models.db)
+        auth_service = AuthService(
+            auth_repository=auth_repository, roles_repository=roles_repository
+        )
         return auth_service.email_confirmation(
             secret_code=secret_code, user_id=user_id
         )
