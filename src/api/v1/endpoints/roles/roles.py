@@ -19,6 +19,7 @@ from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
 from src.services.role_service import RolesService
 
+
 api = Namespace(name="roles", path="/api/v1/roles")
 api.models[InputRoleModel.name] = InputRoleModel
 api.models[OutputUserRoleModel.name] = OutputUserRoleModel
@@ -38,8 +39,8 @@ class Roles(Resource):
                 RoleResponse,
             ),
             int(HTTPStatus.FORBIDDEN): (
-                    "Forbidden.",
-                    ErrorModelResponse,
+                "Forbidden.",
+                ErrorModelResponse,
             ),
         },
         description="Получить весь список ролей.",
@@ -78,8 +79,8 @@ class Roles(Resource):
                 ErrorModelResponse,
             ),
             int(HTTPStatus.FORBIDDEN): (
-                    "Forbidden.",
-                    ErrorModelResponse,
+                "Forbidden.",
+                ErrorModelResponse,
             ),
         },
         description="Назначить пользователю роль.",
@@ -121,8 +122,8 @@ class Roles(Resource):
                 ErrorModelResponse,
             ),
             int(HTTPStatus.FORBIDDEN): (
-                    "Forbidden.",
-                    ErrorModelResponse,
+                "Forbidden.",
+                ErrorModelResponse,
             ),
         },
         description="Удалить у пользователя роль.",

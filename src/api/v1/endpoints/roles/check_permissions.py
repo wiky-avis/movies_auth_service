@@ -12,6 +12,7 @@ from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
 from src.services.role_service import RolesService
 
+
 api = Namespace(name="roles", path="/api/v1/roles")
 api.models[OutputUserRoleModel.name] = OutputUserRoleModel
 api.models[UserRoleResponse.name] = UserRoleResponse
@@ -42,8 +43,8 @@ class CheckPermissions(Resource):
                 ErrorModelResponse,
             ),
             int(HTTPStatus.FORBIDDEN): (
-                    "Forbidden.",
-                    ErrorModelResponse,
+                "Forbidden.",
+                ErrorModelResponse,
             ),
         },
         description="Список ролей пользователя.",

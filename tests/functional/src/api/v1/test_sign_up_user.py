@@ -12,8 +12,8 @@ from tests.functional.vars.tables import CLEAN_TABLES
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 @pytest.fixture(scope="module")
 def create_roles(test_db):
-    for role in ROLES:
-        role = Role(name=role, description="")
+    for _, role_name in ROLES:
+        role = Role(name=role_name, description="")
         test_db.session.add(role)
         test_db.session.commit()
 
