@@ -20,7 +20,7 @@ from src.services.auth_service import AuthService
 logger = logging.getLogger(__name__)
 
 
-api = Namespace(name="v1", path="/api/v1/users")
+api = Namespace(name="auth", path="/api/v1/users")
 api.models[LoginHistoryModel.name] = LoginHistoryModel
 api.models[PaginationModel.name] = PaginationModel
 api.models[LoginHistoryResponse.name] = LoginHistoryResponse

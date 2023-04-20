@@ -20,7 +20,7 @@ from src.repositories.role_repository import RolesRepository
 from src.services.auth_service import AuthService
 
 
-api = Namespace(name="v1", path="/api/v1/users")
+api = Namespace(name="auth", path="/api/v1/users")
 api.models[InputUserRegisterModel.name] = InputUserRegisterModel
 api.models[BaseModelResponse.name] = BaseModelResponse
 api.models[BaseUserModel.name] = BaseUserModel

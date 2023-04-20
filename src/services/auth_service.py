@@ -27,7 +27,7 @@ class AuthService:
 
     def get_user_by_email(self, email: str):
         if not email:
-            logger.error("Email is not valid: %s", email)
+            logger.error("Email is not valid: %s", email, exc_info=True)
             return (
                 BaseResponse(
                     success=False, error={"msg": "Email is not valid."}
@@ -57,11 +57,11 @@ class AuthService:
         user = self.auth_repository.get_user_by_email(email=email)
         if not user:
             return
-        self.roles_repository.set_role(user, role)
+        self.roles_repository.set_role_by_role_name(user, role)
 
     def get_user_roles(self, user_id: str) -> list:
-        roles_ids = self.roles_repository.get_ids_roles(user_id)
-        roles = self.roles_repository.get_roles(roles_ids)
+        roles_ids = self.roles_repository.get_ids_roles_by_user_id(user_id)
+        roles = self.roles_repository.get_role_names_by_ids(roles_ids)
         return roles
 
     def register_temporary_user(self, email: str, password: str):

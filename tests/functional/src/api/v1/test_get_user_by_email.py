@@ -36,7 +36,7 @@ def test_get_user_by_email(test_db, test_client, setup_url, create_roles):
     auth_repository.create_user(email=email)
     user = auth_repository.get_user_by_email(email=email)
     roles_repository = RolesRepository(test_db)
-    roles_repository.set_role(
+    roles_repository.set_role_by_role_name(
         user=user, role_name=RoleType.ROLE_PORTAL_USER.value
     )
     res = test_client.get(f"/api/v1/users?email={email}")

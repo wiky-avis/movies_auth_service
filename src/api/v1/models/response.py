@@ -14,3 +14,8 @@ class UserResponse(IdModelMixin, ORDJSONModelMixin):
 
 class LoginHistoryResponse(BaseResponse):
     pagination: Pagination
+
+
+class UserRoleResponse(ORDJSONModelMixin):
+    user_id: str
+    roles: List[RoleType] = list()

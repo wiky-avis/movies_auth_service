@@ -20,7 +20,7 @@ from src.services.auth_service import AuthService
 logger = logging.getLogger(__name__)
 
 
-api = Namespace(name="v1", path="/api/v1/users")
+api = Namespace(name="auth", path="/api/v1/users")
 api.models[InputUserChangePassword.name] = InputUserChangePassword
 api.models[UserChangePasswordResponse.name] = UserChangePasswordResponse
 api.models[ErrorModel.name] = ErrorModel

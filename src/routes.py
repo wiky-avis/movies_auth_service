@@ -11,11 +11,10 @@ from src.api.v1.endpoints.auth.get_list_login_history import (
 )
 from src.api.v1.endpoints.auth.sign_up import api as sign_up
 from src.api.v1.endpoints.auth.users import api as users
-from src.api.v1.endpoints.role.add_role import api as add_role
-from src.api.v1.endpoints.role.check_permissions import (
+from src.api.v1.endpoints.roles.check_permissions import (
     api as check_permissions,
 )
-from src.api.v1.endpoints.role.delete_role import api as delete_role
+from src.api.v1.endpoints.roles.roles import api as roles
 
 
 def attach_routes(app: Flask):
@@ -34,6 +33,5 @@ def attach_routes(app: Flask):
     api.add_namespace(change_password)
     api.add_namespace(email_confirmation)
     # role
-    api.add_namespace(add_role)
+    api.add_namespace(roles)
     api.add_namespace(check_permissions)
-    api.add_namespace(delete_role)
