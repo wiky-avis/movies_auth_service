@@ -29,14 +29,6 @@ class RolesService:
         return BaseResponse(success=True, result=roles).dict(), HTTPStatus.OK
 
     def check_permissions(self, user_id: str):
-        if not user_id:
-            logger.error("user_id is not valid: %s", user_id, exc_info=True)
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "user_id is not valid."}
-                ).dict(),
-                HTTPStatus.BAD_REQUEST,
-            )
         user = self.auth_repository.get_user_by_id(user_id)
         if not user:
             return (

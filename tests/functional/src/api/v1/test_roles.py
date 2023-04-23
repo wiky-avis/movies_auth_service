@@ -154,34 +154,25 @@ def test_get_delete_role(
 def test_get_check_permissions(
     create_roles, test_db, test_client, setup_url, monkeypatch
 ):
-    admin_email = "test66551@test.ru"
-    admin_role = RoleType.ROLE_PORTAL_ADMIN.value
-
+    role = RoleType.ROLE_PORTAL_USER.value
+    user_email = "test_user@test.ru"
     auth_repository = AuthRepository(test_db)
-    auth_repository.create_user(email=admin_email)
-    admin_user = auth_repository.get_user_by_email(email=admin_email)
     roles_repository = RolesRepository(test_db)
-    roles_repository.set_role_by_role_name(
-        user=admin_user, role_name=admin_role
-    )
+    auth_repository.create_user(email=user_email)
+    user = auth_repository.get_user_by_email(email=user_email)
+    roles_repository.set_role_by_role_name(user=user, role_name=role)
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {
         "X-Auth-Token": sign_jwt(
-            str(admin_user.id),
+            str(user.id),
             roles=[
-                admin_role,
+                role,
             ],
         )
     }
 
-    user_email = "test_user@test.ru"
-    role_portal_user = "5eff1f88-8f2b-40c5-a4d0-85893cb7071b"
-    auth_repository.create_user(email=user_email)
-    user = auth_repository.get_user_by_email(email=user_email)
-    roles_repository.set_role_by_id(role_id=role_portal_user, user_id=user.id)
-
     res = test_client.get(
-        f"/api/v1/roles/check_permissions?user_id={str(user.id)}",
+        "/api/v1/roles/check_permissions",
         headers=headers,
     )
     assert res.status_code == HTTPStatus.OK
