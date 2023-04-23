@@ -9,7 +9,8 @@ from src.api.v1.dto.login_history import (
     LoginHistoryResponse,
     PaginationModel,
 )
-from src.common.decode_auth_token import get_user_id
+from src.common.collections import get_in
+from src.common.decode_auth_token import get_decoded_data
 from src.common.response import BaseResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
@@ -56,7 +57,8 @@ class GetListUserLoginHistory(Resource):
         page = args.get("page")
         per_page = args.get("per_page")
 
-        auth_user_id = get_user_id(access_token)
+        decoded_data = get_decoded_data(access_token)
+        auth_user_id = get_in(decoded_data, "UserId")
         if not auth_user_id:
             logger.warning("Failed to get auth_user_id.")
             return (

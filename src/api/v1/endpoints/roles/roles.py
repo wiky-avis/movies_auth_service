@@ -11,7 +11,8 @@ from src.api.v1.dto.role import (
     RoleResponse,
     UserRoleResponse,
 )
-from src.common.decode_auth_token import get_user_roles
+from src.common.collections import get_in
+from src.common.decode_auth_token import get_decoded_data
 from src.common.response import BaseResponse
 from src.db import db_models
 from src.db.db_models import RoleType
@@ -49,7 +50,8 @@ class Roles(Resource):
     def get(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
-        roles = get_user_roles(access_token)
+        decoded_data = get_decoded_data(access_token)
+        roles = get_in(decoded_data, "Roles")
         if RoleType.ROLE_PORTAL_ADMIN not in roles:
             return (
                 BaseResponse(
@@ -90,7 +92,8 @@ class Roles(Resource):
     def post(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
-        roles = get_user_roles(access_token)
+        decoded_data = get_decoded_data(access_token)
+        roles = get_in(decoded_data, "Roles")
         if RoleType.ROLE_PORTAL_ADMIN not in roles:
             return (
                 BaseResponse(
@@ -133,7 +136,8 @@ class Roles(Resource):
     def delete(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
-        roles = get_user_roles(access_token)
+        decoded_data = get_decoded_data(access_token)
+        roles = get_in(decoded_data, "Roles")
         if RoleType.ROLE_PORTAL_ADMIN not in roles:
             return (
                 BaseResponse(

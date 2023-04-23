@@ -18,7 +18,8 @@ from src.api.v1.dto.user import (
     RegisteredUserModel,
     RegisteredUserModelResponse,
 )
-from src.common.decode_auth_token import get_user_id
+from src.common.collections import get_in
+from src.common.decode_auth_token import get_decoded_data
 from src.common.response import BaseResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
@@ -86,7 +87,8 @@ class Users(Resource):
     def delete(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
-        auth_user_id = get_user_id(access_token)
+        decoded_data = get_decoded_data(access_token)
+        auth_user_id = get_in(decoded_data, "UserId")
         if not auth_user_id:
             logger.warning("Failed to get auth_user_id.")
             return (
@@ -126,7 +128,8 @@ class Users(Resource):
     def patch(self):
         args = parser.parse_args()
         access_token = args.get("X-Auth-Token")
-        auth_user_id = get_user_id(access_token)
+        decoded_data = get_decoded_data(access_token)
+        auth_user_id = get_in(decoded_data, "UserId")
         if not auth_user_id:
             logger.warning("Failed to get auth_user_id.")
             return (
