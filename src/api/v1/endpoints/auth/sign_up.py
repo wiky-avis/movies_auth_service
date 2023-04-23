@@ -11,30 +11,26 @@ from src.api.v1.dto.base import (
 from src.api.v1.dto.user import (
     BaseUserModel,
     InputUserRegisterModel,
-    RegisteredUserModel,
-    RegisteredUserModelResponse,
     TemporaryUserModel,
     TemporaryUserModelResponse,
 )
-from src.db.db_factory import db
+from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
+from src.repositories.role_repository import RolesRepository
 from src.services.auth_service import AuthService
 
 
-api = Namespace(name="v1", path="/api/v1/users")
+api = Namespace(name="auth", path="/api/v1/users")
 api.models[InputUserRegisterModel.name] = InputUserRegisterModel
 api.models[BaseModelResponse.name] = BaseModelResponse
 api.models[BaseUserModel.name] = BaseUserModel
-api.models[RegisteredUserModel.name] = RegisteredUserModel
 api.models[TemporaryUserModel.name] = TemporaryUserModel
-api.models[RegisteredUserModelResponse.name] = RegisteredUserModelResponse
 api.models[TemporaryUserModelResponse.name] = TemporaryUserModelResponse
 api.models[ErrorModel.name] = ErrorModel
 api.models[ErrorModelResponse.name] = ErrorModelResponse
 
 
 @api.route("/sign_up", methods=["POST"])
-@api.route("/<string:user_id>/sign_up", methods=["PATCH"])
 class SignUp(Resource):
     @api.doc(
         responses={
@@ -53,8 +49,11 @@ class SignUp(Resource):
     def post(self):
         email = request.json.get("email")
         password = request.json.get("password")
-        auth_repository = AuthRepository(db)
-        auth_service = AuthService(repository=auth_repository)
+        auth_repository = AuthRepository(db_models.db)
+        roles_repository = RolesRepository(db_models.db)
+        auth_service = AuthService(
+            auth_repository=auth_repository, roles_repository=roles_repository
+        )
         return auth_service.register_temporary_user(
             email=email, password=password
         )

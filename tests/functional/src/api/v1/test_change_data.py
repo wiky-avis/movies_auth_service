@@ -18,8 +18,8 @@ def test_change_data(test_db, test_client, setup_url, monkeypatch):
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user.id))}
 
-    res = test_client.put(
-        "/api/v1/users/change_data",
+    res = test_client.patch(
+        "/api/v1/users",
         json={"email": new_email},
         headers=headers,
     )
@@ -34,8 +34,8 @@ def test_change_data_error_404(test_client, setup_url, monkeypatch):
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user_id))}
 
-    res = test_client.put(
-        "/api/v1/users/change_data",
+    res = test_client.patch(
+        "/api/v1/users",
         json={"email": new_email},
         headers=headers,
     )
@@ -58,8 +58,8 @@ def test_change_data_error_400(test_db, test_client, setup_url, monkeypatch):
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user.id))}
 
-    res = test_client.put(
-        "/api/v1/users/change_data",
+    res = test_client.patch(
+        "/api/v1/users",
         json={"email": ""},
         headers=headers,
     )
@@ -82,8 +82,8 @@ def test_change_data_error_409(test_db, test_client, setup_url, monkeypatch):
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": sign_jwt(str(user.id))}
 
-    res = test_client.put(
-        "/api/v1/users/change_data",
+    res = test_client.patch(
+        "/api/v1/users",
         json={"email": email},
         headers=headers,
     )

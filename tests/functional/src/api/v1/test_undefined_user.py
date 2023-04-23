@@ -41,10 +41,8 @@ def test_undefined_user_method_get(
 @pytest.mark.parametrize(
     "endpoint",
     (
-        "/api/v1/users/change_data",
+        "/api/v1/users",
         "/api/v1/users/change_password",
-        "/api/v1/users/change_password",
-        "/api/v1/users/change_data",
     ),
 )
 @pytest.mark.parametrize(
@@ -62,7 +60,7 @@ def test_undefined_user_method_put(
     monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
     headers = {"X-Auth-Token": token_header}
 
-    res = test_client.put(endpoint, headers=headers)
+    res = test_client.patch(endpoint, headers=headers)
     assert res.status_code == HTTPStatus.UNAUTHORIZED
     assert res.json == {
         "success": False,
@@ -73,7 +71,7 @@ def test_undefined_user_method_put(
 
 @pytest.mark.parametrize(
     "endpoint",
-    ("/api/v1/users/delete_account",),
+    ("/api/v1/users",),
 )
 @pytest.mark.parametrize(
     "token_header",

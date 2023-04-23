@@ -11,15 +11,16 @@ from src.api.v1.dto.login_history import (
 )
 from src.common.decode_auth_token import get_user_id
 from src.common.response import BaseResponse
-from src.db.db_factory import db
+from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
+from src.repositories.role_repository import RolesRepository
 from src.services.auth_service import AuthService
 
 
 logger = logging.getLogger(__name__)
 
 
-api = Namespace(name="v1", path="/api/v1/users")
+api = Namespace(name="auth", path="/api/v1/users")
 api.models[LoginHistoryModel.name] = LoginHistoryModel
 api.models[PaginationModel.name] = PaginationModel
 api.models[LoginHistoryResponse.name] = LoginHistoryResponse
@@ -65,8 +66,11 @@ class GetListUserLoginHistory(Resource):
                 HTTPStatus.UNAUTHORIZED,
             )
 
-        auth_repository = AuthRepository(db)
-        auth_service = AuthService(repository=auth_repository)
+        auth_repository = AuthRepository(db_models.db)
+        roles_repository = RolesRepository(db_models.db)
+        auth_service = AuthService(
+            auth_repository=auth_repository, roles_repository=roles_repository
+        )
         return auth_service.get_list_user_login_history(
             auth_user_id, page, per_page
         )

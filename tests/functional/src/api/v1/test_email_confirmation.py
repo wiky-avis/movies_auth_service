@@ -17,7 +17,9 @@ def test_email_confirmation(test_db, test_client, setup_url):
     user = auth_repository.get_user_by_email(email=email)
     redis_client.set(name=str(user.id), value=secret_code, ex=10)
 
-    res = test_client.put(f"/api/v1/users/{user.id}/mail?code={secret_code}")
+    res = test_client.post(
+        f"/api/v1/users/{user.id}/mail", json={"code": f"{secret_code}"}
+    )
     assert res.status_code == HTTPStatus.OK
     assert res.json == {"error": None, "result": "Ok", "success": True}
     assert user.verified_mail is True
@@ -32,6 +34,8 @@ def test_email_confirmation_error_404(test_db, test_client, setup_url):
     auth_repository.create_user(email=email)
     user = auth_repository.get_user_by_email(email=email)
 
-    res = test_client.put(f"/api/v1/users/{user.id}/mail?code={secret_code}")
+    res = test_client.post(
+        f"/api/v1/users/{user.id}/mail", json={"code": f"{secret_code}"}
+    )
     assert res.status_code == HTTPStatus.NOT_FOUND
     assert res.json == {"error": None, "result": None, "success": False}

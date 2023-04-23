@@ -29,8 +29,20 @@ nwB/v8Nle2XNQ7DJKwIDAQAB
 """
 
 
-def sign_jwt(user_id: str, expires: int = 180) -> Dict[str, str]:
-    token = generate_auth_token(expires_in=expires, id=user_id)
+def sign_jwt(
+    user_id: str,
+    email: str = None,
+    roles: list = None,
+    verified_mail: bool = True,
+    expires: int = 180,
+) -> Dict[str, str]:
+    payload = {
+        "id": user_id,
+        "email": email,
+        "verified_mail": verified_mail,
+        "roles": roles or [],
+    }
+    token = generate_auth_token(expires_in=expires, **payload)
     return token
 
 
