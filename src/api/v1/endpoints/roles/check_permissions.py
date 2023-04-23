@@ -20,7 +20,6 @@ api = Namespace(name="roles", path="/api/v1/roles")
 api.models[OutputUserRoleModel.name] = OutputUserRoleModel
 api.models[UserRoleResponse.name] = UserRoleResponse
 parser = reqparse.RequestParser()
-parser.add_argument("user_id", type=str)
 parser.add_argument("X-Auth-Token", location="headers")
 
 
