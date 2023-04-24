@@ -19,7 +19,3 @@ class LoginHistoryResponse(BaseResponse):
 class UserRoleResponse(ORDJSONModelMixin):
     user_id: str
     roles: List[RoleType] = list()
-
-
-class CodeResponse(ORDJSONModelMixin):
-    code: str = None

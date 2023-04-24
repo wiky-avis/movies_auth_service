@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask_restx import Namespace, Resource
 
 from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
-from src.api.v1.dto.send_code import SendCodeModel, SendCodeResponse
+from src.api.v1.dto.send_code import SendCodeResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
@@ -12,7 +12,6 @@ from src.services.auth_service import AuthService
 
 api = Namespace(name="auth", path="/api/v1/users")
 api.models[ErrorModel.name] = ErrorModel
-api.models[SendCodeModel.name] = SendCodeModel
 api.models[SendCodeResponse.name] = SendCodeResponse
 
 
@@ -26,10 +25,6 @@ class SendCode(Resource):
             ),
             int(HTTPStatus.NOT_FOUND): (
                 "User not found.",
-                ErrorModelResponse,
-            ),
-            int(HTTPStatus.CONFLICT): (
-                "User already confirmed.",
                 ErrorModelResponse,
             ),
         },
