@@ -64,6 +64,12 @@ class Config:
     JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
     JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))
 
+    MAIL_SERVER = os.getenv("MAIL_SERVER", default="smtp.gmail.com")
+    MAIL_PORT = int(os.getenv("MAIL_PORT", default=465))
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME", default="your-email@gmail.com")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", default="your-password")
+
     BCRYPT_LOG_ROUNDS = 13
 
 
