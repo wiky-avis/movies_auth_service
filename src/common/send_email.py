@@ -21,6 +21,7 @@ def send_code_to_email(app: Flask, body: str, recipients: list[str]):
         subject="Confirmation code", sender=MAIL_ADDRESS, recipients=recipients
     )
     msg.body = body
+    logger.info("Confirmation code: %s" % body)
 
     try:
         mail.send(msg)
