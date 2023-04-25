@@ -15,13 +15,11 @@ logger = logging.getLogger(__name__)
 MAIL_ADDRESS = os.getenv("MAIL_ADDRESS", default="from@example.com")
 
 
-def send_code_to_email(app: Flask, body: str, recipients: list[str]):
+def send_to_email(app: Flask, subject: str, recipients: list[str], body: str):
     mail = Mail(app)
-    msg = Message(
-        subject="Confirmation code", sender=MAIL_ADDRESS, recipients=recipients
-    )
+    msg = Message(subject=subject, sender=MAIL_ADDRESS, recipients=recipients)
     msg.body = body
-    logger.info("Confirmation code: %s" % body)
+    logger.info("Message: %s" % body)
 
     try:
         mail.send(msg)

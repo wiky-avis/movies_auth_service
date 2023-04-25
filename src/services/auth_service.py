@@ -2,12 +2,14 @@ import logging
 from http import HTTPStatus
 from random import randint
 
+from flask import current_app
 from sqlalchemy.exc import IntegrityError
 
 from src.api.v1.models.response import LoginHistoryResponse, UserResponse
 from src.common.check_password import check_password
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
+from src.common.send_email import send_to_email
 from src.db.db_models import RoleType
 from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
@@ -230,12 +232,12 @@ class AuthService:
             )
 
         redis_client.set(user_id, randint(10000, 99999), 900)
-        # TODO: Отправка кода подтверждения на почту
-        # send_code_to_email(
-        #     app=current_app,
-        #     body=redis_client.get(user_id),
-        #     recipients=[user.email]
-        # )
+        send_to_email(
+            app=current_app,
+            subject="Confirmation code",
+            recipients=[user.email],
+            body=redis_client.get(user_id),
+        )
 
         return (
             BaseResponse(success=True, result="Ok").dict(),
