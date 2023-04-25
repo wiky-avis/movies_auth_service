@@ -21,8 +21,4 @@ def test_send_code(test_db, test_client, setup_url):
     res = test_client.post(f"/api/v1/users/{user.id}/send_code")
     assert res.status_code == HTTPStatus.OK
     assert code == redis_code
-    assert res.json == {
-        "error": None,
-        "result": {"code": redis_code},
-        "success": True,
-    }
+    assert res.json == {"success": True, "error": None, "result": "Ok"}
