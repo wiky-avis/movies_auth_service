@@ -1,7 +1,9 @@
 import logging
 from http import HTTPStatus
+from typing import NoReturn
 from random import randint
 
+from sqlalchemy.exc import IntegrityError, MultipleResultsFound
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
 
@@ -27,6 +29,17 @@ class AuthService:
     ):
         self.auth_repository = auth_repository
         self.roles_repository = roles_repository
+
+    def create_admin(self, email: str, password: str) -> NoReturn:
+        user = self.auth_repository.get_user_by_email(email)
+        if user:
+            raise MultipleResultsFound
+
+        self.auth_repository.create_admin(email=email, password=password)
+        admin_user = self.auth_repository.get_user_by_email(email=email)
+        self.roles_repository.set_role_by_role_name(
+            user=admin_user, role_name=RoleType.ROLE_PORTAL_ADMIN.value
+        )
 
     def get_user_by_email(self, email: str):
         if not email:
@@ -55,7 +68,7 @@ class AuthService:
         )
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
-    def register_user(self, email: str, role: str) -> None:
+    def register_user(self, email: str, role: str) -> NoReturn:
         self.auth_repository.create_user(email=email)
         user = self.auth_repository.get_user_by_email(email=email)
         if not user:
@@ -109,8 +122,8 @@ class AuthService:
     def change_password(
         self,
         user_id: str,
-        old_password: str | None,
-        new_password: str | None,
+        old_password: str,
+        new_password: str,
     ):
         user = self.auth_repository.get_user_by_id(user_id=user_id)
         if not user:
@@ -142,11 +155,7 @@ class AuthService:
 
         return BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
 
-    def change_data(
-        self,
-        user_id: str,
-        new_email: str | None,
-    ):
+    def change_data(self, user_id: str, new_email: str):
         user = self.auth_repository.get_user_by_id(user_id=user_id)
         if not user:
             return (
@@ -177,7 +186,9 @@ class AuthService:
 
         return BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
 
-    def get_list_user_login_history(self, user_id: str, page, per_page):
+    def get_list_user_login_history(
+        self, user_id: str, page: int, per_page: int
+    ):
         (
             login_history_data,
             login_history,

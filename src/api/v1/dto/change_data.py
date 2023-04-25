@@ -6,7 +6,7 @@ from src.api.v1.dto.base import BaseModelResponse
 InputUserChangeData = Model(
     "InputUserChangeData",
     {
-        "email": fields.String(description="Новая почта"),
+        "email": fields.String(required=True, description="Новая почта"),
     },
 )
 
@@ -22,8 +22,12 @@ UserChangeDataResponse = Model.inherit(
 InputUserChangePassword = Model(
     "InputUserChangePassword",
     {
-        "old_password": fields.String(description="Старый пароль"),
-        "new_password": fields.String(description="Новый пароль"),
+        "old_password": fields.String(
+            required=True, description="Старый пароль"
+        ),
+        "new_password": fields.String(
+            required=True, description="Новый пароль"
+        ),
     },
 )
 

@@ -61,6 +61,10 @@ python manage.py api
 ```bash
 pytest
 ```
+- создать суперпользователя
+```bash
+python manage.py create-superuser your_email your_password
+```
 
 ###  Тест API
 [Swagger](http://127.0.0.1:5000/api/swagger)
