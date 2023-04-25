@@ -5,14 +5,27 @@ from random import randint
 
 from sqlalchemy.exc import IntegrityError, MultipleResultsFound
 from flask import current_app
+import flask
+from flask import current_app, make_response, request
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    get_jwt,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
+)
 from sqlalchemy.exc import IntegrityError
+from user_agents import parse
 
 from src.api.v1.models.response import LoginHistoryResponse, UserResponse
+from src.common.blocklist import BLOCKLIST
 from src.common.check_password import check_password
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
 from src.common.send_email import send_to_email
-from src.db.db_models import RoleType
+from src.db.db_models import ActionType, RoleType
 from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
@@ -254,3 +267,87 @@ class AuthService:
             BaseResponse(success=True, result="Ok").dict(),
             HTTPStatus.OK,
         )
+
+    def auth_user(self, email: str, password: str):
+        if not email or not password:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "No email or no password."},
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        user = self.auth_repository.get_user_by_email(email=email)
+        if not user:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User does not exist."}
+                ).dict(),
+                HTTPStatus.NOT_FOUND,
+            )
+
+        password = check_password(user.password_hash, password)
+        if not password:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "Invalid password."}
+                ).dict(),
+                HTTPStatus.UNAUTHORIZED,
+            )
+
+        if not user.verified_mail:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "Email is not verified."}
+                ).dict(),
+                HTTPStatus.CONFLICT,
+            )
+
+        user_roles = self.get_user_roles(user.id)
+
+        payload = {
+            "id": str(user.id),
+            "email": email,
+            "verified_mail": user.verified_mail,
+            "roles": user_roles,
+        }
+        access_token = create_access_token(identity=payload)
+        refresh_token = create_refresh_token(identity=payload)
+
+        response = make_response(
+            BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
+        )
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+
+        user_agent = parse(flask.request.user_agent.string)
+        self.auth_repository.set_list_login_history(
+            user_id=str(user.id),
+            user_agent=str(user_agent),
+            action_type=ActionType.LOGIN.value,
+        )
+
+        return response
+
+    def logout_user(self, *args):
+        access_token = request.cookies.get("access_token_cookie")
+        user_id = decode_token(access_token)["sub"]["id"]
+
+        # TODO: Запись jti в Redis
+        jti = get_jwt()["jti"]
+        BLOCKLIST.add(jti)
+
+        response = make_response(
+            BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
+        )
+        unset_jwt_cookies(response)
+
+        user_agent = parse(flask.request.user_agent.string)
+        self.auth_repository.set_list_login_history(
+            user_id=user_id,
+            user_agent=str(user_agent),
+            action_type=ActionType.LOGOUT.value,
+        )
+
+        return response

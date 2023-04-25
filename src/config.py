@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -63,6 +64,9 @@ class Config:
     JWT_PUBLIC_KEY = os.getenv("JWT_PUBLIC_KEY", default=TEST_PUBLIC_KEY)
     JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
     JWT_EXPIRES_IN = int(os.getenv("JWT_EXPIRES_IN", default=600))
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    JWT_TOKEN_LOCATION = ["cookies"]
 
     MAIL_SERVER = os.getenv("MAIL_SERVER", default="smtp.gmail.com")
     MAIL_PORT = int(os.getenv("MAIL_PORT", default=465))

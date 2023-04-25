@@ -36,6 +36,7 @@ def upgrade():
     )
     op.create_table('login_history',
     sa.Column('user_id', sa.UUID(), nullable=True),
+    sa.Column('action_type', sa.String(), nullable=True),
     sa.Column('device_type', sa.String(), nullable=False),
     sa.Column('user_agent', sa.Text(), nullable=True),
     sa.Column('created_dt', sa.DateTime(), nullable=False),

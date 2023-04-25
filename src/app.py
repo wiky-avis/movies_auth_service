@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from gevent import monkey
 
 from src.db.db_factory import init_db
@@ -10,11 +11,15 @@ monkey.patch_all()
 
 cors = CORS()
 
+jwt = JWTManager()
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object("config.Config")
     app.app_context().push()
+
+    jwt.init_app(app)
 
     init_db(app)
     attach_routes(app)
