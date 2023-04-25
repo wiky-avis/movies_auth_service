@@ -61,3 +61,10 @@ class AuthRepository:
     def update_flag_verified_mail(self, user: User) -> NoReturn:
         user.verified_mail = True
         self.db.session.commit()
+
+    def set_list_login_history(self, user_id, user_agent, action_type):
+        new_action = LoginHistory(
+            user_id=user_id, user_agent=user_agent, action_type=action_type
+        )
+        self.db.session.add(new_action)
+        self.db.session.commit()
