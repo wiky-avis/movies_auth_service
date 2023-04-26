@@ -1,11 +1,8 @@
 from functools import wraps
 from http import HTTPStatus
 
-from flask_jwt_extended import decode_token
-from flask_jwt_extended.exceptions import JWTDecodeError
-from jwt import DecodeError
-
 from src.common.collections import get_in
+from src.common.decode_auth_token import get_decoded_data
 from src.common.response import BaseResponse
 from src.db.db_models import RoleType
 
@@ -15,10 +12,7 @@ def admin_required(request):
         @wraps(fn)
         def decorator(*args, **kwargs):
             access_token = request.cookies.get("access_token_cookie")
-            try:
-                decoded_token = decode_token(access_token)
-            except (DecodeError, JWTDecodeError):
-                decoded_token = None
+            decoded_token = get_decoded_data(access_token)
             roles = get_in(decoded_token, "sub", "roles")
             if RoleType.ROLE_PORTAL_ADMIN not in roles:
                 return (
