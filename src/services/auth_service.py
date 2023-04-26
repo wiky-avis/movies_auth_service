@@ -1,11 +1,10 @@
 import logging
 from http import HTTPStatus
-from typing import NoReturn
 from random import randint
+from typing import NoReturn
 
-from sqlalchemy.exc import IntegrityError, MultipleResultsFound
 from flask import current_app
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, MultipleResultsFound
 
 from src.api.v1.models.response import LoginHistoryResponse, UserResponse
 from src.common.check_password import check_password

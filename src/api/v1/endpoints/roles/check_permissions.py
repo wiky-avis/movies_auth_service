@@ -1,12 +1,15 @@
 import logging
 from http import HTTPStatus
 
-from flask_restx import Namespace, Resource, reqparse
+from flask import request
+from flask_jwt_extended import decode_token
+from flask_jwt_extended.exceptions import JWTDecodeError
+from flask_restx import Namespace, Resource
+from jwt import DecodeError
 
 from src.api.v1.dto.base import ErrorModelResponse
 from src.api.v1.dto.role import OutputUserRoleModel, UserRoleResponse
 from src.common.collections import get_in
-from src.common.decode_auth_token import get_decoded_data
 from src.common.response import BaseResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
@@ -19,8 +22,6 @@ logger = logging.getLogger(__name__)
 api = Namespace(name="roles", path="/api/v1/roles")
 api.models[OutputUserRoleModel.name] = OutputUserRoleModel
 api.models[UserRoleResponse.name] = UserRoleResponse
-parser = reqparse.RequestParser()
-parser.add_argument("X-Auth-Token", location="headers")
 
 
 @api.route(
@@ -47,12 +48,13 @@ class CheckPermissions(Resource):
         },
         description="Список ролей пользователя.",
     )
-    @api.header("X-Auth-Token", "JWT токен")
     def get(self):
-        args = parser.parse_args()
-        access_token = args.get("X-Auth-Token")
-        decoded_data = get_decoded_data(access_token)
-        auth_user_id = get_in(decoded_data, "UserId")
+        access_token = request.cookies.get("access_token_cookie")
+        try:
+            decoded_token = decode_token(access_token)
+        except (DecodeError, JWTDecodeError):
+            decoded_token = None
+        auth_user_id = get_in(decoded_token, "sub", "user_id")
         if not auth_user_id:
             logger.warning("Failed to get auth_user_id.")
             return (

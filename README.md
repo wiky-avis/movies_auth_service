@@ -49,7 +49,7 @@ make up_local_compose
 ```bash
 cp .env.test .env
 ```
-- привозникновении ошибки "ModuleNotFoundError: No module named 'config'"
+- при возникновении ошибки "ModuleNotFoundError: No module named 'config'"
 ```bash
 export PYTHONPATH=src
 ```
