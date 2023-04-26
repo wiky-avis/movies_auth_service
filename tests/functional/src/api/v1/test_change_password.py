@@ -18,7 +18,7 @@ def test_change_password(test_db, test_client, setup_url, monkeypatch):
     user = auth_repository.get_user_by_email(email=email)
     auth_repository.set_password(user, old_password)
     payload = {
-        "id": str(user.id),
+        "user_id": str(user.id),
         "email": email,
         "verified_mail": user.verified_mail,
         "roles": user.roles,
@@ -40,7 +40,7 @@ def test_change_password_error_404(test_client, setup_url, monkeypatch):
     user_id = "bbbbbbbb-9be4-4066-be89-695d35ea9131"
     old_password = "abraabra"
     new_password = "abracadabra"
-    payload = {"id": user_id}
+    payload = {"user_id": user_id}
     access_token = create_access_token(identity=payload)
     test_client.set_cookie(
         server_name="localhost", key="access_token_cookie", value=access_token
@@ -70,7 +70,7 @@ def test_change_password_error_400(
     auth_repository.create_user(email=email)
     user = auth_repository.get_user_by_email(email=email)
     payload = {
-        "id": str(user.id),
+        "user_id": str(user.id),
         "email": email,
         "verified_mail": user.verified_mail,
         "roles": user.roles,
@@ -107,7 +107,7 @@ def test_change_password_error_401(
     user = auth_repository.get_user_by_email(email=email)
     auth_repository.set_password(user, bad_password)
     payload = {
-        "id": str(user.id),
+        "user_id": str(user.id),
         "email": email,
         "verified_mail": user.verified_mail,
         "roles": user.roles,

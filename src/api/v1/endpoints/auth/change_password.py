@@ -60,7 +60,7 @@ class UserChangeData(Resource):
             decoded_token = decode_token(access_token)
         except (DecodeError, JWTDecodeError):
             decoded_token = None
-        auth_user_id = get_in(decoded_token, "sub", "id")
+        auth_user_id = get_in(decoded_token, "sub", "user_id")
         if not auth_user_id:
             logger.warning("Failed to get auth_user_id.")
             return (

@@ -3,10 +3,13 @@ from http import HTTPStatus
 
 from flask import request
 from flask_jwt_extended import decode_token
+from flask_jwt_extended.exceptions import JWTDecodeError
 from flask_restx import Namespace, Resource
+from jwt import DecodeError
 
 from src.api.v1.dto.base import ErrorModelResponse
 from src.api.v1.dto.role import OutputUserRoleModel, UserRoleResponse
+from src.common.collections import get_in
 from src.common.response import BaseResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
@@ -47,8 +50,11 @@ class CheckPermissions(Resource):
     )
     def get(self):
         access_token = request.cookies.get("access_token_cookie")
-        auth_user_id = decode_token(access_token)["sub"]["id"]
-
+        try:
+            decoded_token = decode_token(access_token)
+        except (DecodeError, JWTDecodeError):
+            decoded_token = None
+        auth_user_id = get_in(decoded_token, "sub", "user_id")
         if not auth_user_id:
             logger.warning("Failed to get auth_user_id.")
             return (

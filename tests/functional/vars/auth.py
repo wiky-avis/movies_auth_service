@@ -37,7 +37,7 @@ def sign_jwt(
     expires: int = 180,
 ) -> Dict[str, str]:
     payload = {
-        "id": user_id,
+        "user_id": user_id,
         "email": email,
         "verified_mail": verified_mail,
         "roles": roles or [],

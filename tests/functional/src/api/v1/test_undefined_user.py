@@ -2,12 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from tests.functional.vars.auth import (
-    BAD_TOKEN,
-    EXP_TOKEN,
-    NO_TOKEN,
-    TEST_PUBLIC_KEY,
-)
+from tests.functional.vars.auth import BAD_TOKEN, EXP_TOKEN, NO_TOKEN
 
 
 @pytest.mark.parametrize(
@@ -26,10 +21,11 @@ def test_undefined_user_method_get(
     endpoint,
     token_header,
 ):
-    monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
-    headers = {"X-Auth-Token": token_header}
+    test_client.set_cookie(
+        server_name="localhost", key="access_token_cookie", value=token_header
+    )
 
-    res = test_client.get(endpoint, headers=headers)
+    res = test_client.get(endpoint)
     assert res.status_code == HTTPStatus.UNAUTHORIZED
     assert res.json == {
         "success": False,
@@ -86,10 +82,11 @@ def test_undefined_user_method_delete(
     token_header,
     endpoint,
 ):
-    monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
-    headers = {"X-Auth-Token": token_header}
+    test_client.set_cookie(
+        server_name="localhost", key="access_token_cookie", value=token_header
+    )
 
-    res = test_client.delete(endpoint, headers=headers)
+    res = test_client.delete(endpoint)
     assert res.status_code == HTTPStatus.UNAUTHORIZED
     assert res.json == {
         "success": False,
