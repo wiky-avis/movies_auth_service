@@ -1,6 +1,7 @@
 import psycopg2
 import pytest
 from flask import Flask, current_app
+from flask_jwt_extended import JWTManager
 from psycopg2.extras import DictCursor
 
 from src.config import Config
@@ -18,6 +19,8 @@ def test_app():
     ctx = app.app_context()
     ctx.push()
 
+    jwt = JWTManager()
+    jwt.init_app(app)
     init_db(app)
     attach_routes(app)
 

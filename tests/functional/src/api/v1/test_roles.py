@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 import pytest
+from flask_jwt_extended import create_access_token
 
 from src.db.db_models import RoleType
 from src.repositories.auth_repository import AuthRepository
@@ -150,20 +151,22 @@ def test_get_check_permissions(
     auth_repository.create_user(email=user_email)
     user = auth_repository.get_user_by_email(email=user_email)
     roles_repository.set_role_by_role_name(user=user, role_name=role)
-    monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
-    headers = {
-        "X-Auth-Token": sign_jwt(
-            str(user.id),
-            roles=[
-                role,
-            ],
-        )
+    payload = {
+        "id": str(user.id),
+        "email": user_email,
+        "verified_mail": user.verified_mail,
+        "roles": [
+            role,
+        ],
     }
-
+    access_token = create_access_token(identity=payload)
+    test_client.set_cookie(
+        server_name="localhost", key="access_token_cookie", value=access_token
+    )
     res = test_client.get(
         "/api/v1/roles/check_permissions",
-        headers=headers,
     )
+
     assert res.status_code == HTTPStatus.OK
     body = res.json
     assert body["success"] is True
