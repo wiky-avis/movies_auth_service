@@ -2,20 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
-from src.db import Role
 from src.repositories.auth_repository import AuthRepository
-from tests.functional.vars.roles import ROLES
 from tests.functional.vars.tables import CLEAN_TABLES
-
-
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-@pytest.fixture(scope="module")
-def create_roles(test_db):
-    for _, role_name in ROLES:
-        role = Role(name=role_name, description="")
-        test_db.session.add(role)
-        test_db.session.commit()
 
 
 def test_sign_up_temporary_user(test_client, setup_url, create_roles):

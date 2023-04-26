@@ -2,21 +2,10 @@ from http import HTTPStatus
 
 import pytest
 
-from src.db.db_models import Role, RoleType
+from src.db.db_models import RoleType
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
-from tests.functional.vars.roles import ROLES
 from tests.functional.vars.tables import CLEAN_TABLES
-
-
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-@pytest.fixture(scope="module")
-def create_roles(test_db):
-    for _, role_name in ROLES:
-        role = Role(name=role_name, description="")
-        test_db.session.add(role)
-        test_db.session.commit()
 
 
 @pytest.mark.usefixtures("clean_table")

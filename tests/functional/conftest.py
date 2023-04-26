@@ -4,9 +4,10 @@ from flask import Flask, current_app
 from psycopg2.extras import DictCursor
 
 from src.config import Config
-from src.db import db_models
+from src.db import Role, db_models
 from src.db.db_factory import init_db
 from src.routes import attach_routes
+from tests.functional.vars.roles import ROLES
 
 
 @pytest.fixture(scope="session")
@@ -67,3 +68,11 @@ def clean_table(request):
         clean_tables(*request.param)
 
     request.addfinalizer(teardown)
+
+
+@pytest.fixture
+def create_roles(test_db):
+    for role_id, role_name in ROLES:
+        role = Role(id=role_id, name=role_name, description="")
+        test_db.session.add(role)
+        test_db.session.commit()

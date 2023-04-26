@@ -1,3 +1,5 @@
+from typing import Any, NoReturn, Union
+
 from flask_sqlalchemy import SQLAlchemy
 
 from src.api.v1.models.login_history import UserLoginHistory
@@ -8,20 +10,26 @@ class AuthRepository:
     def __init__(self, db: SQLAlchemy):
         self.db = db
 
-    def create_user(self, email: str) -> None:
+    def create_user(self, email: str) -> NoReturn:
         new_user = User(email=email)
         self.db.session.add(new_user)
         self.db.session.commit()
 
-    def delete_user(self, user: User) -> None:
+    def create_admin(self, email: str, password: str) -> NoReturn:
+        self.create_user(email=email)
+        admin_user = self.get_user_by_email(email=email)
+        self.set_password(user=admin_user, password=password)
+        self.update_flag_verified_mail(admin_user)
+
+    def delete_user(self, user: User) -> NoReturn:
         self.db.session.delete(user)
         self.db.session.commit()
 
-    def set_password(self, user: User, password: str) -> None:
+    def set_password(self, user: User, password: str) -> NoReturn:
         user.password(password)
         self.db.session.commit()
 
-    def set_email(self, user: User, email: str) -> None:
+    def set_email(self, user: User, email: str) -> NoReturn:
         user.email = email
         self.db.session.commit()
 
@@ -33,7 +41,9 @@ class AuthRepository:
         user = self.db.session.query(User).filter_by(id=user_id).first()
         return user
 
-    def get_list_login_history(self, user_id, page, per_page):
+    def get_list_login_history(
+        self, user_id: str, page: int, per_page: int
+    ) -> Union[Any, list[UserLoginHistory]]:
         login_history_data = (
             self.db.session.query(LoginHistory)
             .filter_by(user_id=user_id)
@@ -48,6 +58,6 @@ class AuthRepository:
         ]
         return login_history_data, login_history
 
-    def update_flag_verified_mail(self, user: User):
+    def update_flag_verified_mail(self, user: User) -> NoReturn:
         user.verified_mail = True
         self.db.session.commit()
