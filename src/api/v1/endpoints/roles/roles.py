@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from flask import request
-from flask_restx import Namespace, Resource, reqparse
+from flask_restx import Namespace, Resource
 
 from src.api.v1.dto.base import ErrorModelResponse
 from src.api.v1.dto.role import (
@@ -24,8 +24,6 @@ api.models[OutputUserRoleModel.name] = OutputUserRoleModel
 api.models[UserRoleResponse.name] = UserRoleResponse
 api.models[OutputRoleModel.name] = OutputRoleModel
 api.models[RoleResponse.name] = RoleResponse
-parser = reqparse.RequestParser()
-parser.add_argument("X-Auth-Token", location="headers")
 
 
 @api.route("", methods=["GET", "POST", "DELETE"])
