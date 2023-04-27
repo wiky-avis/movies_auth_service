@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from flask import request
-from flask_restx import Namespace, Resource, reqparse
+from flask_restx import Namespace, Resource
 
 from src.api.v1.dto.base import ErrorModelResponse
 from src.api.v1.dto.role import (
@@ -11,11 +11,8 @@ from src.api.v1.dto.role import (
     RoleResponse,
     UserRoleResponse,
 )
-from src.common.collections import get_in
-from src.common.decode_auth_token import get_decoded_data
-from src.common.response import BaseResponse
+from src.common.decorators import admin_required
 from src.db import db_models
-from src.db.db_models import RoleType
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
 from src.services.role_service import RolesService
@@ -27,8 +24,6 @@ api.models[OutputUserRoleModel.name] = OutputUserRoleModel
 api.models[UserRoleResponse.name] = UserRoleResponse
 api.models[OutputRoleModel.name] = OutputRoleModel
 api.models[RoleResponse.name] = RoleResponse
-parser = reqparse.RequestParser()
-parser.add_argument("X-Auth-Token", location="headers")
 
 
 @api.route("", methods=["GET", "POST", "DELETE"])
@@ -46,19 +41,8 @@ class Roles(Resource):
         },
         description="Получить весь список ролей.",
     )
-    @api.header("X-Auth-Token", "JWT токен")
+    @admin_required(request)
     def get(self):
-        args = parser.parse_args()
-        access_token = args.get("X-Auth-Token")
-        decoded_data = get_decoded_data(access_token)
-        roles = get_in(decoded_data, "Roles")
-        if RoleType.ROLE_PORTAL_ADMIN not in roles:
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "Forbidden."}
-                ).dict(),
-                HTTPStatus.FORBIDDEN,
-            )
         auth_repository = AuthRepository(db_models.db)
         roles_repository = RolesRepository(db_models.db)
         role_service = RolesService(
@@ -87,20 +71,9 @@ class Roles(Resource):
         },
         description="Назначить пользователю роль.",
     )
-    @api.header("X-Auth-Token", "JWT токен")
     @api.expect(InputRoleModel)
+    @admin_required(request)
     def post(self):
-        args = parser.parse_args()
-        access_token = args.get("X-Auth-Token")
-        decoded_data = get_decoded_data(access_token)
-        roles = get_in(decoded_data, "Roles")
-        if RoleType.ROLE_PORTAL_ADMIN not in roles:
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "Forbidden."}
-                ).dict(),
-                HTTPStatus.FORBIDDEN,
-            )
         user_id = request.json.get("user_id")
         role_id = request.json.get("role_id")
         auth_repository = AuthRepository(db_models.db)
@@ -131,20 +104,9 @@ class Roles(Resource):
         },
         description="Удалить у пользователя роль.",
     )
-    @api.header("X-Auth-Token", "JWT токен")
     @api.expect(InputRoleModel)
+    @admin_required(request)
     def delete(self):
-        args = parser.parse_args()
-        access_token = args.get("X-Auth-Token")
-        decoded_data = get_decoded_data(access_token)
-        roles = get_in(decoded_data, "Roles")
-        if RoleType.ROLE_PORTAL_ADMIN not in roles:
-            return (
-                BaseResponse(
-                    success=False, error={"msg": "Forbidden."}
-                ).dict(),
-                HTTPStatus.FORBIDDEN,
-            )
         user_id = request.json.get("user_id")
         role_id = request.json.get("role_id")
         auth_repository = AuthRepository(db_models.db)

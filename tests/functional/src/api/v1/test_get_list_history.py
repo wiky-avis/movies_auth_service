@@ -2,11 +2,10 @@ from datetime import datetime
 from http import HTTPStatus
 
 import pytest
+from flask_jwt_extended import create_access_token
 
-from src.config import TEST_PUBLIC_KEY
 from src.db import LoginHistory
 from src.repositories.auth_repository import AuthRepository
-from tests.functional.vars.auth import sign_jwt
 from tests.functional.vars.login_history import USER_LOGIN_HISTORY
 from tests.functional.vars.tables import CLEAN_TABLES
 
@@ -39,10 +38,13 @@ def test_get_list_history(
 ):
     auth_repository = AuthRepository(db=test_db)
     user = auth_repository.get_user_by_email(email=email)
-    monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
-    headers = {"X-Auth-Token": sign_jwt(str(user.id))}
+    payload = {"user_id": str(user.id)}
+    access_token = create_access_token(identity=payload)
+    test_client.set_cookie(
+        server_name="localhost", key="access_token_cookie", value=access_token
+    )
 
-    res = test_client.get(f"/api/v1/users/login_history", headers=headers)
+    res = test_client.get(f"/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.OK
     body = res.json
     assert body == USER_LOGIN_HISTORY
@@ -74,12 +76,14 @@ def test_get_list_history_pagination(
     total_count = 10
     auth_repository = AuthRepository(db=test_db)
     user = auth_repository.get_user_by_email(email=email)
-    monkeypatch.setattr("src.config.Config.JWT_PUBLIC_KEY", TEST_PUBLIC_KEY)
-    headers = {"X-Auth-Token": sign_jwt(str(user.id))}
+    payload = {"user_id": str(user.id)}
+    access_token = create_access_token(identity=payload)
+    test_client.set_cookie(
+        server_name="localhost", key="access_token_cookie", value=access_token
+    )
 
     res = test_client.get(
-        f"/api/v1/users/login_history?page={page}&per_page={per_page}",
-        headers=headers,
+        f"/api/v1/users/login_history?page={page}&per_page={per_page}"
     )
     assert res.status_code == HTTPStatus.OK
     body = res.json
