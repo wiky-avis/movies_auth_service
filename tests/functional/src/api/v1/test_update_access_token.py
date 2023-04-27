@@ -25,16 +25,16 @@ def test_update_access_token(test_db, test_client, setup_url, create_roles):
     )
     assert res.status_code == HTTPStatus.OK
 
-    res = test_client.get(f"/api/v1/users/login_history")
+    res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.OK
 
     old_access_token = request.cookies.get("access_token_cookie")
     assert old_access_token is not None
 
-    res = test_client.post("/api/v1/users/refresh")
+    res = test_client.post("/api/v1/users/refresh_token")
     assert res.status_code == HTTPStatus.OK
 
-    res = test_client.get(f"/api/v1/users/login_history")
+    res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.OK
 
     new_token = request.cookies.get("access_token_cookie")

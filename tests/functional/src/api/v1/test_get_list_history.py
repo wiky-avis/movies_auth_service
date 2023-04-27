@@ -44,7 +44,7 @@ def test_get_list_history(
         server_name="localhost", key="access_token_cookie", value=access_token
     )
 
-    res = test_client.get(f"/api/v1/users/login_history")
+    res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.OK
     body = res.json
     assert body == USER_LOGIN_HISTORY

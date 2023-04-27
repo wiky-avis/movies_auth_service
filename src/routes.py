@@ -11,7 +11,7 @@ from src.api.v1.endpoints.auth.get_list_login_history import (
 )
 from src.api.v1.endpoints.auth.login import api as login
 from src.api.v1.endpoints.auth.logout import api as logout
-from src.api.v1.endpoints.auth.refresh import api as refresh
+from src.api.v1.endpoints.auth.refresh_token import api as refresh_token
 from src.api.v1.endpoints.auth.send_code import api as send_code
 from src.api.v1.endpoints.auth.sign_up import api as sign_up
 from src.api.v1.endpoints.auth.users import api as users
@@ -33,7 +33,7 @@ def attach_routes(app: Flask):
     api.add_namespace(ping_api)
     api.add_namespace(users)
     api.add_namespace(logout)
-    api.add_namespace(refresh)
+    api.add_namespace(refresh_token)
     api.add_namespace(login)
     api.add_namespace(sign_up)
     api.add_namespace(list_login_history)
