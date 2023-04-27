@@ -53,3 +53,17 @@ TemporaryUserModelResponse = Model.inherit(
     BaseModelResponse,
     {"result": fields.Nested(TemporaryUserModel)},
 )
+
+
+InputUserAuthModel = Model.inherit(
+    "InputUserAuthModel",
+    InputUserRegisterModel,
+)
+
+UserAuthModelResponse = Model.inherit(
+    "UserAuthModelResponse",
+    BaseModelResponse,
+    {
+        "result": fields.String(example="Ok"),
+    },
+)

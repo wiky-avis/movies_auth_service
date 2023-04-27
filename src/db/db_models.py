@@ -97,12 +97,18 @@ class DeviceType(str, enum.Enum):
     UNKNOWN = "unknown"
 
 
+class ActionType(str, enum.Enum):
+    LOGIN = "login"
+    LOGOUT = "logout"
+
+
 class LoginHistory(UUIDMixin, db.Model):
     __tablename__ = "login_history"
 
     user_id = db.Column(
         UUID(as_uuid=True), db.ForeignKey(User.id, ondelete="CASCADE")
     )
+    action_type = db.Column(db.String)
     device_type = db.Column(
         db.String,
         nullable=False,
