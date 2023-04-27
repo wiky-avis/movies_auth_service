@@ -15,17 +15,16 @@ from tests.functional.vars.tables import CLEAN_TABLES
 def test_get_all_roles_ok(
     create_roles, test_db, test_client, setup_url, monkeypatch
 ):
-    email = "test6691@test.ru"
+    admin_email = "test6691@test.ru"
+    password = "abracadabra"
     role = RoleType.ROLE_PORTAL_ADMIN.value
 
     auth_repository = AuthRepository(test_db)
-    auth_repository.create_user(email=email)
-    user = auth_repository.get_user_by_email(email=email)
-    roles_repository = RolesRepository(test_db)
-    roles_repository.set_role_by_role_name(user=user, role_name=role)
+    auth_repository.create_admin(email=admin_email, password=password)
+    user = auth_repository.get_user_by_email(email=admin_email)
     payload = {
         "user_id": str(user.id),
-        "email": email,
+        "email": admin_email,
         "verified_mail": user.verified_mail,
         "roles": [
             role,
@@ -70,15 +69,12 @@ def test_get_add_role(
     create_roles, test_db, test_client, setup_url, monkeypatch
 ):
     admin_email = "test66551@test.ru"
+    password = "abracadabra"
     admin_role = RoleType.ROLE_PORTAL_ADMIN.value
 
     auth_repository = AuthRepository(test_db)
-    auth_repository.create_user(email=admin_email)
+    auth_repository.create_admin(email=admin_email, password=password)
     admin_user = auth_repository.get_user_by_email(email=admin_email)
-    roles_repository = RolesRepository(test_db)
-    roles_repository.set_role_by_role_name(
-        user=admin_user, role_name=admin_role
-    )
     payload = {
         "user_id": str(admin_user.id),
         "email": admin_email,
@@ -113,15 +109,11 @@ def test_get_delete_role(
     create_roles, test_db, test_client, setup_url, monkeypatch
 ):
     admin_email = "test665541@test.ru"
+    password = "abracadabra"
     admin_role = RoleType.ROLE_PORTAL_ADMIN.value
-
     auth_repository = AuthRepository(test_db)
-    auth_repository.create_user(email=admin_email)
+    auth_repository.create_admin(email=admin_email, password=password)
     admin_user = auth_repository.get_user_by_email(email=admin_email)
-    roles_repository = RolesRepository(test_db)
-    roles_repository.set_role_by_role_name(
-        user=admin_user, role_name=admin_role
-    )
     payload = {
         "user_id": str(admin_user.id),
         "email": admin_email,
@@ -139,6 +131,7 @@ def test_get_delete_role(
     role_portal_user = "5eff1f88-8f2b-40c5-a4d0-85893cb7071b"
     auth_repository.create_user(email=user_email)
     user = auth_repository.get_user_by_email(email=user_email)
+    roles_repository = RolesRepository(test_db)
     roles_repository.set_role_by_id(role_id=role_portal_user, user_id=user.id)
 
     input_body = {"user_id": str(user.id), "role_id": role_portal_user}
@@ -156,27 +149,35 @@ def test_get_delete_role(
 def test_get_check_permissions(
     create_roles, test_db, test_client, setup_url, monkeypatch
 ):
-    role = RoleType.ROLE_PORTAL_USER.value
-    user_email = "test_user@test.ru"
+    admin_email = "test66551@test.ru"
+    password = "abracadabra"
+    admin_role = RoleType.ROLE_PORTAL_ADMIN.value
+
     auth_repository = AuthRepository(test_db)
-    roles_repository = RolesRepository(test_db)
-    auth_repository.create_user(email=user_email)
-    user = auth_repository.get_user_by_email(email=user_email)
-    roles_repository.set_role_by_role_name(user=user, role_name=role)
+    auth_repository.create_admin(email=admin_email, password=password)
+    admin_user = auth_repository.get_user_by_email(email=admin_email)
     payload = {
-        "user_id": str(user.id),
-        "email": user_email,
-        "verified_mail": user.verified_mail,
+        "user_id": str(admin_user.id),
+        "email": admin_email,
+        "verified_mail": admin_user.verified_mail,
         "roles": [
-            role,
+            admin_role,
         ],
     }
     access_token = create_access_token(identity=payload)
     test_client.set_cookie(
         server_name="localhost", key="access_token_cookie", value=access_token
     )
+
+    role = RoleType.ROLE_PORTAL_USER.value
+    user_email = "test_user@test.ru"
+    roles_repository = RolesRepository(test_db)
+    auth_repository.create_user(email=user_email)
+    user = auth_repository.get_user_by_email(email=user_email)
+    roles_repository.set_role_by_role_name(user=user, role_name=role)
+
     res = test_client.get(
-        "/api/v1/roles/check_permissions",
+        f"/api/v1/roles/check_permissions?user_id={str(user.id)}"
     )
 
     assert res.status_code == HTTPStatus.OK
