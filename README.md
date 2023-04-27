@@ -209,4 +209,21 @@ Body:
 - Получение списка ролей: **GET /api/v1/roles**
 - Создание роли: **POST /api/v1/roles**
 - Удаление роли: **DELETE /api/v1/roles**
-- Получение ролей пользователя по user_id: **GET /api/v1/roles/<str:user_id>**
+- Получение ролей пользователя по user_id: **GET /api/v1/roles/check_permissions/?user_id=<str:user_id>**
+
+Управлять ролями может только администратор. В ближайшее время планируется реализация доступа к функционалу по токену.
+
+### Управление авторизацией
+- Авторизация пользователя: **POST /api/v1/users/login**
+- Создание пользователя: **POST /api/v1/users/sign_up**
+- Выход пользователя (помещает переданные токены в блоклист): **DELETE /api/v1/users/logout**
+- Обновление access-токена: **POST /api/v1/users/refresh_token**
+
+### Управление пользователями
+- Изменение email/логин пользователя: **PATCH /api/v1/users**
+- История авторизаций пользователя: **GET /api/v1/users/login_history**
+- Удаление аккаунта пользователя: **DELETE /api/v1/users**
+- Изменение пароля пользователя **PATCH /api/v1/users/change_password**
+- Добавление роли пользователя **POST /api/v1/user/role**
+- Подтверждение почты **POST /api/v1/users/<str:user_id>/mail**
+- Отправка кода подтверждения на почту **POST /api/v1/users/<str:user_id>/send_code**
