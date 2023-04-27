@@ -62,9 +62,14 @@ class AuthRepository:
         user.verified_mail = True
         self.db.session.commit()
 
-    def set_list_login_history(self, user_id, user_agent, action_type):
+    def save_action_to_login_history(
+        self, user_id, device_type, user_agent, action_type
+    ):
         new_action = LoginHistory(
-            user_id=user_id, user_agent=user_agent, action_type=action_type
+            user_id=user_id,
+            device_type=device_type,
+            user_agent=user_agent,
+            action_type=action_type,
         )
         self.db.session.add(new_action)
         self.db.session.commit()

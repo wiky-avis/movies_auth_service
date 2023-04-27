@@ -23,8 +23,8 @@ api.models[ErrorModel.name] = ErrorModel
 api.models[ErrorModelResponse.name] = ErrorModelResponse
 
 
-@api.route("/sign_in", methods=["POST"])
-class SignIn(Resource):
+@api.route("/login", methods=["POST"])
+class Login(Resource):
     @api.doc(
         responses={
             int(HTTPStatus.OK): (

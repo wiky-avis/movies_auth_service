@@ -19,7 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from user_agents import parse
 
 from src.api.v1.models.response import LoginHistoryResponse, UserResponse
-from src.common.blocklist import BLOCKLIST
+from src.common.check_device import check_device_type
 from src.common.check_password import check_password
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
@@ -306,7 +306,7 @@ class AuthService:
         user_roles = self.get_user_roles(user.id)
 
         payload = {
-            "id": str(user.id),
+            "user_id": str(user.id),
             "email": email,
             "verified_mail": user.verified_mail,
             "roles": user_roles,
@@ -321,8 +321,9 @@ class AuthService:
         set_refresh_cookies(response, refresh_token)
 
         user_agent = parse(flask.request.user_agent.string)
-        self.auth_repository.set_list_login_history(
+        self.auth_repository.save_action_to_login_history(
             user_id=str(user.id),
+            device_type=check_device_type(user_agent),
             user_agent=str(user_agent),
             action_type=ActionType.LOGIN.value,
         )
@@ -331,20 +332,23 @@ class AuthService:
 
     def logout_user(self, *args):
         access_token = request.cookies.get("access_token_cookie")
-        user_id = decode_token(access_token)["sub"]["id"]
+        user_id = decode_token(access_token)["sub"]["user_id"]
 
-        # TODO: Запись jti в Redis
         jti = get_jwt()["jti"]
-        BLOCKLIST.add(jti)
+        redis_client.set(
+            jti, "", ex=current_app.config.get("JWT_ACCESS_TOKEN_EXPIRES")
+        )
 
         response = make_response(
-            BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
+            BaseResponse(success=True, result="Ok").dict(),
+            HTTPStatus.NO_CONTENT,
         )
         unset_jwt_cookies(response)
 
         user_agent = parse(flask.request.user_agent.string)
-        self.auth_repository.set_list_login_history(
+        self.auth_repository.save_action_to_login_history(
             user_id=user_id,
+            device_type=check_device_type(user_agent),
             user_agent=str(user_agent),
             action_type=ActionType.LOGOUT.value,
         )

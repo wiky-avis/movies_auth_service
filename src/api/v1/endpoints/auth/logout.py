@@ -13,11 +13,11 @@ from src.services.auth_service import AuthService
 api = Namespace(name="auth", path="/api/v1/users")
 
 
-@api.route("/logout")
+@api.route("/logout", methods=["DELETE"])
 class Logout(Resource):
     @api.doc(
         responses={
-            int(HTTPStatus.OK): (
+            int(HTTPStatus.NO_CONTENT): (
                 "Success.",
                 UserLogoutResponse,
             ),
@@ -25,10 +25,10 @@ class Logout(Resource):
         description="Выход из аккаунта.",
     )
     @jwt_required()
-    def get(self):
+    def delete(self):
         auth_repository = AuthRepository(db_models.db)
         roles_repository = RolesRepository(db_models.db)
         auth_service = AuthService(
             auth_repository=auth_repository, roles_repository=roles_repository
         )
-        return auth_service.logout_user(self.get)
+        return auth_service.logout_user(self.delete)
