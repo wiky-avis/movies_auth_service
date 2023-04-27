@@ -53,6 +53,7 @@ class AuthRepository:
             UserLoginHistory(
                 device_type=user_history.device_type,
                 login_dt=str(user_history.created_dt),
+                action_type=user_history.action_type,
             )
             for user_history in login_history_data
         ]
