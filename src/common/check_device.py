@@ -9,6 +9,6 @@ def check_device_type(user_agent: UserAgent):
     if user_agent.is_mobile:
         return DeviceType.MOBILE.value
     if user_agent.is_tablet:
-        return DeviceType.MOBILE.value
+        return DeviceType.TABLET.value
 
     return DeviceType.UNKNOWN.value
