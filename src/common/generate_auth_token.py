@@ -17,10 +17,10 @@ JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", default="RS256")
 
 def generate_auth_token(expires_in=JWT_EXPIRES_IN, **kwargs):
     payload = {
-        "UserId": kwargs.get("id"),
-        "Email": kwargs.get("email"),
-        "VerifiedMail": kwargs.get("verified_mail"),
-        "Roles": kwargs.get("roles"),
+        "user_id": kwargs.get("id"),
+        "email": kwargs.get("email"),
+        "verified_mail": kwargs.get("verified_mail"),
+        "roles": kwargs.get("roles"),
         "exp": time.time() + expires_in,
     }
     token = jwt.encode(
