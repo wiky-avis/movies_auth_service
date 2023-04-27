@@ -20,3 +20,13 @@ def revoked_token_callback(jwt_header, jwt_payload: dict):
         ).dict(),
         HTTPStatus.NOT_FOUND,
     )
+
+
+@jwt.needs_fresh_token_loader
+def token_not_fresh_callback(jwt_header, jwt_payload):
+    return (
+        BaseResponse(
+            success=False, error={"msg": "The token is not fresh."}
+        ).dict(),
+        HTTPStatus.UNAUTHORIZED,
+    )

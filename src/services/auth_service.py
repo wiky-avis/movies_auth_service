@@ -352,3 +352,18 @@ class AuthService:
         )
 
         return response
+
+    def update_access_token(self, identity: dict):
+        jti = get_jwt()["jti"]
+        redis_client.set(
+            jti, "", ex=current_app.config.get("JWT_ACCESS_TOKEN_EXPIRES")
+        )
+
+        access_token = create_access_token(identity=identity)
+
+        response = make_response(
+            BaseResponse(success=True, result="Ok").dict(), HTTPStatus.OK
+        )
+        set_access_cookies(response, access_token)
+
+        return response

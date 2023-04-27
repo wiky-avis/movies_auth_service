@@ -29,7 +29,7 @@ def test_login_user(test_db, test_client, setup_url, create_roles):
         "result": "Ok",
     }
 
-    res = test_client.get(f"/api/v1/users/login_history")
+    res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.OK
     body = res.json
     assert len(body["result"]) == 1
@@ -52,7 +52,7 @@ def test_logout_user(test_db, test_client, setup_url):
     )
     assert history[1][1].action_type == "logout"
 
-    res = test_client.get(f"/api/v1/users/login_history")
+    res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.UNAUTHORIZED
 
     assert request.cookies.get("access_token_cookie") is None
