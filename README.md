@@ -1,4 +1,6 @@
-# Проектная работа 6 спринта
+# Сервис Auth API
+Сервис авторизации с системой ролей.
+Авторозация реализована с помощью jwt-токенов, которые прокидываются в куки юзера.
 
 ###  Сборка и запуск в контейнере
 - создание .env файла (.env.example)
@@ -40,7 +42,6 @@ poetry install --no-root && poetry shell
 ```bash
 cp .env.example .env
 ```
-
 - сборка контейнеров
 ```bash
 make up_local_compose
@@ -61,7 +62,12 @@ python manage.py api
 ```bash
 pytest
 ```
-- создать суперпользователя
+- создать суперпользователя(для создания пользователя в бд должна быть роль 'ROLE_PORTAL_ADMIN')
+```sql
+insert into roles
+(id, name, description)
+VALUES('cfc83768-9be4-4066-be89-695d35ea9136', 'ROLE_PORTAL_ADMIN', '');
+```
 ```bash
 python manage.py create-superuser your_email your_password
 ```
