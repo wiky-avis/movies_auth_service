@@ -96,12 +96,11 @@ python manage.py create-superuser your_email your_password
 [Swagger](http://127.0.0.1:5000/api/swagger)
 
 ## Описание функционала
-
-### Регистрации пользователя:
 Преполагается взаимодействие фронта с апи нашего сервиса.
 
+### Регистрации пользователя:
 1. Проверка, существует ли такой пользователь:
-GET /api/v1/users?email=sgsf@sgfg.ru
+**GET /api/v1/users?email=sgsf@sgfg.ru**
 
 Ответ:
 ```
@@ -127,7 +126,7 @@ GET /api/v1/users?email=sgsf@sgfg.ru
 пересылаем ему код подтверждения /api/v1/users/308645/send_code.
 
 2. Создание временного пользователя.
-POST /api/v1/users/sign_up
+**POST /api/v1/users/sign_up**
 
 body:
 ```
@@ -152,7 +151,8 @@ body:
 ```
 
 3. Отправить код пользователю с id пользователя для подтверждения почты.
-POST /api/v1/users/308645/send_code
+**POST /api/v1/users/308645/send_code**
+
 Body:
 ```
 {
@@ -163,7 +163,7 @@ Body:
 * код сохраняем в редисе с ограниченным сроком жизни
 
 4. Подтверждение почты кодом из письма.
-POST /api/v1/users/308645/mail
+**POST /api/v1/users/308645/mail**
 
 body:
 ```
@@ -196,7 +196,7 @@ body:
 
 - Если ответ ручки /api/v1/users/308645/mail отрицательный. Отправить повторно код пользователю 
 с id пользователя для подтверждения почты.
-POST /api/v1/users/308645/send_code
+**POST /api/v1/users/308645/send_code**
 
 Body:
 ```
@@ -204,3 +204,9 @@ Body:
 	"code": 7506
 }
 ```
+
+### Управление ролями
+- Получение списка ролей: **GET /api/v1/roles**
+- Создание роли: **POST /api/v1/roles**
+- Удаление роли: **DELETE /api/v1/roles**
+- Получение ролей пользователя по user_id: **GET /api/v1/roles/<str:user_id>**
