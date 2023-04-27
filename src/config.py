@@ -71,7 +71,9 @@ class Config:
         days=int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES", default=30))
     )
     JWT_TOKEN_LOCATION = ["cookies"]
-    JWT_COOKIE_CSRF_PROTECT = int(os.getenv("JWT_COOKIE_CSRF_PROTECT", default=0))
+    JWT_COOKIE_CSRF_PROTECT = int(
+        os.getenv("JWT_COOKIE_CSRF_PROTECT", default=0)
+    )
 
     MAIL_SERVER = os.getenv("MAIL_SERVER", default="smtp.gmail.com")
     MAIL_PORT = int(os.getenv("MAIL_PORT", default=465))

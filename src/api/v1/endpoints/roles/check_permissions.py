@@ -6,10 +6,7 @@ from flask_restx import Namespace, Resource, reqparse
 
 from src.api.v1.dto.base import ErrorModelResponse
 from src.api.v1.dto.role import OutputUserRoleModel, UserRoleResponse
-from src.common.collections import get_in
-from src.common.decode_auth_token import get_decoded_data
 from src.common.decorators import admin_required
-from src.common.response import BaseResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
