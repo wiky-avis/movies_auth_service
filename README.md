@@ -231,6 +231,5 @@ Body:
 - История авторизаций пользователя: **GET /api/v1/users/login_history**
 - Удаление аккаунта пользователя: **DELETE /api/v1/users**
 - Изменение пароля пользователя **PATCH /api/v1/users/change_password**
-- Добавление роли пользователя **POST /api/v1/user/role**
 - Подтверждение почты **POST /api/v1/users/<str:user_id>/mail**
 - Отправка кода подтверждения на почту **POST /api/v1/users/<str:user_id>/send_code**
