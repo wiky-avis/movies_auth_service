@@ -12,6 +12,7 @@ from src.db.db_factory import init_db
 from src.repositories.auth_repository import AuthRepository
 from src.routes import attach_routes
 from tests.functional.vars.roles import ROLES
+from tests.functional.vars.tables import CLEAN_TABLES
 
 
 @pytest.fixture(scope="session")
@@ -77,6 +78,8 @@ def clean_table(request):
     request.addfinalizer(teardown)
 
 
+@pytest.mark.usefixtures("clean_table")
+@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 @pytest.fixture
 def create_roles(test_db):
     for role_id, role_name in ROLES:
@@ -85,6 +88,8 @@ def create_roles(test_db):
         test_db.session.commit()
 
 
+@pytest.mark.usefixtures("clean_table")
+@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 @pytest.fixture
 def create_list_user_login_history(test_db):
     email = "test77@test.ru"
