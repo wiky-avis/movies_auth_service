@@ -1,3 +1,5 @@
+from typing import NoReturn, Optional
+
 from flask_sqlalchemy import SQLAlchemy
 
 from src.api.v1.models.role import RoleModel
@@ -8,13 +10,13 @@ class RolesRepository:
     def __init__(self, db: SQLAlchemy):
         self.db = db
 
-    def set_role_by_role_name(self, user: User, role_name: str) -> None:
+    def set_role_by_role_name(self, user: User, role_name: str) -> NoReturn:
         role = self.db.session.query(Role).filter_by(name=role_name).first()
         user_role = UserRole(role_id=role.id, user_id=user.id)
         self.db.session.add(user_role)
         self.db.session.commit()
 
-    def get_ids_roles_by_user_id(self, user_id) -> list[str] | None:
+    def get_ids_roles_by_user_id(self, user_id) -> Optional[list[str]]:
         roles = self.db.session.query(UserRole).filter_by(user_id=user_id)
         roles_ids = [user_role.role_id for user_role in roles]
         return roles_ids
@@ -29,12 +31,12 @@ class RolesRepository:
         roles = [role.name for role in roles]
         return roles
 
-    def set_role_by_id(self, role_id: str, user_id: str) -> None:
+    def set_role_by_id(self, role_id: str, user_id: str) -> NoReturn:
         user_role = UserRole(role_id=role_id, user_id=user_id)
         self.db.session.add(user_role)
         self.db.session.commit()
 
-    def delete_role_by_id(self, role_id: str, user_id: str) -> None:
+    def delete_role_by_id(self, role_id: str, user_id: str) -> NoReturn:
         user_role = (
             self.db.session.query(UserRole)
             .filter_by(role_id=role_id, user_id=user_id)
@@ -43,7 +45,7 @@ class RolesRepository:
         self.db.session.delete(user_role)
         self.db.session.commit()
 
-    def get_all_roles(self):
+    def get_all_roles(self) -> list[RoleModel]:
         roles = self.db.session.query(Role).all()
         roles = [
             RoleModel(role_id=str(role.id), name=role.name) for role in roles

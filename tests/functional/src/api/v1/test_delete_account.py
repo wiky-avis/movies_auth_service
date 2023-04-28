@@ -22,8 +22,6 @@ def test_delete_account(test_db, test_client, setup_url, monkeypatch):
     assert res.status_code == HTTPStatus.NO_CONTENT
 
 
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_delete_account_error_404(test_client, setup_url, monkeypatch):
     user_id = "bbbbbbbb-9be4-4066-be89-695d35ea9131"
     payload = {"user_id": str(user_id)}

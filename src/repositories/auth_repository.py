@@ -1,4 +1,4 @@
-from typing import Any, NoReturn, Union
+from typing import Any, NoReturn, Optional, Union
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -42,7 +42,7 @@ class AuthRepository:
         return user
 
     def get_list_login_history(
-        self, user_id: str, page: int, per_page: int
+        self, user_id: str, page: Optional[int], per_page: Optional[int]
     ) -> Union[Any, list[UserLoginHistory]]:
         login_history_data = (
             self.db.session.query(LoginHistory)
@@ -64,8 +64,8 @@ class AuthRepository:
         self.db.session.commit()
 
     def save_action_to_login_history(
-        self, user_id, device_type, user_agent, action_type
-    ):
+        self, user_id: str, device_type: str, user_agent: str, action_type: str
+    ) -> NoReturn:
         new_action = LoginHistory(
             user_id=user_id,
             device_type=device_type,

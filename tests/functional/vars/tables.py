@@ -3,4 +3,5 @@ CLEAN_TABLES = [
     "login_history",
     "users",
     "roles",
+    "social_account",
 ]

@@ -25,8 +25,6 @@ def test_change_data(test_db, test_client, setup_url, monkeypatch):
     assert body == {"success": True, "error": None, "result": "Ok"}
 
 
-@pytest.mark.usefixtures("clean_table")
-@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_change_data_error_404(test_client, setup_url, monkeypatch):
     user_id = "bbbbbbbb-9be4-4066-be89-695d35ea9131"
     new_email = "test55@test.ru"
