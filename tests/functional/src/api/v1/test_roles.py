@@ -31,9 +31,7 @@ def test_get_all_roles_ok(
         ],
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.get("/api/v1/roles")
     assert res.status_code == HTTPStatus.OK
@@ -55,9 +53,7 @@ def test_get_all_roles_fail(
         ],
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.get("/api/v1/roles")
     assert res.status_code == HTTPStatus.FORBIDDEN
@@ -84,9 +80,7 @@ def test_get_add_role(
         ],
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     user_email = "test_user@test.ru"
     role_portal_user = "5eff1f88-8f2b-40c5-a4d0-85893cb7071b"
@@ -123,9 +117,7 @@ def test_get_delete_role(
         ],
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     user_email = "test_user2@test.ru"
     role_portal_user = "5eff1f88-8f2b-40c5-a4d0-85893cb7071b"
@@ -165,9 +157,7 @@ def test_get_check_permissions(
         ],
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     role = RoleType.ROLE_PORTAL_USER.value
     user_email = "test_user@test.ru"

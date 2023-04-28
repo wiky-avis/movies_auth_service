@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import psycopg2
 import pytest
 from flask import Flask, current_app
@@ -5,8 +7,9 @@ from flask_jwt_extended import JWTManager
 from psycopg2.extras import DictCursor
 
 from src.config import Config
-from src.db import Role, db_models
+from src.db import LoginHistory, Role, db_models
 from src.db.db_factory import init_db
+from src.repositories.auth_repository import AuthRepository
 from src.routes import attach_routes
 from tests.functional.vars.roles import ROLES
 
@@ -80,3 +83,18 @@ def create_roles(test_db):
         role = Role(id=role_id, name=role_name, description="")
         test_db.session.add(role)
         test_db.session.commit()
+
+
+@pytest.fixture
+def create_list_user_login_history(test_db):
+    email = "test77@test.ru"
+    login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
+    auth_repository = AuthRepository(db=test_db)
+    auth_repository.create_user(email=email)
+    user = auth_repository.get_user_by_email(email=email)
+
+    objects = [
+        LoginHistory(user_id=user.id, created_dt=login_dt) for _ in range(10)
+    ]
+    test_db.session.bulk_save_objects(objects)
+    test_db.session.commit()

@@ -21,9 +21,7 @@ def test_undefined_user_method_get(
     endpoint,
     token_header,
 ):
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=token_header
-    )
+    test_client.set_cookie(key="access_token_cookie", value=token_header)
 
     res = test_client.get(endpoint)
     assert res.status_code == HTTPStatus.UNAUTHORIZED
@@ -53,9 +51,7 @@ def test_undefined_user_method_put(
     token_header,
     endpoint,
 ):
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=token_header
-    )
+    test_client.set_cookie(key="access_token_cookie", value=token_header)
     res = test_client.patch(endpoint)
 
     assert res.status_code == HTTPStatus.UNAUTHORIZED
@@ -82,9 +78,7 @@ def test_undefined_user_method_delete(
     token_header,
     endpoint,
 ):
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=token_header
-    )
+    test_client.set_cookie(key="access_token_cookie", value=token_header)
 
     res = test_client.delete(endpoint)
     assert res.status_code == HTTPStatus.UNAUTHORIZED

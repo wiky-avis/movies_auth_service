@@ -39,6 +39,8 @@ def test_get_user_by_email(test_db, test_client, setup_url, create_roles):
     assert body["result"]["registered_on"]
 
 
+@pytest.mark.usefixtures("clean_table")
+@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_get_user_by_email_error_400(test_client, setup_url):
     res = test_client.get("/api/v1/users")
     assert res.status_code == HTTPStatus.BAD_REQUEST

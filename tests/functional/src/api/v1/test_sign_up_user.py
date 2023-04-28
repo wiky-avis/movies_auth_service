@@ -6,6 +6,8 @@ from src.repositories.auth_repository import AuthRepository
 from tests.functional.vars.tables import CLEAN_TABLES
 
 
+@pytest.mark.usefixtures("clean_table")
+@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_sign_up_temporary_user(test_client, setup_url, create_roles):
     email = "test543645@test.ru"
     password = "MyPaSsWoRd123"
@@ -26,7 +28,7 @@ def test_sign_up_temporary_user(test_client, setup_url, create_roles):
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_sign_up_temporary_user_error_409(test_db, test_client, setup_url):
-    email = "test47364@test.ru"
+    email = "test47355@test.ru"
     password = "MyPaSsWoRd123"
 
     auth_repository = AuthRepository(test_db)

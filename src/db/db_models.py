@@ -90,8 +90,12 @@ class User(UUIDMixin, db.Model):
         )
 
     @classmethod
-    def get_user_by_universal_login(cls, username: Optional[str] = None, email: Optional[str] = None):
-        return cls.query.filter(or_(cls.username == username, cls.email == email)).first()
+    def get_user_by_universal_login(
+        cls, username: Optional[str] = None, email: Optional[str] = None
+    ):
+        return cls.query.filter(
+            or_(cls.username == username, cls.email == email)
+        ).first()
 
 
 class UserRole(UUIDMixin, db.Model):
@@ -140,7 +144,9 @@ class SocialAccount(UUIDMixin, db.Model):
     __tablename__ = "social_account"
 
     user_id = db.Column(
-        UUID(as_uuid=True), db.ForeignKey(User.id, ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=True),
+        db.ForeignKey(User.id, ondelete="CASCADE"),
+        nullable=False,
     )
     social_id = db.Column(db.Text, nullable=False)
     social_name = db.Column(db.Text, nullable=False)
