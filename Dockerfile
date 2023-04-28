@@ -25,4 +25,4 @@ RUN pip install --no-cache-dir --upgrade -r /opt/app/requirements.txt
 
 COPY . .
 
-CMD ["gunicorn", "--worker-class=gevent", "--workers=4", "-b", "0.0.0.0:5000", "app:app"]
+RUN chmod +x entrypoint.sh
