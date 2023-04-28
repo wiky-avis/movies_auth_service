@@ -15,8 +15,8 @@ services:
       - ./.env
     networks:
       - "backend"
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    expose:
+      - "${POSTGRES_PORT}"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
       interval: 10s
@@ -29,8 +29,8 @@ services:
       - "backend"
     volumes:
       - "redis_data:/opt/redis/data"
-    ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
+    expose:
+      - "${REDIS_PORT}"
     env_file:
       - ./.env
     healthcheck:

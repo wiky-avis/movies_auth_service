@@ -318,7 +318,11 @@ class AuthService:
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
 
-        user_agent = parse(request.user_agent.string)
+        try:
+            user_agent = parse(request.user_agent.string)
+        except Exception:
+            user_agent = "unknown device"
+
         self.auth_repository.save_action_to_login_history(
             user_id=str(user.id),
             device_type=check_device_type(user_agent),
@@ -343,7 +347,11 @@ class AuthService:
         )
         unset_jwt_cookies(response)
 
-        user_agent = parse(request.user_agent.string)
+        try:
+            user_agent = parse(request.user_agent.string)
+        except Exception:
+            user_agent = "unknown device"
+
         self.auth_repository.save_action_to_login_history(
             user_id=user_id,
             device_type=check_device_type(user_agent),
