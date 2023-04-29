@@ -10,16 +10,56 @@ USER_LOGIN_HISTORY = {
         "total_count": 10,
     },
     "result": [
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
-        {"device_type": "web", "login_dt": "2022-12-13 14:13:02.115756"},
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
+        {
+            "action_type": "login",
+            "device_type": "web",
+            "login_dt": "2022-12-13 14:13:02.115756",
+        },
     ],
     "success": True,
 }

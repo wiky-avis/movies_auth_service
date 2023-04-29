@@ -17,9 +17,7 @@ def test_change_data(test_db, test_client, setup_url, monkeypatch):
     user = auth_repository.get_user_by_email(email=email)
     payload = {"user_id": str(user.id)}
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.patch("/api/v1/users", json={"email": new_email})
     assert res.status_code == HTTPStatus.OK
@@ -32,9 +30,7 @@ def test_change_data_error_404(test_client, setup_url, monkeypatch):
     new_email = "test55@test.ru"
     payload = {"user_id": str(user_id)}
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.patch("/api/v1/users", json={"email": new_email})
     assert res.status_code == HTTPStatus.NOT_FOUND
@@ -55,9 +51,7 @@ def test_change_data_error_400(test_db, test_client, setup_url, monkeypatch):
     user = auth_repository.get_user_by_email(email=email)
     payload = {"user_id": str(user.id)}
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.patch("/api/v1/users", json={"email": ""})
     assert res.status_code == HTTPStatus.BAD_REQUEST
@@ -78,9 +72,7 @@ def test_change_data_error_409(test_db, test_client, setup_url, monkeypatch):
     user = auth_repository.get_user_by_email(email=email)
     payload = {"user_id": str(user.id)}
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.patch("/api/v1/users", json={"email": email})
     assert res.status_code == HTTPStatus.CONFLICT

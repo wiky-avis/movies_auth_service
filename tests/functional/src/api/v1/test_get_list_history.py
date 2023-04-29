@@ -1,34 +1,15 @@
-from datetime import datetime
 from http import HTTPStatus
 
 import pytest
 from flask_jwt_extended import create_access_token
 
-from src.db import LoginHistory
 from src.repositories.auth_repository import AuthRepository
 from tests.functional.vars.login_history import USER_LOGIN_HISTORY
 from tests.functional.vars.tables import CLEAN_TABLES
 
 
-email = "test77@test.ru"
-
-
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-@pytest.fixture(scope="module")
-def create_list_user_login_history(test_db):
-    login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
-    auth_repository = AuthRepository(db=test_db)
-    auth_repository.create_user(email=email)
-    user = auth_repository.get_user_by_email(email=email)
-
-    objects = [
-        LoginHistory(user_id=user.id, created_dt=login_dt) for _ in range(10)
-    ]
-    test_db.session.bulk_save_objects(objects)
-    test_db.session.commit()
-
-
 def test_get_list_history(
     test_db,
     test_client,
@@ -36,13 +17,12 @@ def test_get_list_history(
     monkeypatch,
     create_list_user_login_history,
 ):
+    email = "test77@test.ru"
     auth_repository = AuthRepository(db=test_db)
     user = auth_repository.get_user_by_email(email=email)
     payload = {"user_id": str(user.id)}
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.OK
@@ -50,6 +30,8 @@ def test_get_list_history(
     assert body == USER_LOGIN_HISTORY
 
 
+@pytest.mark.usefixtures("clean_table")
+@pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 @pytest.mark.parametrize(
     "page, per_page, pages, prev_page, next_page, has_next, has_prev, result",
     (
@@ -73,14 +55,13 @@ def test_get_list_history_pagination(
     result,
     create_list_user_login_history,
 ):
+    email = "test77@test.ru"
     total_count = 10
     auth_repository = AuthRepository(db=test_db)
     user = auth_repository.get_user_by_email(email=email)
     payload = {"user_id": str(user.id)}
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.get(
         f"/api/v1/users/login_history?page={page}&per_page={per_page}"

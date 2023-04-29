@@ -1,9 +1,11 @@
 import enum
 import uuid
 from datetime import timezone
+from typing import Optional
 
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash
@@ -53,11 +55,20 @@ class User(UUIDMixin, db.Model):
 
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(100), nullable=True)
+    username = db.Column(db.String(255), nullable=True)
+    first_name = db.Column(db.String(255), nullable=True)
+    last_name = db.Column(db.String(255), nullable=True)
     registered_on = db.Column(db.DateTime, default=utc_now)
     verified_mail = db.Column(db.Boolean, unique=False, default=False)
     login_history = db.relationship("LoginHistory", backref="user")
     roles = db.relationship(
         "Role", secondary="user_role", back_populates="users"
+    )
+    social_accounts = db.relationship(
+        "SocialAccount",
+        backref="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     def __repr__(self):
@@ -77,6 +88,14 @@ class User(UUIDMixin, db.Model):
         self.password_hash = generate_password_hash(
             password=password, salt_length=log_rounds
         )
+
+    @classmethod
+    def get_user_by_universal_login(
+        cls, username: Optional[str] = None, email: Optional[str] = None
+    ):
+        return cls.query.filter(
+            or_(cls.username == username, cls.email == email)
+        ).first()
 
 
 class UserRole(UUIDMixin, db.Model):
@@ -119,3 +138,22 @@ class LoginHistory(UUIDMixin, db.Model):
 
     def __repr__(self):
         return f"<LoginHistory: (User: {self.user_id}, {self.created_dt}>"
+
+
+class SocialAccount(UUIDMixin, db.Model):
+    __tablename__ = "social_account"
+
+    user_id = db.Column(
+        UUID(as_uuid=True),
+        db.ForeignKey(User.id, ondelete="CASCADE"),
+        nullable=False,
+    )
+    social_id = db.Column(db.Text, nullable=False)
+    social_name = db.Column(db.Text, nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint("social_id", "social_name", name="social_pk"),
+    )
+
+    def __repr__(self):
+        return f"<SocialAccount {self.social_name}:{self.user_id}>"

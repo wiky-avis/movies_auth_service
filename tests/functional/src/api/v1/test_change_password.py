@@ -24,9 +24,7 @@ def test_change_password(test_db, test_client, setup_url, monkeypatch):
         "roles": user.roles,
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
     res = test_client.patch(
         "/api/v1/users/change_password",
         json={"old_password": old_password, "new_password": new_password},
@@ -42,9 +40,7 @@ def test_change_password_error_404(test_client, setup_url, monkeypatch):
     new_password = "abracadabra"
     payload = {"user_id": user_id}
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
     res = test_client.patch(
         "/api/v1/users/change_password",
         json={"old_password": old_password, "new_password": new_password},
@@ -76,9 +72,7 @@ def test_change_password_error_400(
         "roles": user.roles,
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
     res = test_client.patch(
         "/api/v1/users/change_password",
         json={"old_password": "", "new_password": new_password},
@@ -113,9 +107,7 @@ def test_change_password_error_401(
         "roles": user.roles,
     }
     access_token = create_access_token(identity=payload)
-    test_client.set_cookie(
-        server_name="localhost", key="access_token_cookie", value=access_token
-    )
+    test_client.set_cookie(key="access_token_cookie", value=access_token)
 
     res = test_client.patch(
         "/api/v1/users/change_password",
