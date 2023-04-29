@@ -52,8 +52,8 @@ class GetListUserLoginHistory(Resource):
     @api.param("per_page", "Количество записей на странице")
     def get(self):
         args = parser.parse_args()
-        page = args.get("page", 1)
-        per_page = args.get("per_page", 10)
+        page = args.get("page")
+        per_page = args.get("per_page")
 
         access_token = request.cookies.get("access_token_cookie")
         decoded_token = get_decoded_data(access_token)

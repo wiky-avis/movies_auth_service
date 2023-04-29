@@ -95,7 +95,9 @@ def create_list_user_login_history(test_db):
 
     objects = [
         LoginHistory(
-            user_id=user.id, created_dt=login_dt, action_type=ActionType.LOGIN.value
+            user_id=user.id,
+            created_dt=login_dt,
+            action_type=ActionType.LOGIN.value,
         )
         for _ in range(10)
     ]
