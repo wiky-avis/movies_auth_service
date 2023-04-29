@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from src.api.v1.models.response import UserRoleResponse
+from src.api.v1.models.user import UserRoleResponse
 from src.common.response import BaseResponse
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
