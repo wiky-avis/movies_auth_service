@@ -37,7 +37,6 @@ def test_db(test_app):
     db_models.db.create_all()
     db_models.db.session.commit()
     yield db_models.db
-    db_models.db.session.remove()
 
 
 @pytest.fixture
@@ -96,7 +95,7 @@ def create_list_user_login_history(test_db):
 
     objects = [
         LoginHistory(
-            user_id=user.id, created_dt=login_dt, action_type=ActionType.LOGIN
+            user_id=user.id, created_dt=login_dt, action_type=ActionType.LOGIN.value
         )
         for _ in range(10)
     ]

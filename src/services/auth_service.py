@@ -332,7 +332,7 @@ class AuthService:
 
         return response
 
-    def logout_user(self):
+    def logout_user(self, *args):
         access_token = request.cookies.get("access_token_cookie")
         user_id = decode_token(access_token)["sub"]["user_id"]
 
