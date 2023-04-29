@@ -6,12 +6,12 @@ from flask import Flask, current_app
 from flask_jwt_extended import JWTManager
 from psycopg2.extras import DictCursor
 
-from src.config import Config
 from src.db import LoginHistory, Role, db_models
 from src.db.db_factory import init_db
 from src.db.db_models import ActionType
 from src.repositories.auth_repository import AuthRepository
 from src.routes import attach_routes
+from src.settings.config import Config
 from tests.functional.vars.roles import ROLES
 
 

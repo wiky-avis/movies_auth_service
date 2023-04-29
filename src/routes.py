@@ -15,6 +15,7 @@ from src.api.v1.endpoints.auth.refresh_token import api as refresh_token
 from src.api.v1.endpoints.auth.send_code import api as send_code
 from src.api.v1.endpoints.auth.sign_up import api as sign_up
 from src.api.v1.endpoints.auth.users import api as users
+from src.api.v1.endpoints.oauth.ya import api as ya
 from src.api.v1.endpoints.roles.check_permissions import (
     api as check_permissions,
 )
@@ -43,3 +44,5 @@ def attach_routes(app: Flask):
     # role
     api.add_namespace(roles)
     api.add_namespace(check_permissions)
+    # oauth
+    api.add_namespace(ya)
