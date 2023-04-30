@@ -147,7 +147,7 @@ class OAuthService:
         if old_user:
             social_account = (
                 self._auth_repository.get_social_account_by_user_id(
-                    old_user.id
+                    user_id=str(old_user.id)
                 )
             )
             if not social_account:

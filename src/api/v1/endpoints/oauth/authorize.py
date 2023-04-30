@@ -1,9 +1,9 @@
 from flask_restx import Namespace, Resource
 
-from src.common.services.oauth_service import OAuthService
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
+from src.services.oauth_service import OAuthService
 from src.settings import get_service_config
 
 

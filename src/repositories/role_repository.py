@@ -8,16 +8,16 @@ from src.db import Role, User, UserRole
 
 class RolesRepository:
     def __init__(self, db: SQLAlchemy):
-        self.db = db
+        self._db = db
 
     def set_role_by_role_name(self, user: User, role_name: str) -> NoReturn:
-        role = self.db.session.query(Role).filter_by(name=role_name).first()
+        role = self._db.session.query(Role).filter_by(name=role_name).first()
         user_role = UserRole(role_id=role.id, user_id=user.id)
-        self.db.session.add(user_role)
-        self.db.session.commit()
+        self._db.session.add(user_role)
+        self._db.session.commit()
 
     def get_ids_roles_by_user_id(self, user_id) -> Optional[list[str]]:
-        roles = self.db.session.query(UserRole).filter_by(user_id=user_id)
+        roles = self._db.session.query(UserRole).filter_by(user_id=user_id)
         roles_ids = [user_role.role_id for user_role in roles]
         return roles_ids
 
@@ -25,7 +25,7 @@ class RolesRepository:
         roles = []
         for role_id in roles_ids:
             roles.append(
-                self.db.session.query(Role).filter_by(id=role_id).first()
+                self._db.session.query(Role).filter_by(id=role_id).first()
             )
 
         roles = [role.name for role in roles]
@@ -33,20 +33,20 @@ class RolesRepository:
 
     def set_role_by_id(self, role_id: str, user_id: str) -> NoReturn:
         user_role = UserRole(role_id=role_id, user_id=user_id)
-        self.db.session.add(user_role)
-        self.db.session.commit()
+        self._db.session.add(user_role)
+        self._db.session.commit()
 
     def delete_role_by_id(self, role_id: str, user_id: str) -> NoReturn:
         user_role = (
-            self.db.session.query(UserRole)
+            self._db.session.query(UserRole)
             .filter_by(role_id=role_id, user_id=user_id)
             .first()
         )
-        self.db.session.delete(user_role)
-        self.db.session.commit()
+        self._db.session.delete(user_role)
+        self._db.session.commit()
 
     def get_all_roles(self) -> list[RoleModel]:
-        roles = self.db.session.query(Role).all()
+        roles = self._db.session.query(Role).all()
         roles = [
             RoleModel(role_id=str(role.id), name=role.name) for role in roles
         ]
