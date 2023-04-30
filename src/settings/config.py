@@ -93,3 +93,4 @@ convention = {
 }
 
 BASE_URL = os.getenv("BASE_URL", default="http://localhost:8080")
+SSL_FLAG = bool(os.getenv("SSL_FLAG", default=0))

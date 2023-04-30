@@ -3,11 +3,12 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from gevent import monkey
 
+from src import settings
 from src.db.db_factory import init_db
 from src.routes import attach_routes
 
 
-monkey.patch_all(ssl=False)
+monkey.patch_all(ssl=settings.SSL_FLAG)
 
 cors = CORS()
 
