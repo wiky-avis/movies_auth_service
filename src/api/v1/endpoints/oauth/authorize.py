@@ -1,0 +1,27 @@
+from flask_restx import Namespace, Resource
+
+from src.common.services.oauth_service import OAuthService
+from src.db import db_models
+from src.repositories.auth_repository import AuthRepository
+from src.settings import get_service_config
+
+
+api = Namespace(name="roles", path="/api/v1/users")
+
+
+@api.route(
+    "/authorize/<string:provider_name>",
+    methods=[
+        "GET",
+    ],
+)
+class OAuthAuthorize(Resource):
+    def get(self, provider_name):
+        config = get_service_config(provider_name)
+        auth_repository = AuthRepository(db_models.db)
+        result = OAuthService(
+            config=config,
+            auth_repository=auth_repository,
+            provider_name=provider_name,
+        )
+        return result.authorize()

@@ -3,46 +3,34 @@ from http import HTTPStatus
 from flask import request
 from flask_restx import Namespace, Resource
 
-from src import settings
 from src.common.response import BaseResponse
+from src.common.services.oauth_service import OAuthService
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
-from src.services.yandex_oauth_service import YandexOAuthService
+from src.settings import get_service_config
 
 
 api = Namespace(name="roles", path="/api/v1/users")
 
 
 @api.route(
-    "/oauth/yandex",
+    "/callback/<string:provider_name>",
     methods=[
         "GET",
     ],
 )
-class OAuthYandex(Resource):
-    def get(self):
-        auth_repository = AuthRepository(db_models.db)
-        result = YandexOAuthService(
-            config=settings.YandexOAuthConfig(),
-            auth_repository=auth_repository,
-        )
-        return result.authorize()
-
-
-@api.route(
-    "/callback/yandex",
-    methods=[
-        "GET",
-    ],
-)
-class CallbackYandex(Resource):
-    def get(self):
+class OAuthCallback(Resource):
+    def get(self, provider_name):
         yandex_code = request.args.get("code")
+        config = get_service_config(provider_name)
         auth_repository = AuthRepository(db_models.db)
-        result = YandexOAuthService(
-            config=settings.YandexOAuthConfig(),
+        result = OAuthService(
+            config=config,
             auth_repository=auth_repository,
+            provider_name=provider_name,
         )
+        # yandex,  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 YaBrowser/23.3.0.2318 Yowser/2.5 Safari/537.36
+        print(request.args.get("state"), request.headers.get("User-Agent"))
         if yandex_code:
             print(yandex_code)
             res = result.callback(
