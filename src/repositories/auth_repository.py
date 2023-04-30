@@ -31,6 +31,10 @@ class AuthRepository:
         user.password(password)
         self._db.session.commit()
 
+    def set_username(self, user: User, username: str) -> NoReturn:
+        user.username = username
+        self._db.session.commit()
+
     def set_email(self, user: User, email: str) -> NoReturn:
         user.email = email
         self._db.session.commit()

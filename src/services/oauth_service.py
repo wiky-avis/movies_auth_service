@@ -217,6 +217,10 @@ class OAuthService:
                 self._auth_repository.create_social_account(
                     social_id, social_name, old_user.id
                 )
+                if login:
+                    self._auth_repository.set_username(
+                        user=old_user, username=login
+                    )
 
             roles_ids = self._roles_repository.get_ids_roles_by_user_id(
                 old_user.id
@@ -249,6 +253,10 @@ class OAuthService:
             self._auth_repository.set_password(
                 user=new_user, password=generated_password
             )
+            if login:
+                self._auth_repository.set_username(
+                    user=new_user, username=login
+                )
             self._roles_repository.set_role_by_role_name(new_user, role)
             roles_ids = self._roles_repository.get_ids_roles_by_user_id(
                 new_user.id
