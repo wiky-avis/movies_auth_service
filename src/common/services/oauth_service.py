@@ -1,5 +1,6 @@
 import logging
 from http import HTTPStatus
+from typing import Any, Dict, Optional
 from urllib.parse import urlencode, urljoin
 
 import requests
@@ -72,8 +73,7 @@ class OAuthService:
         ).json()
         return token
 
-    def get_user_info(self, data):
-        user_info = dict()
+    def get_user_info(self, data: Dict[str, Any]) -> Optional[dict]:
         access_token = get_in(data, "access_token")
         if self._provider_name == PoviderName.YANDEX:
             user_info = requests.get(
@@ -87,7 +87,10 @@ class OAuthService:
             user_info = requests.get(
                 url=self._config.url_user_info,
                 headers=dict(Authorization=f"{token_type} {access_token}"),
-            ).json()
+            )
+        else:
+            logger.warning("Provider name could not be determined")
+            return None
         return user_info.json()
 
     def authorize(self):
@@ -135,7 +138,9 @@ class OAuthService:
             social_name=state.upper(),
         )
 
-    def oauth_authorize(self, email, login, social_id, social_name):
+    def oauth_authorize(
+        self, email: str, login: str, social_id: str, social_name: str
+    ):
         old_user = self._auth_repository.get_user_by_universal_login(
             username=login, email=email
         )
@@ -171,7 +176,7 @@ class OAuthService:
             if not new_user:
                 return (
                     BaseResponse(
-                        success=False, error={"msg": "New user does not exist"}
+                        success=False, error={"msg": "New user not created"}
                     ).dict(),
                     HTTPStatus.NOT_FOUND,
                 )
