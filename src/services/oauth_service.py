@@ -33,6 +33,10 @@ class OAuthService:
         self._roles_repository = roles_repository
         self._provider_name = provider_name
 
+    @property
+    def redirect_uri(self):
+        return f"{settings.BASE_URL}{self._config.redirect_path}"
+
     @staticmethod
     def build_url(base_url: str = None, **kwargs):
         params = urlencode(kwargs)
@@ -52,7 +56,7 @@ class OAuthService:
                 client_id=self._config.client_id,
                 access_type="offline",
                 response_type="code",
-                redirect_uri=self._config.redirect_uri,
+                redirect_uri=self.redirect_uri,
                 scope=self._config.scope,
                 state="google",
             )
