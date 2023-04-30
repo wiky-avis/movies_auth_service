@@ -19,9 +19,9 @@ class OAuthAuthorize(Resource):
     def get(self, provider_name):
         config = get_service_config(provider_name)
         auth_repository = AuthRepository(db_models.db)
-        result = OAuthService(
+        oauth_service = OAuthService(
             config=config,
             auth_repository=auth_repository,
             provider_name=provider_name,
         )
-        return result.authorize()
+        return oauth_service.authorize()

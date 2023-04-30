@@ -24,7 +24,7 @@ class OAuthCallback(Resource):
         yandex_code = request.args.get("code")
         config = get_service_config(provider_name)
         auth_repository = AuthRepository(db_models.db)
-        result = OAuthService(
+        oauth_service = OAuthService(
             config=config,
             auth_repository=auth_repository,
             provider_name=provider_name,
@@ -33,7 +33,7 @@ class OAuthCallback(Resource):
         print(request.args.get("state"), request.headers.get("User-Agent"))
         if yandex_code:
             print(yandex_code)
-            res = result.callback(
+            res = oauth_service.callback(
                 yandex_code,
                 user_agent=request.headers.get("User-Agent"),
                 state=request.args.get("state"),
