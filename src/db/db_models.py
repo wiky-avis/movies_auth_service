@@ -1,11 +1,9 @@
 import enum
 import uuid
 from datetime import timezone
-from typing import Optional
 
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash
@@ -88,14 +86,6 @@ class User(UUIDMixin, db.Model):
         self.password_hash = generate_password_hash(
             password=password, salt_length=log_rounds
         )
-
-    @classmethod
-    def get_user_by_universal_login(
-        cls, username: Optional[str] = None, email: Optional[str] = None
-    ):
-        return cls.query.filter(
-            or_(cls.username == username, cls.email == email)
-        ).first()
 
 
 class UserRole(UUIDMixin, db.Model):

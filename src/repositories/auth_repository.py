@@ -1,9 +1,11 @@
 from typing import Any, NoReturn, Optional, Union
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 
 from src.api.v1.models.login_history import UserLoginHistory
 from src.db import LoginHistory, User
+from src.db.db_models import SocialAccount
 
 
 class AuthRepository:
@@ -33,11 +35,11 @@ class AuthRepository:
         user.email = email
         self.db.session.commit()
 
-    def get_user_by_email(self, email: str) -> User | None:
+    def get_user_by_email(self, email: str) -> Optional[User]:
         user = self.db.session.query(User).filter_by(email=email).first()
         return user
 
-    def get_user_by_id(self, user_id: str) -> User | None:
+    def get_user_by_id(self, user_id: str) -> Optional[User]:
         user = self.db.session.query(User).filter_by(id=user_id).first()
         return user
 
@@ -74,3 +76,28 @@ class AuthRepository:
         )
         self.db.session.add(new_action)
         self.db.session.commit()
+
+    def get_user_by_universal_login(
+        self, username: Optional[str] = None, email: Optional[str] = None
+    ) -> Optional[User]:
+        user = (
+            self.db.session.query(User)
+            .filter(or_(username == username, email == email))
+            .first()
+        )
+        return user
+
+    def create_social_account(
+        self, social_id: str, social_name: str, user_id: str
+    ) -> NoReturn:
+        new_account = SocialAccount(
+            social_id=social_id, social_name=social_name, user_id=user_id
+        )
+        self.db.session.add(new_account)
+        self.db.session.commit()
+
+    def get_social_account_by_user_id(self, user_id: str) -> Optional[User]:
+        social_account = (
+            self.db.session.query(User).filter(user_id=user_id).first()
+        )
+        return social_account

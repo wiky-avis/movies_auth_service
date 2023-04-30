@@ -3,6 +3,7 @@ from flask_restx import Namespace, Resource
 from src.common.services.oauth_service import OAuthService
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
+from src.repositories.role_repository import RolesRepository
 from src.settings import get_service_config
 
 
@@ -19,9 +20,11 @@ class OAuthAuthorize(Resource):
     def get(self, provider_name):
         config = get_service_config(provider_name)
         auth_repository = AuthRepository(db_models.db)
+        roles_repository = RolesRepository(db_models.db)
         oauth_service = OAuthService(
             config=config,
             auth_repository=auth_repository,
+            roles_repository=roles_repository,
             provider_name=provider_name,
         )
         return oauth_service.authorize()
