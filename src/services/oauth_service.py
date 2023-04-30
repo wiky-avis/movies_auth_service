@@ -9,6 +9,7 @@ from flask import redirect
 from src import settings
 from src.api.v1.models.user import UserResponse
 from src.common.collections import get_in
+from src.common.exceptions import BadRequestError, ServiceError
 from src.common.gen_password import generate_random_string
 from src.common.response import BaseResponse
 from src.db.db_models import RoleType
@@ -42,6 +43,12 @@ class OAuthService:
         params = urlencode(kwargs)
         return urljoin(base_url, f"?{params}")
 
+    def generate_email_by_login(self, login):
+        if self._provider_name == PoviderName.YANDEX:
+            return f"{login}@yandex.ru"
+        elif self._provider_name == PoviderName.GOOGLE:
+            return f"{login}@gmail.com"
+
     def get_params(self):
         params = dict()
         if self._provider_name == PoviderName.YANDEX:
@@ -62,7 +69,7 @@ class OAuthService:
             )
         return params
 
-    def get_token(self, auth_code):
+    def get_user_data(self, auth_code):
         data = urlencode(
             dict(
                 grant_type=self._config.grant_type or "",
@@ -71,38 +78,83 @@ class OAuthService:
                 code=auth_code,
             )
         )
-        token = requests.post(
-            url=self._config.url_token,
-            data=data,
-        ).json()
-        return token
+        try:
+            user_data = requests.post(
+                url=self._config.url_token,
+                data=data,
+            ).json()
+        except (ServiceError, BadRequestError, TimeoutError):
+            logger.warning(
+                "Error getting user data: provider_name %s client_id %s",
+                self._provider_name,
+                self._config.client_id,
+                exc_info=True,
+            )
+            return None
+        return user_data
 
     def get_user_info(self, data: Dict[str, Any]) -> Optional[dict]:
+        user_info = dict()
         access_token = get_in(data, "access_token")
         if self._provider_name == PoviderName.YANDEX:
-            user_info = requests.get(
-                url=self._config.url_user_info,
-                params=urlencode(
-                    dict(Authorization="OAuth", oauth_token=access_token)
-                ),
-            )
+            try:
+                user_info = requests.get(
+                    url=self._config.url_user_info,
+                    params=urlencode(
+                        dict(Authorization="OAuth", oauth_token=access_token)
+                    ),
+                )
+            except (ServiceError, BadRequestError, TimeoutError):
+                logger.warning(
+                    "Error getting user info: provider_name %s data %s",
+                    self._provider_name,
+                    data,
+                    exc_info=True,
+                )
         elif self._provider_name == PoviderName.GOOGLE:
             token_type = get_in(data, "token_type")
-            user_info = requests.get(
-                url=self._config.url_user_info,
-                headers=dict(Authorization=f"{token_type} {access_token}"),
-            )
-        else:
-            logger.warning("Provider name could not be determined")
-            return None
-        return user_info.json()
+            try:
+                user_info = requests.get(
+                    url=self._config.url_user_info,
+                    headers=dict(Authorization=f"{token_type} {access_token}"),
+                )
+            except (ServiceError, BadRequestError, TimeoutError):
+                logger.warning(
+                    "Error getting user info: provider_name %s data %s",
+                    self._provider_name,
+                    data,
+                    exc_info=True,
+                )
+        return user_info.json() if user_info else None
 
     def authorize(self):
+        if not self._provider_name or self._provider_name not in {
+            PoviderName.YANDEX,
+            PoviderName.GOOGLE,
+        }:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "Unidentified provider."},
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
         params = self.get_params()
         url = self.build_url(base_url=self._config.redirect_auth_uri, **params)
         return redirect(url, code=302)
 
     def callback(self, auth_code: str, state: str):
+        if not self._provider_name or self._provider_name not in {
+            PoviderName.YANDEX,
+            PoviderName.GOOGLE,
+        }:
+            return (
+                BaseResponse(
+                    success=False,
+                    error={"msg": "Unidentified provider."},
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
         if not auth_code:
             return (
                 BaseResponse(
@@ -111,33 +163,40 @@ class OAuthService:
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-        data = self.get_token(auth_code)
+        data = self.get_user_data(auth_code)
         if not data:
             return (
                 BaseResponse(
                     success=False,
-                    error={"msg": "Error getting data."},
+                    error={
+                        "msg": "Error getting user data. Invalid auth_code or external service error"
+                    },
                 ).dict(),
-                HTTPStatus.BAD_REQUEST,
+                HTTPStatus.NOT_FOUND,
             )
         user_data = self.get_user_info(data)
         if not user_data:
             return (
                 BaseResponse(
                     success=False,
-                    error={"msg": "Error getting code."},
+                    error={
+                        "msg": "Error getting user info. Invalid token or external service error."
+                    },
                 ).dict(),
-                HTTPStatus.BAD_REQUEST,
+                HTTPStatus.UNAUTHORIZED,
             )
         email = (
             get_in(user_data, "email")
             or get_in(user_data, "default_email")
             or get_in(user_data, "emails", 0)
         )
+        login = get_in(user_data, "login")
+        if not email and login:
+            email = self.generate_email_by_login(login)
 
         return self.oauth_authorize(
             email=email,
-            login=get_in(user_data, "login"),
+            login=login,
             social_id=str(get_in(user_data, "id")),
             social_name=state.upper(),
         )
@@ -206,5 +265,5 @@ class OAuthService:
             )
         return (
             BaseResponse(success=True, result=user).dict(),
-            HTTPStatus.CREATED,
+            HTTPStatus.OK,
         )
