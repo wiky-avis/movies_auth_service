@@ -21,6 +21,10 @@ from src.api.endpoints.v1.roles.check_permissions import (
     api as check_permissions,
 )
 from src.api.endpoints.v1.roles.roles import api as roles
+from src.api.endpoints.srv.roles.check_permissions import (
+    api as srv_check_permissions,
+)
+from src.api.endpoints.srv.roles.roles import api as srv_roles
 
 
 def attach_routes(app: Flask):
@@ -48,3 +52,7 @@ def attach_routes(app: Flask):
     # oauth
     api.add_namespace(authorize)
     api.add_namespace(callback)
+    # srv
+    api.add_namespace(srv_roles)
+    api.add_namespace(srv_check_permissions)
+
