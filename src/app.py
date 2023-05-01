@@ -3,11 +3,12 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from gevent import monkey
 
+from src import settings
 from src.db.db_factory import init_db
 from src.routes import attach_routes
 
 
-monkey.patch_all()
+monkey.patch_all(ssl=settings.SSL_FLAG)
 
 cors = CORS()
 
@@ -16,7 +17,7 @@ jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object("config.Config")
+    app.config.from_object("settings.Config")
     app.app_context().push()
 
     jwt.init_app(app)

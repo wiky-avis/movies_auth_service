@@ -6,12 +6,12 @@ from flask import Flask, current_app
 from flask_jwt_extended import JWTManager
 from psycopg2.extras import DictCursor
 
-from src.config import Config
 from src.db import LoginHistory, Role, db_models
 from src.db.db_factory import init_db
 from src.db.db_models import ActionType
 from src.repositories.auth_repository import AuthRepository
 from src.routes import attach_routes
+from src.settings.config import Config
 from tests.functional.vars.roles import ROLES
 
 
@@ -36,6 +36,7 @@ def test_app():
 def test_db(test_app):
     db_models.db.create_all()
     db_models.db.session.commit()
+
     yield db_models.db
 
 
@@ -79,14 +80,18 @@ def clean_table(request):
 
 @pytest.fixture
 def create_roles(test_db):
-    for role_id, role_name in ROLES:
-        role = Role(id=role_id, name=role_name, description="")
-        test_db.session.add(role)
-        test_db.session.commit()
+    test_db.session.rollback()
+    objects = [
+        Role(id=role_id, name=role_name, description="")
+        for role_id, role_name in ROLES
+    ]
+    test_db.session.bulk_save_objects(objects)
+    test_db.session.commit()
 
 
 @pytest.fixture
 def create_list_user_login_history(test_db):
+    test_db.session.rollback()
     email = "test77@test.ru"
     login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
     auth_repository = AuthRepository(db=test_db)

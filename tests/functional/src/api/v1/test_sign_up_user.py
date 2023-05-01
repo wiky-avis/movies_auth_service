@@ -27,7 +27,9 @@ def test_sign_up_temporary_user(test_client, setup_url, create_roles):
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_sign_up_temporary_user_error_409(test_db, test_client, setup_url):
+def test_sign_up_temporary_user_error_409(
+    test_db, create_roles, test_client, setup_url
+):
     email = "test47355@test.ru"
     password = "MyPaSsWoRd123"
 

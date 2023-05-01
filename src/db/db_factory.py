@@ -2,8 +2,8 @@ from flask import Flask
 from flask_migrate import Migrate
 from sqlalchemy import MetaData
 
-from src.config import convention
 from src.db import db_models
+from src.settings.config import convention
 
 
 metadata = MetaData(naming_convention=convention)

@@ -16,20 +16,20 @@ class RolesService:
         auth_repository: AuthRepository,
         roles_repository: RolesRepository,
     ):
-        self.auth_repository = auth_repository
-        self.roles_repository = roles_repository
+        self._auth_repository = auth_repository
+        self._roles_repository = roles_repository
 
     def get_user_roles(self, user_id: str) -> list[str]:
-        roles_ids = self.roles_repository.get_ids_roles_by_user_id(user_id)
-        roles = self.roles_repository.get_role_names_by_ids(roles_ids)
+        roles_ids = self._roles_repository.get_ids_roles_by_user_id(user_id)
+        roles = self._roles_repository.get_role_names_by_ids(roles_ids)
         return roles
 
     def get_all_roles(self):
-        roles = self.roles_repository.get_all_roles()
+        roles = self._roles_repository.get_all_roles()
         return BaseResponse(success=True, result=roles).dict(), HTTPStatus.OK
 
     def check_permissions(self, user_id: str):
-        user = self.auth_repository.get_user_by_id(user_id)
+        user = self._auth_repository.get_user_by_id(user_id)
         if not user:
             return (
                 BaseResponse(
@@ -58,7 +58,7 @@ class RolesService:
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-        user = self.auth_repository.get_user_by_id(user_id)
+        user = self._auth_repository.get_user_by_id(user_id)
         if not user:
             return (
                 BaseResponse(
@@ -67,7 +67,7 @@ class RolesService:
                 HTTPStatus.NOT_FOUND,
             )
 
-        self.roles_repository.set_role_by_id(user_id=user_id, role_id=role_id)
+        self._roles_repository.set_role_by_id(user_id=user_id, role_id=role_id)
 
         user_roles = self.get_user_roles(user_id)
         user = UserRoleResponse(
@@ -90,7 +90,7 @@ class RolesService:
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-        user = self.auth_repository.get_user_by_id(user_id)
+        user = self._auth_repository.get_user_by_id(user_id)
         if not user:
             return (
                 BaseResponse(
@@ -99,7 +99,7 @@ class RolesService:
                 HTTPStatus.NOT_FOUND,
             )
 
-        self.roles_repository.delete_role_by_id(
+        self._roles_repository.delete_role_by_id(
             user_id=user_id, role_id=role_id
         )
 
