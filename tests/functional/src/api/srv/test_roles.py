@@ -52,7 +52,7 @@ def test_get_add_role(
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_get_delete_role(
+def test_get_delete_user_role(
     create_roles, test_db, test_client, setup_url, monkeypatch
 ):
     auth_repository = AuthRepository(test_db)
@@ -79,7 +79,7 @@ def test_get_delete_role(
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_get_check_permissions(
+def test_get_check_user_permissions(
     create_roles, test_db, test_client, setup_url, monkeypatch
 ):
     auth_repository = AuthRepository(test_db)
