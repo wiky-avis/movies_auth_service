@@ -1,26 +1,32 @@
 from flask import Flask
 from flask_restx import Api
 
-from src.api.technical.ping import api as ping_api
-from src.api.v1.endpoints.auth.change_password import api as change_password
-from src.api.v1.endpoints.auth.email_confirmation import (
+from src.api.endpoints.srv.roles.check_permissions import (
+    api as srv_check_permissions,
+)
+from src.api.endpoints.srv.roles.create_new_role import api as srv_create_role
+from src.api.endpoints.srv.roles.delete_role import api as srv_delete_role
+from src.api.endpoints.srv.roles.roles import api as srv_roles
+from src.api.endpoints.technical.ping import api as ping_api
+from src.api.endpoints.v1.auth.change_password import api as change_password
+from src.api.endpoints.v1.auth.email_confirmation import (
     api as email_confirmation,
 )
-from src.api.v1.endpoints.auth.get_list_login_history import (
+from src.api.endpoints.v1.auth.get_list_login_history import (
     api as list_login_history,
 )
-from src.api.v1.endpoints.auth.login import api as login
-from src.api.v1.endpoints.auth.logout import api as logout
-from src.api.v1.endpoints.auth.refresh_token import api as refresh_token
-from src.api.v1.endpoints.auth.send_code import api as send_code
-from src.api.v1.endpoints.auth.sign_up import api as sign_up
-from src.api.v1.endpoints.auth.users import api as users
-from src.api.v1.endpoints.oauth.authorize import api as authorize
-from src.api.v1.endpoints.oauth.callback import api as callback
-from src.api.v1.endpoints.roles.check_permissions import (
+from src.api.endpoints.v1.auth.login import api as login
+from src.api.endpoints.v1.auth.logout import api as logout
+from src.api.endpoints.v1.auth.refresh_token import api as refresh_token
+from src.api.endpoints.v1.auth.send_code import api as send_code
+from src.api.endpoints.v1.auth.sign_up import api as sign_up
+from src.api.endpoints.v1.auth.users import api as users
+from src.api.endpoints.v1.oauth.authorize import api as authorize
+from src.api.endpoints.v1.oauth.callback import api as callback
+from src.api.endpoints.v1.roles.check_permissions import (
     api as check_permissions,
 )
-from src.api.v1.endpoints.roles.roles import api as roles
+from src.api.endpoints.v1.roles.roles import api as roles
 
 
 def attach_routes(app: Flask):
@@ -48,3 +54,8 @@ def attach_routes(app: Flask):
     # oauth
     api.add_namespace(authorize)
     api.add_namespace(callback)
+    # srv
+    api.add_namespace(srv_roles)
+    api.add_namespace(srv_check_permissions)
+    api.add_namespace(srv_create_role)
+    api.add_namespace(srv_delete_role)

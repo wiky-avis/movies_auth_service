@@ -2,7 +2,7 @@ from typing import NoReturn, Optional
 
 from flask_sqlalchemy import SQLAlchemy
 
-from src.api.v1.models.role import RoleModel
+from src.api.base.models.role import RoleModel
 from src.db import Role, User, UserRole
 
 
@@ -31,9 +31,20 @@ class RolesRepository:
         roles = [role.name for role in roles]
         return roles
 
+    def get_role_names_by_role_name(self, role_name: str):
+        role = self._db.session.query(Role).filter_by(name=role_name).first()
+        return role
+
     def set_role_by_id(self, role_id: str, user_id: str) -> NoReturn:
         user_role = UserRole(role_id=role_id, user_id=user_id)
         self._db.session.add(user_role)
+        self._db.session.commit()
+
+    def create_role(
+        self, role_name: str, description: Optional[str] = None
+    ) -> NoReturn:
+        new_role = Role(name=role_name, description=description)
+        self._db.session.add(new_role)
         self._db.session.commit()
 
     def delete_role_by_id(self, role_id: str, user_id: str) -> NoReturn:
@@ -42,6 +53,11 @@ class RolesRepository:
             .filter_by(role_id=role_id, user_id=user_id)
             .first()
         )
+        self._db.session.delete(user_role)
+        self._db.session.commit()
+
+    def remove_role_by_id(self, role_id: str) -> NoReturn:
+        user_role = self._db.session.query(Role).filter_by(id=role_id).first()
         self._db.session.delete(user_role)
         self._db.session.commit()
 

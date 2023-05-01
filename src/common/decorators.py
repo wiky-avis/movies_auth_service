@@ -1,6 +1,9 @@
 from functools import wraps
 from http import HTTPStatus
 
+from werkzeug.exceptions import Forbidden
+
+from src import settings
 from src.common.collections import get_in
 from src.common.decode_auth_token import get_decoded_data
 from src.common.response import BaseResponse
@@ -21,6 +24,21 @@ def admin_required(request):
                     ).dict(),
                     HTTPStatus.FORBIDDEN,
                 )
+            return fn(*args, **kwargs)
+
+        return decorator
+
+    return wrapper
+
+
+def token_required(request, allowed_tokens):
+    def wrapper(fn):
+        @wraps(fn)
+        def decorator(*args, **kwargs):
+            token = request.headers.get(settings.TOKEN_HEADER)
+            if token not in allowed_tokens and settings.STRICT_TOKEN:
+                raise Forbidden("Token required")
+
             return fn(*args, **kwargs)
 
         return decorator

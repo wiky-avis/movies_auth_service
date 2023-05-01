@@ -94,3 +94,10 @@ convention = {
 
 BASE_URL = os.getenv("BASE_URL", default="http://localhost:8080")
 SSL_FLAG = bool(os.getenv("SSL_FLAG", default=0))
+TOKEN_HEADER = os.getenv("TOKEN_HEADER", default="X-TOKEN")
+STRICT_TOKEN = bool(os.getenv("STRICT_TOKEN", default=True))
+TEST_TOKEN = "test"
+ASYNC_API_SRV_TOKEN = os.getenv("ASYNC_API_SRV_TOKEN", default=TEST_TOKEN)
+AUTH_SRV_TOKENS = {
+    ASYNC_API_SRV_TOKEN,
+}

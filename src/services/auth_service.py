@@ -16,8 +16,8 @@ from flask_jwt_extended import (
 from sqlalchemy.exc import IntegrityError, MultipleResultsFound
 from user_agents import parse
 
-from src.api.v1.models.login_history import LoginHistoryResponse
-from src.api.v1.models.user import UserResponse
+from src.api.base.models.login_history import LoginHistoryResponse
+from src.api.base.models.user import UserResponse
 from src.common.check_device import check_device_type
 from src.common.check_password import check_password
 from src.common.pagination import get_pagination

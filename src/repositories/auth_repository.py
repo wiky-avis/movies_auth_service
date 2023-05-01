@@ -2,7 +2,7 @@ from typing import Any, NoReturn, Optional, Union
 
 from flask_sqlalchemy import SQLAlchemy
 
-from src.api.v1.models.login_history import UserLoginHistory
+from src.api.base.models.login_history import UserLoginHistory
 from src.db import LoginHistory, User
 from src.db.db_models import SocialAccount
 
