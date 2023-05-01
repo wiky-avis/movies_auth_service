@@ -140,7 +140,7 @@ class OAuthService:
             )
         params = self.get_params()
         url = self.build_url(base_url=self._config.redirect_auth_uri, **params)
-        return redirect(url, code=302)
+        return redirect(url, code=HTTPStatus.FOUND)
 
     def callback(self, auth_code: str, state: str):
         if not self._provider_name or self._provider_name not in {
@@ -168,7 +168,7 @@ class OAuthService:
                 BaseResponse(
                     success=False,
                     error={
-                        "msg": "Error getting user data. Invalid auth_code or external service error"
+                        "msg": "Error getting user data. Invalid auth_code or external service error."
                     },
                 ).dict(),
                 HTTPStatus.NOT_FOUND,

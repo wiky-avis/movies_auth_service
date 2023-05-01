@@ -1,5 +1,8 @@
+from http import HTTPStatus
+
 from flask_restx import Namespace, Resource
 
+from src.api.v1.dto.base import ErrorModel, ErrorModelResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
@@ -8,6 +11,8 @@ from src.settings import get_service_config
 
 
 api = Namespace(name="oauth", path="/api/v1/users")
+api.models[ErrorModel.name] = ErrorModel
+api.models[ErrorModelResponse.name] = ErrorModelResponse
 
 
 @api.route(
@@ -17,6 +22,16 @@ api = Namespace(name="oauth", path="/api/v1/users")
     ],
 )
 class OAuthAuthorize(Resource):
+    @api.doc(
+        responses={
+            int(HTTPStatus.FOUND): "Success redirect.",
+            int(HTTPStatus.BAD_REQUEST): (
+                "Unidentified provider.",
+                ErrorModelResponse,
+            ),
+        },
+        description="Авторизация OAuth2. Редиректит на страницу провайдера.",
+    )
     def get(self, provider_name):
         config = get_service_config(provider_name)
         auth_repository = AuthRepository(db_models.db)
