@@ -2,6 +2,7 @@ from datetime import datetime
 
 import psycopg2
 import pytest
+import redis
 from flask import Flask, current_app
 from flask_jwt_extended import JWTManager
 from psycopg2.extras import DictCursor
@@ -50,6 +51,21 @@ def test_client(test_app):
     with test_app.test_client() as testing_client:
         with test_app.app_context():
             yield testing_client
+
+
+@pytest.fixture(scope="session")
+def redis_client():
+    with redis.from_url(
+        url=f"redis://127.0.0.1:6379",
+        encoding="utf-8",
+        decode_responses=True,
+    ) as pool:
+        yield pool
+
+
+@pytest.fixture
+def flush_redis(redis_client):
+    redis_client.flushdb()
 
 
 def clean_tables(*tables):
