@@ -25,9 +25,9 @@ class GoogleOAuthConfig(BaseOAuthConfig):
     url_user_info: str = "https://www.googleapis.com/oauth2/v1/userinfo"
     client_id: str = os.getenv("GOOGLE_CLIENT_ID", default="test")
     client_secret: str = os.getenv("GOOGLE_CLIENT_SECRET", default="test")
-    redirect_path: str = "/api/v1/oauth/callback/google"
+    redirect_path: str = "/api/v1/users/callback/google"
     grant_type: str = "authorization_code"
-    scope: str = "email profile openid"
+    scope: str = "email profile"
     redirect_auth_uri = "https://accounts.google.com/o/oauth2/auth"
 
 
@@ -38,7 +38,7 @@ class YandexOAuthConfig(BaseOAuthConfig):
     client_id: str = os.getenv("YANDEX_CLIENT_ID", default="test")
     client_secret: str = os.getenv("YANDEX_CLIENT_SECRET", default="test")
     redirect_auth_uri: str = "https://oauth.yandex.ru/authorize"
-    redirect_path: str = "/api/v1/oauth/callback/yandex"
+    redirect_path: str = "/api/v1/users/callback/yandex"
     grant_type: str = "authorization_code"
 
 

@@ -1,7 +1,6 @@
 from typing import Any, NoReturn, Optional, Union
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
 
 from src.api.v1.models.login_history import UserLoginHistory
 from src.db import LoginHistory, User
@@ -31,8 +30,16 @@ class AuthRepository:
         user.password(password)
         self._db.session.commit()
 
-    def set_username(self, user: User, username: str) -> NoReturn:
+    def set_additional_user_data(
+        self,
+        user: User,
+        username: Optional[str],
+        first_name: Optional[str],
+        last_name: Optional[str],
+    ) -> NoReturn:
         user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
         self._db.session.commit()
 
     def set_email(self, user: User, email: str) -> NoReturn:
@@ -80,16 +87,6 @@ class AuthRepository:
         )
         self._db.session.add(new_action)
         self._db.session.commit()
-
-    def get_user_by_universal_login(
-        self, username: Optional[str] = None, email: Optional[str] = None
-    ) -> Optional[User]:
-        user = (
-            self._db.session.query(User)
-            .filter(or_(username == username, email == email))
-            .first()
-        )
-        return user
 
     def create_social_account(
         self, social_id: str, social_name: str, user_id: str

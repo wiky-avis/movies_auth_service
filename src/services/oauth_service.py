@@ -70,13 +70,12 @@ class OAuthService:
         return params
 
     def get_user_data(self, auth_code):
-        data = urlencode(
-            dict(
-                grant_type=self._config.grant_type or "",
-                client_id=self._config.client_id,
-                client_secret=self._config.client_secret,
-                code=auth_code,
-            )
+        data = dict(
+            grant_type=self._config.grant_type or "",
+            client_id=self._config.client_id,
+            client_secret=self._config.client_secret,
+            redirect_uri=self.redirect_uri,
+            code=auth_code,
         )
         try:
             user_data = requests.post(
@@ -193,20 +192,32 @@ class OAuthService:
         login = get_in(user_data, "login")
         if not email and login:
             email = self.generate_email_by_login(login)
+        first_name = get_in(user_data, "first_name") or get_in(
+            user_data, "given_name"
+        )
+        last_name = get_in(user_data, "last_name") or get_in(
+            user_data, "family_name"
+        )
 
         return self.oauth_authorize(
             email=email,
             login=login,
             social_id=str(get_in(user_data, "id")),
             social_name=state.upper(),
+            first_name=first_name,
+            last_name=last_name,
         )
 
     def oauth_authorize(
-        self, email: str, login: str, social_id: str, social_name: str
+        self,
+        email: str,
+        social_id: str,
+        social_name: str,
+        login: Optional[str] = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
     ):
-        old_user = self._auth_repository.get_user_by_universal_login(
-            username=login, email=email
-        )
+        old_user = self._auth_repository.get_user_by_email(email=email)
         if old_user:
             social_account = (
                 self._auth_repository.get_social_account_by_user_id(
@@ -217,9 +228,12 @@ class OAuthService:
                 self._auth_repository.create_social_account(
                     social_id, social_name, old_user.id
                 )
-                if login:
-                    self._auth_repository.set_username(
-                        user=old_user, username=login
+                if login or first_name or last_name:
+                    self._auth_repository.set_additional_user_data(
+                        user=old_user,
+                        username=login,
+                        first_name=first_name,
+                        last_name=last_name,
                     )
 
             roles_ids = self._roles_repository.get_ids_roles_by_user_id(
@@ -253,9 +267,12 @@ class OAuthService:
             self._auth_repository.set_password(
                 user=new_user, password=generated_password
             )
-            if login:
-                self._auth_repository.set_username(
-                    user=new_user, username=login
+            if login or first_name or last_name:
+                self._auth_repository.set_additional_user_data(
+                    user=new_user,
+                    username=login,
+                    first_name=first_name,
+                    last_name=last_name,
                 )
             self._roles_repository.set_role_by_role_name(new_user, role)
             roles_ids = self._roles_repository.get_ids_roles_by_user_id(
