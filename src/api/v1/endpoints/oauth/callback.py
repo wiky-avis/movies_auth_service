@@ -55,7 +55,7 @@ class OAuthCallback(Resource):
                 ErrorModelResponse,
             ),
         },
-        description="Авторизация OAuth2. Получает данные о пользователе из соц сетей и создает нового пользователя.",
+        description="Авторизация OAuth2. Получает данные о пользователе из соц сетей и создает нового пользователя в бд.",
     )
     def get(self, provider_name):
         auth_code = request.args.get("code")
