@@ -250,8 +250,6 @@ Body:
 - Отправка кода подтверждения на почту **POST /api/v1/users/<str:user_id>/send_code**
 
 ## Сервисные ручки
-*Необходим токен доступа
-
 ### Управление ролями
 - Получение списка ролей: **GET /api/srv/roles**
 - Назначение роли пользователю: **POST /api/srv/roles**
@@ -259,3 +257,5 @@ Body:
 - Получение ролей пользователя по user_id: **GET /api/v1/roles/check_permissions/?user_id=<str:user_id>**
 - Добавление новой роли в бд: **POST /api/srv/roles/create_role**
 - Удаление роли из бд: **DELETE /api/srv/roles/<string:role_id>/delete_role**
+
+*Необходим токен доступа
