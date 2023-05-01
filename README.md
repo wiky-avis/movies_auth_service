@@ -236,7 +236,7 @@ Body:
 - Создание пользователя: **POST /api/v1/users/sign_up**
 - Выход пользователя (помещает переданные токены в блоклист): **DELETE /api/v1/users/logout**
 - Обновление access-токена: **POST /api/v1/users/refresh_token**
-- Авторизация и регистациа с помощью социальных сетей (OAuth2)Ж
+- Авторизация и регистациа с помощью социальных сетей (OAuth2):
   **GET /api/v1/users/authorize/<string:provider_name>**
   **GET /api/v1/users/callback/<string:provider_name>**
 
