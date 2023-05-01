@@ -2,14 +2,14 @@ from http import HTTPStatus
 
 import pytest
 
-from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
 from tests.functional.vars.tables import CLEAN_TABLES
 
 
 @pytest.mark.usefixtures("clean_table")
+@pytest.mark.usefixtures("flush_redis")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
-def test_email_confirmation(test_db, test_client, setup_url):
+def test_email_confirmation(test_db, test_client, setup_url, redis_client):
     email = "test10101@test.ru"
     secret_code = 709888
     auth_repository = AuthRepository(db=test_db)
