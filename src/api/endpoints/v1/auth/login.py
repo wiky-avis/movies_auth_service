@@ -9,6 +9,7 @@ from src.api.base.dto.base import (
     ErrorModelResponse,
 )
 from src.api.base.dto.user import InputUserAuthModel, UserAuthModelResponse
+from src.common.rate_limite import allow_request
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
@@ -47,6 +48,7 @@ class Login(Resource):
         description="Аутентификация пользователя.",
     )
     @api.expect(InputUserAuthModel)
+    @allow_request("login")
     def post(self):
         email = request.json.get("email")
         password = request.json.get("password")

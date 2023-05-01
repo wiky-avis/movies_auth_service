@@ -11,6 +11,7 @@ from src.api.base.dto.change_data import (
 )
 from src.common.collections import get_in
 from src.common.decode_auth_token import get_decoded_data
+from src.common.rate_limite import allow_request
 from src.common.response import BaseResponse
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
@@ -52,6 +53,7 @@ class UserChangeData(Resource):
         description="Изменение пароля.",
     )
     @api.expect(InputUserChangePassword)
+    @allow_request("change_password")
     def patch(self):
         access_token = request.cookies.get("access_token_cookie")
         decoded_token = get_decoded_data(access_token)
