@@ -7,7 +7,7 @@ from src.services.oauth_service import OAuthService
 from src.settings import get_service_config
 
 
-api = Namespace(name="roles", path="/api/v1/users")
+api = Namespace(name="oauth", path="/api/v1/users")
 
 
 @api.route(

@@ -36,6 +36,7 @@ def test_app():
 def test_db(test_app):
     db_models.db.create_all()
     db_models.db.session.commit()
+
     yield db_models.db
 
 
@@ -79,14 +80,18 @@ def clean_table(request):
 
 @pytest.fixture
 def create_roles(test_db):
-    for role_id, role_name in ROLES:
-        role = Role(id=role_id, name=role_name, description="")
-        test_db.session.add(role)
-        test_db.session.commit()
+    test_db.session.rollback()
+    objects = [
+        Role(id=role_id, name=role_name, description="")
+        for role_id, role_name in ROLES
+    ]
+    test_db.session.bulk_save_objects(objects)
+    test_db.session.commit()
 
 
 @pytest.fixture
 def create_list_user_login_history(test_db):
+    test_db.session.rollback()
     email = "test77@test.ru"
     login_dt = datetime(2022, 12, 13, 14, 13, 2, 115756)
     auth_repository = AuthRepository(db=test_db)

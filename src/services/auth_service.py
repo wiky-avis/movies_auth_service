@@ -61,7 +61,7 @@ class AuthService:
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
             )
-        user = self.auth_repository.get_user_by_email(email)
+        user = self._auth_repository.get_user_by_email(email)
         if not user:
             return (
                 BaseResponse(
