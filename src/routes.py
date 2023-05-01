@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_restx import Api
 
+from src.api.endpoints.srv.roles.check_permissions import (
+    api as srv_check_permissions,
+)
+from src.api.endpoints.srv.roles.roles import api as srv_roles
 from src.api.endpoints.technical.ping import api as ping_api
 from src.api.endpoints.v1.auth.change_password import api as change_password
 from src.api.endpoints.v1.auth.email_confirmation import (
@@ -21,10 +25,8 @@ from src.api.endpoints.v1.roles.check_permissions import (
     api as check_permissions,
 )
 from src.api.endpoints.v1.roles.roles import api as roles
-from src.api.endpoints.srv.roles.check_permissions import (
-    api as srv_check_permissions,
-)
-from src.api.endpoints.srv.roles.roles import api as srv_roles
+from src.api.endpoints.srv.roles.create_new_role import api as srv_create_role
+from src.api.endpoints.srv.roles.delete_role import api as srv_delete_role
 
 
 def attach_routes(app: Flask):
@@ -55,4 +57,5 @@ def attach_routes(app: Flask):
     # srv
     api.add_namespace(srv_roles)
     api.add_namespace(srv_check_permissions)
-
+    api.add_namespace(srv_create_role)
+    api.add_namespace(srv_delete_role)

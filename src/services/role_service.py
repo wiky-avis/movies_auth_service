@@ -1,6 +1,8 @@
 import logging
 from http import HTTPStatus
+from typing import Optional
 
+from src.api.base.models.role import RoleModel
 from src.api.base.models.user import UserRoleResponse
 from src.common.response import BaseResponse
 from src.repositories.auth_repository import AuthRepository
@@ -76,6 +78,30 @@ class RolesService:
         )
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
+    def create_role(self, role_name: str, description: Optional[str]):
+        if not role_name:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "Did not pass role_name."}
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
+        self._roles_repository.create_role(
+            role_name=role_name, description=description
+        )
+
+        role = self._roles_repository.get_role_names_by_role_name(
+            role_name=role_name
+        )
+        new_role = RoleModel(
+            role_id=role.id,
+            name=role.name,
+        )
+        return (
+            BaseResponse(success=True, result=new_role).dict(),
+            HTTPStatus.OK,
+        )
+
     def delete_role(self, user_id: str, role_id: str):
         if not user_id or not role_id:
             logger.error(
@@ -109,3 +135,15 @@ class RolesService:
             roles=user_roles,
         )
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
+
+    def remove_role(self, role_id: str):
+        if not role_id:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "Did not pass role_id."}
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        self._roles_repository.remove_role_by_id(role_id=role_id)
+        return BaseResponse(success=True).dict(), HTTPStatus.NO_CONTENT

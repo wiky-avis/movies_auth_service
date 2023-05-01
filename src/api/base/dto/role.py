@@ -39,3 +39,13 @@ RoleResponse = Model.inherit(
     BaseModelResponse,
     {"result": fields.List(fields.Nested(OutputRoleModel))},
 )
+
+InputCreateRoleModel = Model(
+    "InputRoleModel",
+    {
+        "role_name": fields.String(required=True, description="Название роли"),
+        "description": fields.String(
+            required=False, description="Описание роли"
+        ),
+    },
+)

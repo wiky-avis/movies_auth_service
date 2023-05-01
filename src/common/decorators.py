@@ -1,7 +1,7 @@
 from functools import wraps
 from http import HTTPStatus
 
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Forbidden
 
 from src import settings
 from src.common.collections import get_in
@@ -37,7 +37,7 @@ def token_required(request, allowed_tokens):
         def decorator(*args, **kwargs):
             token = request.headers.get(settings.TOKEN_HEADER)
             if token not in allowed_tokens and settings.STRICT_TOKEN:
-                raise Unauthorized("Token required")
+                raise Forbidden("Token required")
 
             return fn(*args, **kwargs)
 
