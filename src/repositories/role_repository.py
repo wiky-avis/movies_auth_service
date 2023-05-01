@@ -40,7 +40,9 @@ class RolesRepository:
         self._db.session.add(user_role)
         self._db.session.commit()
 
-    def create_role(self, role_name: str, description: str = "") -> NoReturn:
+    def create_role(
+        self, role_name: str, description: Optional[str] = None
+    ) -> NoReturn:
         new_role = Role(name=role_name, description=description)
         self._db.session.add(new_role)
         self._db.session.commit()
@@ -55,9 +57,7 @@ class RolesRepository:
         self._db.session.commit()
 
     def remove_role_by_id(self, role_id: str) -> NoReturn:
-        user_role = (
-            self._db.session.query(Role).filter_by(role_id=role_id).first()
-        )
+        user_role = self._db.session.query(Role).filter_by(id=role_id).first()
         self._db.session.delete(user_role)
         self._db.session.commit()
 

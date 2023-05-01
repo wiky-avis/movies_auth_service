@@ -28,7 +28,7 @@ api.models[RoleResponse.name] = RoleResponse
 
 
 @api.route(
-    "/delete_role/<string:role_id>",
+    "/<string:role_id>/delete_role",
     methods=[
         "DELETE",
     ],

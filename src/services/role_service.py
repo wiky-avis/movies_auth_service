@@ -78,7 +78,7 @@ class RolesService:
         )
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
-    def create_role(self, role_name: str, description: Optional[str]):
+    def create_role(self, role_name: str, description: Optional[str] = None):
         if not role_name:
             return (
                 BaseResponse(
@@ -94,12 +94,12 @@ class RolesService:
             role_name=role_name
         )
         new_role = RoleModel(
-            role_id=role.id,
+            role_id=str(role.id),
             name=role.name,
         )
         return (
             BaseResponse(success=True, result=new_role).dict(),
-            HTTPStatus.OK,
+            HTTPStatus.CREATED,
         )
 
     def delete_role(self, user_id: str, role_id: str):
