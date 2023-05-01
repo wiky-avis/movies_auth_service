@@ -2,7 +2,7 @@ from typing import NoReturn, Optional
 
 from flask_sqlalchemy import SQLAlchemy
 
-from src.api.v1.models.role import RoleModel
+from src.api.base.models.role import RoleModel
 from src.db import Role, User, UserRole
 
 

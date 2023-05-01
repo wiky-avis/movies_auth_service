@@ -7,7 +7,7 @@ import requests
 from flask import redirect
 
 from src import settings
-from src.api.v1.models.user import UserResponse
+from src.api.base.models.user import UserResponse
 from src.common.collections import get_in
 from src.common.exceptions import BadRequestError, ServiceError
 from src.common.gen_password import generate_random_string
