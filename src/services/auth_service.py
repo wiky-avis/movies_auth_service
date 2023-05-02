@@ -23,6 +23,7 @@ from src.common.check_password import check_password
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
 from src.common.send_email import send_to_email
+from src.common.tracer import trace_request as trace
 from src.db.db_models import ActionType, RoleType
 from src.db.redis import redis_client
 from src.repositories.auth_repository import AuthRepository
@@ -86,6 +87,7 @@ class AuthService:
             return
         self._roles_repository.set_role_by_role_name(user, role)
 
+    @trace("get_user_roles")
     def get_user_roles(self, user_id: str) -> list:
         roles_ids = self._roles_repository.get_ids_roles_by_user_id(user_id)
         roles = self._roles_repository.get_role_names_by_ids(roles_ids)
@@ -268,6 +270,7 @@ class AuthService:
             HTTPStatus.OK,
         )
 
+    @trace("auth_user")
     def auth_user(self, email: str, password: str):
         if not email or not password:
             return (

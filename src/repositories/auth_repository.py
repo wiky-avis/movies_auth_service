@@ -78,6 +78,7 @@ class AuthRepository:
         user.verified_mail = True
         self._db.session.commit()
 
+    @trace("save_action_to_login_history")
     def save_action_to_login_history(
         self, user_id: str, device_type: str, user_agent: str, action_type: str
     ) -> NoReturn:

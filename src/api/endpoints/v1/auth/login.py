@@ -10,6 +10,7 @@ from src.api.base.dto.base import (
 )
 from src.api.base.dto.user import InputUserAuthModel, UserAuthModelResponse
 from src.common.rate_limite import allow_request
+from src.common.tracer import trace_request as trace
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
@@ -53,6 +54,7 @@ class Login(Resource):
     )
     @api.expect(InputUserAuthModel)
     @allow_request("login")
+    @trace("login")
     def post(self):
         email = request.json.get("email")
         password = request.json.get("password")
