@@ -45,7 +45,7 @@ InputCreateRoleModel = Model(
     {
         "role_name": fields.String(required=True, description="Название роли"),
         "description": fields.String(
-            required=False, description="Описание роли"
+            required=True, description="Описание роли"
         ),
     },
 )
