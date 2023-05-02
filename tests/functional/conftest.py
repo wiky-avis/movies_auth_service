@@ -9,7 +9,7 @@ from psycopg2.extras import DictCursor
 
 from src.db import LoginHistory, Role, db_models
 from src.db.db_factory import init_db
-from src.db.db_models import ActionType
+from src.db.db_models import ActionType, DeviceType
 from src.repositories.auth_repository import AuthRepository
 from src.routes import attach_routes
 from src.settings.config import Config
@@ -99,7 +99,7 @@ def clean_table(request):
 def create_roles(test_db):
     test_db.session.rollback()
     objects = [
-        Role(id=role_id, name=role_name, description="")
+        Role(id=role_id, name=role_name, description="test")
         for role_id, role_name in ROLES
     ]
     test_db.session.bulk_save_objects(objects)
@@ -120,6 +120,7 @@ def create_list_user_login_history(test_db):
             user_id=user.id,
             created_dt=login_dt,
             action_type=ActionType.LOGIN.value,
+            device_type=DeviceType.WEB.value,
         )
         for _ in range(10)
     ]

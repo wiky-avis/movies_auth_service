@@ -105,7 +105,7 @@ def test_get_check_user_permissions(
 
 def test_create_role_ok(test_db, test_client, setup_url, monkeypatch):
     new_role = "ROLE_SUBSCRIBER"
-    input_body = {"role_name": new_role}
+    input_body = {"role_name": new_role, "description": "sub"}
     res = test_client.post(
         "/api/srv/roles/create_role",
         json=input_body,

@@ -56,5 +56,5 @@ def test_logout_user(test_db, test_client, setup_url):
     res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.UNAUTHORIZED
 
-    assert request.cookies.get("access_token_cookie") == "" or None
-    assert request.cookies.get("refresh_token_cookie") == "" or None
+    assert request.cookies.get("access_token_cookie") is None
+    assert request.cookies.get("refresh_token_cookie") is None
