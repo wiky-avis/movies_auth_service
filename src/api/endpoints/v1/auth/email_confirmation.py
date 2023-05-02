@@ -5,7 +5,7 @@ from flask_restx import Namespace, Resource
 
 from src.api.base.dto.base import ErrorModel, ErrorModelResponse
 from src.api.base.dto.email_confirmation import EmailConfirmationResponse
-from src.api.base.dto.user import InputUserRegisterModel
+from src.api.base.dto.user import ConfirmMailModel
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
@@ -13,7 +13,7 @@ from src.services.auth_service import AuthService
 
 
 api = Namespace(name="auth", path="/api/v1/users")
-api.models[InputUserRegisterModel.name] = InputUserRegisterModel
+api.models[ConfirmMailModel.name] = ConfirmMailModel
 api.models[EmailConfirmationResponse.name] = EmailConfirmationResponse
 api.models[ErrorModel.name] = ErrorModel
 api.models[ErrorModelResponse.name] = ErrorModelResponse
@@ -34,7 +34,7 @@ class EmailConfirmation(Resource):
         },
         description="Подтверждение почты.",
     )
-    @api.expect(InputUserRegisterModel)
+    @api.expect(ConfirmMailModel)
     def post(self, user_id):
         secret_code = request.json.get("code")
 

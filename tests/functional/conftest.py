@@ -56,7 +56,8 @@ def test_client(test_app):
 @pytest.fixture(scope="session")
 def redis_client():
     with redis.from_url(
-        url=f"redis://127.0.0.1:6379",
+        url=f"redis://{current_app.config.get('REDIS_HOST')}:"
+        f"{current_app.config.get('REDIS_PORT')}",
         encoding="utf-8",
         decode_responses=True,
     ) as pool:
