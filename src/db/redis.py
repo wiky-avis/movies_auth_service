@@ -13,7 +13,9 @@ redis_pool = redis.ConnectionPool(
     db=0,
 )
 
-redis_client = redis.StrictRedis(
-    connection_pool=redis_pool,
+redis_client = redis.from_url(
+    url=f"redis://{os.getenv('REDIS_HOST', default='redis')}:"
+    f"{int(os.getenv('REDIS_PORT', default=6379))}",
+    encoding="utf-8",
     decode_responses=True,
 )
