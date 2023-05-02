@@ -111,18 +111,37 @@ class ActionType(str, enum.Enum):
     LOGOUT = "logout"
 
 
+def create_partition(target, connection, **kwargs) -> None:
+    connection.execute(
+        """CREATE TABLE IF NOT EXISTS "login_history_web" PARTITION OF "login_history" FOR VALUES IN ('web')"""
+    )
+    connection.execute(
+        """CREATE TABLE IF NOT EXISTS "login_history_mobile" PARTITION OF "login_history" FOR VALUES IN ('mobile')"""
+    )
+    connection.execute(
+        """CREATE TABLE IF NOT EXISTS "login_history_tablet" PARTITION OF "login_history" FOR VALUES IN ('tablet')"""
+    )
+    connection.execute(
+        """CREATE TABLE IF NOT EXISTS "login_history_unknown" PARTITION OF "login_history" FOR VALUES IN ('unknown')"""
+    )
+
+
 class LoginHistory(UUIDMixin, db.Model):
     __tablename__ = "login_history"
+    __table_args__ = (
+        db.PrimaryKeyConstraint("id", "device_type"),
+        db.UniqueConstraint("id", "device_type"),
+        {
+            "postgresql_partition_by": "LIST (device_type)",
+            "listeners": [("after_create", create_partition)],
+        },
+    )
 
     user_id = db.Column(
         UUID(as_uuid=True), db.ForeignKey(User.id, ondelete="CASCADE")
     )
     action_type = db.Column(db.String)
-    device_type = db.Column(
-        db.String,
-        nullable=False,
-        default=DeviceType.WEB.value,
-    )
+    device_type = db.Column(db.String, primary_key=True)
     user_agent = db.Column(db.Text)
     created_dt = db.Column(db.DateTime, nullable=False, default=utc_now)
 
