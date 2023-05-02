@@ -49,6 +49,10 @@ class UserChangeData(Resource):
                 "Invalid password.",
                 ErrorModelResponse,
             ),
+            int(HTTPStatus.TOO_MANY_REQUESTS): (
+                "Too Many Requests.",
+                ErrorModelResponse,
+            ),
         },
         description="Изменение пароля.",
     )

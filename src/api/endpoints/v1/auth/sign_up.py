@@ -43,6 +43,10 @@ class SignUp(Resource):
                 "User already exists.",
                 ErrorModelResponse,
             ),
+            int(HTTPStatus.TOO_MANY_REQUESTS): (
+                "Too Many Requests.",
+                ErrorModelResponse,
+            ),
         },
         description="Создание временного пользователя.",
     )

@@ -44,6 +44,10 @@ class Login(Resource):
                 "Email is not verified.",
                 ErrorModelResponse,
             ),
+            int(HTTPStatus.TOO_MANY_REQUESTS): (
+                "Too Many Requests.",
+                ErrorModelResponse,
+            ),
         },
         description="Аутентификация пользователя.",
     )
