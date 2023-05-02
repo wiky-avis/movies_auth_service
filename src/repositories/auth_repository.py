@@ -3,6 +3,7 @@ from typing import Any, NoReturn, Optional, Union
 from flask_sqlalchemy import SQLAlchemy
 
 from src.api.base.models.login_history import UserLoginHistory
+from src.common.tracer import trace_request as trace
 from src.db import LoginHistory, User
 from src.db.db_models import SocialAccount
 
@@ -46,6 +47,7 @@ class AuthRepository:
         user.email = email
         self._db.session.commit()
 
+    @trace("get_user_by_email")
     def get_user_by_email(self, email: str) -> Optional[User]:
         user = self._db.session.query(User).filter_by(email=email).first()
         return user
