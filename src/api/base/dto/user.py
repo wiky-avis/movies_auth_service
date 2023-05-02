@@ -42,6 +42,14 @@ TemporaryUserModel = Model.inherit(
 )
 
 
+ConfirmMailModel = Model(
+    "ConfirmMailModel",
+    {
+        "code": fields.String(required=True, description="Код подтверждения"),
+    },
+)
+
+
 RegisteredUserModelResponse = Model.inherit(
     "RegisteredUserModelResponse",
     BaseModelResponse,

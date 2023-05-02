@@ -39,7 +39,7 @@ class Role(UUIDMixin, db.Model):
     __tablename__ = "roles"
 
     name = db.Column(db.String(72), unique=True, nullable=False)
-    description = db.Column(db.String(255), nullable=True)
+    description = db.Column(db.String(255), nullable=False)
     users = db.relationship(
         "User", secondary="user_role", back_populates="roles"
     )

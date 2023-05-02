@@ -8,6 +8,7 @@ from tests.functional.vars.tables import CLEAN_TABLES
 
 
 @pytest.mark.usefixtures("clean_table")
+@pytest.mark.usefixtures("flush_redis")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_change_password(test_db, test_client, setup_url, monkeypatch):
     email = "test66@test.ru"
@@ -56,6 +57,7 @@ def test_change_password_error_404(test_client, setup_url, monkeypatch):
 
 
 @pytest.mark.usefixtures("clean_table")
+@pytest.mark.usefixtures("flush_redis")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_change_password_error_400(
     test_db, test_client, setup_url, monkeypatch
@@ -88,6 +90,7 @@ def test_change_password_error_400(
 
 
 @pytest.mark.usefixtures("clean_table")
+@pytest.mark.usefixtures("flush_redis")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_change_password_error_401(
     test_db, test_client, setup_url, monkeypatch

@@ -7,6 +7,7 @@ from tests.functional.vars.tables import CLEAN_TABLES
 
 
 @pytest.mark.usefixtures("clean_table")
+@pytest.mark.usefixtures("flush_redis")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_sign_up_temporary_user(test_client, setup_url, create_roles):
     email = "test543645@test.ru"
@@ -26,6 +27,7 @@ def test_sign_up_temporary_user(test_client, setup_url, create_roles):
 
 
 @pytest.mark.usefixtures("clean_table")
+@pytest.mark.usefixtures("flush_redis")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_sign_up_temporary_user_error_409(
     test_db, create_roles, test_client, setup_url

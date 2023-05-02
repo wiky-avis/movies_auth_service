@@ -14,6 +14,7 @@ from src.api.base.dto.user import (
     TemporaryUserModel,
     TemporaryUserModelResponse,
 )
+from src.common.rate_limite import allow_request
 from src.db import db_models
 from src.repositories.auth_repository import AuthRepository
 from src.repositories.role_repository import RolesRepository
@@ -42,10 +43,15 @@ class SignUp(Resource):
                 "User already exists.",
                 ErrorModelResponse,
             ),
+            int(HTTPStatus.TOO_MANY_REQUESTS): (
+                "Too Many Requests.",
+                ErrorModelResponse,
+            ),
         },
         description="Создание временного пользователя.",
     )
     @api.expect(InputUserRegisterModel)
+    @allow_request("sign_up")
     def post(self):
         email = request.json.get("email")
         password = request.json.get("password")

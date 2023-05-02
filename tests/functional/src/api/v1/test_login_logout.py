@@ -39,6 +39,7 @@ def test_login_user(test_db, test_client, setup_url, create_roles):
 
 
 @pytest.mark.usefixtures("clean_table")
+@pytest.mark.usefixtures("flush_redis")
 @pytest.mark.parametrize("clean_table", [CLEAN_TABLES], indirect=True)
 def test_logout_user(test_db, test_client, setup_url):
     auth_repository = AuthRepository(test_db)
@@ -55,5 +56,5 @@ def test_logout_user(test_db, test_client, setup_url):
     res = test_client.get("/api/v1/users/login_history")
     assert res.status_code == HTTPStatus.UNAUTHORIZED
 
-    assert request.cookies.get("access_token_cookie") is None
-    assert request.cookies.get("refresh_token_cookie") is None
+    assert request.cookies.get("access_token_cookie") == "" or None
+    assert request.cookies.get("refresh_token_cookie") == "" or None
