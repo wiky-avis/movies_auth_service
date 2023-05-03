@@ -92,6 +92,8 @@ convention = {
     "pk": "pk_%(table_name)s",
 }
 
+DEBUG = os.getenv("DEBUG", "False").lower() in "1"
+ENABLE_TRACING = os.getenv("ENABLE_TRACING", "False").lower() in "1"
 BASE_URL = os.getenv("BASE_URL", default="http://localhost:8080")
 SSL_FLAG = bool(os.getenv("SSL_FLAG", default=0))
 RATELIMIT_ENABLED = os.getenv("RATELIMIT_ENABLED", "False").lower() in "1"
