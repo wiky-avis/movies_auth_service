@@ -1,4 +1,4 @@
-import os
+import logging
 from http import HTTPStatus
 from uuid import uuid4
 
@@ -11,6 +11,7 @@ from src.common.response import BaseResponse
 from src.common.tracer import configure_tracer
 from src.db.db_factory import init_db
 from src.routes import attach_routes
+from src.settings.config import DEBUG, ENABLE_TRACING
 
 
 monkey.patch_all()
@@ -18,6 +19,14 @@ monkey.patch_all()
 cors = CORS()
 
 jwt = JWTManager()
+
+
+def init_tracer(app: Flask):
+    if ENABLE_TRACING:
+        configure_tracer(app)
+        logging.info("Tracing is enabled")
+    else:
+        logging.info("Tracing is disabled")
 
 
 def create_app():
@@ -31,7 +40,7 @@ def create_app():
     attach_routes(app)
     cors.init_app(app)
 
-    configure_tracer(app)
+    init_tracer(app)
 
     return app
 
@@ -41,7 +50,7 @@ app = create_app()
 
 @app.before_request
 def before_request():
-    if os.getenv("DEBUG"):
+    if DEBUG:
         request.environ["HTTP_X_REQUEST_ID"] = str(uuid4())
 
     request_id = request.headers.get("X-Request-Id")
