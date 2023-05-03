@@ -1,3 +1,4 @@
+import logging
 import os
 from http import HTTPStatus
 from uuid import uuid4
@@ -20,6 +21,14 @@ cors = CORS()
 jwt = JWTManager()
 
 
+def init_tracer(app: Flask):
+    if os.getenv("ENABLE_TRACING", default=False):
+        configure_tracer(app)
+        logging.info("Tracing is enabled")
+    else:
+        logging.info("Tracing is disabled")
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object("settings.Config")
@@ -31,7 +40,7 @@ def create_app():
     attach_routes(app)
     cors.init_app(app)
 
-    configure_tracer(app)
+    init_tracer(app)
 
     return app
 

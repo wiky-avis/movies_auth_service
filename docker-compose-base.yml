@@ -42,8 +42,8 @@ services:
   api:
     build: .
     entrypoint: ./entrypoint.sh
-    ports:
-      - "${HTTP_PORT}:${HTTP_PORT}"
+    expose:
+      - "${HTTP_PORT}"
     env_file:
       - ./.env
     networks:

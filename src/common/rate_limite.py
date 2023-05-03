@@ -5,6 +5,7 @@ from pyrate_limiter.exceptions import BucketFullException
 
 from src.common.response import BaseResponse
 from src.db.redis import redis_pool
+from src.settings.config import RATELIMIT_ENABLED
 
 
 rate_limits = (RequestRate(20, Duration.MINUTE),)
@@ -21,6 +22,8 @@ def allow_request(identity: str):
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
             try:
+                if not RATELIMIT_ENABLED:
+                    return result
                 limiter.try_acquire(identity)
             except BucketFullException:
                 return (
