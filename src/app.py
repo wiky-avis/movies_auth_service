@@ -1,18 +1,19 @@
+import os
 from http import HTTPStatus
+from uuid import uuid4
 
 from flask import Flask, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from gevent import monkey
 
-from src import settings
 from src.common.response import BaseResponse
 from src.common.tracer import configure_tracer
 from src.db.db_factory import init_db
 from src.routes import attach_routes
 
 
-monkey.patch_all(ssl=settings.SSL_FLAG)
+monkey.patch_all()
 
 cors = CORS()
 
@@ -40,6 +41,9 @@ app = create_app()
 
 @app.before_request
 def before_request():
+    if os.getenv("DEBUG"):
+        request.environ["HTTP_X_REQUEST_ID"] = str(uuid4())
+
     request_id = request.headers.get("X-Request-Id")
     if not request_id:
         return (
