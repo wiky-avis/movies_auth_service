@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from flask import request
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, reqparse
 
 from src.api.base.dto.base import ErrorModelResponse
 from src.api.base.dto.role import (
@@ -24,6 +24,9 @@ api.models[OutputUserRoleModel.name] = OutputUserRoleModel
 api.models[UserRoleResponse.name] = UserRoleResponse
 api.models[OutputRoleModel.name] = OutputRoleModel
 api.models[RoleResponse.name] = RoleResponse
+parser = reqparse.RequestParser()
+parser.add_argument("user_id", type=str)
+parser.add_argument("role_id", type=str)
 
 
 @api.route("", methods=["GET", "POST", "DELETE"])
@@ -104,11 +107,14 @@ class Roles(Resource):
         },
         description="Удалить у пользователя роль.",
     )
-    @api.expect(InputRoleModel)
+    @api.param("user_id", "Id пользователя")
+    @api.param("role_id", "Id роли")
     @admin_required(request)
     def delete(self):
-        user_id = request.json.get("user_id")
-        role_id = request.json.get("role_id")
+        args = parser.parse_args()
+        user_id = args.get("user_id")
+        role_id = args.get("role_id")
+
         auth_repository = AuthRepository(db_models.db)
         roles_repository = RolesRepository(db_models.db)
         role_service = RolesService(

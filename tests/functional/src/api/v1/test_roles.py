@@ -126,8 +126,9 @@ def test_get_delete_role(
     roles_repository = RolesRepository(test_db)
     roles_repository.set_role_by_id(role_id=role_portal_user, user_id=user.id)
 
-    input_body = {"user_id": str(user.id), "role_id": role_portal_user}
-    res = test_client.delete("/api/v1/roles", json=input_body)
+    res = test_client.delete(
+        f"/api/v1/roles?user_id={str(user.id)}&role_id={role_portal_user}"
+    )
     assert res.status_code == HTTPStatus.OK
     body = res.json
     assert body["success"] is True
