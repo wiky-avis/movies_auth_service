@@ -228,7 +228,7 @@ Body:
 ### Управление ролями
 - Получение списка ролей: **GET /api/v1/roles**
 - Назначить роль пользователю: **POST /api/v1/roles**
-- Удаление роли у пользовтателя: **DELETE /api/v1/roles**
+- Удаление роли у пользователя: **DELETE /api/v1/roles**
 - Получение ролей пользователя по user_id: **GET /api/v1/roles/check_permissions/?user_id=<str:user_id>**
 
 Доступ к этим ручкам имеют юзеры с ролью администратор.
@@ -254,7 +254,7 @@ Body:
 ### Управление ролями
 - Получение списка ролей: **GET /api/srv/roles**
 - Назначение роли пользователю: **POST /api/srv/roles**
-- Удаление роли у пользовтателя: **DELETE /api/srv/roles**
+- Удаление роли у пользователя: **DELETE /api/srv/roles**
 - Получение ролей пользователя по user_id: **GET /api/v1/roles/check_permissions/?user_id=<str:user_id>**
 - Добавление новой роли в бд: **POST /api/srv/roles/create_role**
 - Удаление роли из бд: **DELETE /api/srv/roles/<string:role_id>/delete_role**
