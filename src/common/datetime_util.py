@@ -31,3 +31,16 @@ def make_tzaware(dt, use_tz=None, localize=True):
     if not use_tz:
         use_tz = get_local_utcoffset()
     return dt.astimezone(use_tz) if localize else dt.replace(tzinfo=use_tz)
+
+
+def get_gmt_timezone(localtime: str):
+    try:
+        dt = datetime.fromisoformat(localtime).utcoffset()
+        gmt_offset = dt.total_seconds() // 3600
+        gmt_timezone = int("{0:+3d}".format(int(gmt_offset)))
+        if gmt_timezone > 12 or gmt_timezone < -12:
+            return None
+
+        return str(gmt_timezone)
+    except ValueError:
+        return None

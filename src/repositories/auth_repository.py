@@ -107,3 +107,7 @@ class AuthRepository:
             .first()
         )
         return social_account
+
+    def update_gmt_timezone(self, user: User, tz: str) -> NoReturn:
+        user.tz = tz
+        self._db.session.commit()

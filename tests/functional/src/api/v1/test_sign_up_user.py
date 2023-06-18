@@ -12,9 +12,11 @@ from tests.functional.vars.tables import CLEAN_TABLES
 def test_sign_up_temporary_user(test_client, setup_url, create_roles):
     email = "test543645@test.ru"
     password = "MyPaSsWoRd123"
+    localtime = "2020-01-08T12:00:00-08:00"
 
     res = test_client.post(
-        "/api/v1/users/sign_up", json={"email": email, "password": password}
+        "/api/v1/users/sign_up",
+        json={"email": email, "password": password, "localtime": localtime},
     )
     assert res.status_code == HTTPStatus.CREATED
     body = res.json
@@ -34,12 +36,14 @@ def test_sign_up_temporary_user_error_409(
 ):
     email = "test47355@test.ru"
     password = "MyPaSsWoRd123"
+    localtime = "2020-01-08T12:00:00-08:00"
 
     auth_repository = AuthRepository(test_db)
     auth_repository.create_user(email=email)
 
     res = test_client.post(
-        "/api/v1/users/sign_up", json={"email": email, "password": password}
+        "/api/v1/users/sign_up",
+        json={"email": email, "password": password, "localtime": localtime},
     )
     assert res.status_code == HTTPStatus.CONFLICT
     assert res.json == {

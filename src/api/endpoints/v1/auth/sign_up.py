@@ -55,11 +55,12 @@ class SignUp(Resource):
     def post(self):
         email = request.json.get("email")
         password = request.json.get("password")
+        localtime = request.json.get("localtime")
         auth_repository = AuthRepository(db_models.db)
         roles_repository = RolesRepository(db_models.db)
         auth_service = AuthService(
             auth_repository=auth_repository, roles_repository=roles_repository
         )
         return auth_service.register_temporary_user(
-            email=email, password=password
+            email=email, password=password, localtime=localtime
         )

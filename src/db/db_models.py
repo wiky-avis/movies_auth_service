@@ -57,6 +57,7 @@ class User(UUIDMixin, db.Model):
     first_name = db.Column(db.String(255), nullable=True)
     last_name = db.Column(db.String(255), nullable=True)
     registered_on = db.Column(db.DateTime, default=utc_now)
+    tz = db.Column(db.String(3), nullable=True)
     verified_mail = db.Column(db.Boolean, unique=False, default=False)
     login_history = db.relationship("LoginHistory", backref="user")
     roles = db.relationship(
