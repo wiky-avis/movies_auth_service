@@ -8,6 +8,9 @@ InputUserRegisterModel = Model(
     {
         "email": fields.String(required=True, description="Почта"),
         "password": fields.String(required=True, description="Пароль"),
+        "localtime": fields.String(
+            required=True, description="Локальное время пользователя"
+        ),
     },
 )
 
@@ -18,6 +21,7 @@ BaseUserModel = Model(
         "email": fields.String(required=True, description="Почта"),
         "roles": fields.List(fields.String(), description="Роли пользователя"),
         "registered_on": fields.String(description="Дата регистрации"),
+        "tz": fields.String(description="Временная зона"),
     },
 )
 

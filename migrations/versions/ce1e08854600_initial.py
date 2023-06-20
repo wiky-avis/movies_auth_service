@@ -30,6 +30,7 @@ def upgrade():
     sa.Column('password_hash', sa.String(length=100), nullable=True),
     sa.Column('registered_on', sa.DateTime(), nullable=True),
     sa.Column('verified_mail', sa.Boolean(), nullable=True),
+    sa.Column('tz', sa.String(length=3), nullable=True),
     sa.Column('id', sa.UUID(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')

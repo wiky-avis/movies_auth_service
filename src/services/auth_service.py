@@ -20,6 +20,7 @@ from src.api.base.models.login_history import LoginHistoryResponse
 from src.api.base.models.user import UserResponse
 from src.common.check_device import check_device_type
 from src.common.check_password import check_password
+from src.common.datetime_util import get_gmt_timezone
 from src.common.pagination import get_pagination
 from src.common.response import BaseResponse, Pagination
 from src.common.send_email import send_to_email
@@ -77,6 +78,35 @@ class AuthService:
             roles=user_roles,
             verified_mail=user.verified_mail,
             registered_on=str(user.registered_on),
+            tz=user.tz,
+        )
+        return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
+
+    def get_user_by_id(self, user_id: str):
+        if not user_id:
+            logger.error("User id is not valid: %s", user_id, exc_info=True)
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User id is not valid."}
+                ).dict(),
+                HTTPStatus.BAD_REQUEST,
+            )
+        user = self._auth_repository.get_user_by_id(user_id)
+        if not user:
+            return (
+                BaseResponse(
+                    success=False, error={"msg": "User does not exist."}
+                ).dict(),
+                HTTPStatus.NOT_FOUND,
+            )
+        user_roles = self.get_user_roles(user.id)
+        user = UserResponse(
+            id=str(user.id),
+            email=user.email,
+            roles=user_roles,
+            verified_mail=user.verified_mail,
+            registered_on=str(user.registered_on),
+            tz=user.tz,
         )
         return BaseResponse(success=True, result=user).dict(), HTTPStatus.OK
 
@@ -93,14 +123,24 @@ class AuthService:
         roles = self._roles_repository.get_role_names_by_ids(roles_ids)
         return roles
 
-    def register_temporary_user(self, email: str, password: str):
+    def register_temporary_user(
+        self, email: str, password: str, localtime: str
+    ):
         if not email or not password:
             return (
                 BaseResponse(
                     success=False,
-                    error={"msg": "No email or no password."},
+                    error={
+                        "msg": "Fields 'email' and 'password' are required."
+                    },
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
+            )
+
+        gmt = get_gmt_timezone(localtime=localtime)
+        if gmt is None:
+            logger.error(
+                "Local time isn't valid: %s", localtime, exc_info=True
             )
 
         role = RoleType.ROLE_PORTAL_USER.value
@@ -119,6 +159,7 @@ class AuthService:
 
         user = self._auth_repository.get_user_by_email(email=email)
         self._auth_repository.set_password(user=user, password=password)
+        self._auth_repository.set_gmt_timezone(user=user, tz=gmt)
         user_roles = self.get_user_roles(user.id)
         user = UserResponse(
             id=str(user.id),
@@ -126,6 +167,7 @@ class AuthService:
             roles=user_roles,
             verified_mail=user.verified_mail,
             registered_on=str(user.registered_on),
+            tz=user.tz,
         )
         return (
             BaseResponse(success=True, result=user).dict(),
@@ -271,14 +313,22 @@ class AuthService:
         )
 
     @trace("auth_user")
-    def auth_user(self, email: str, password: str):
+    def auth_user(self, email: str, password: str, localtime: str):
         if not email or not password:
             return (
                 BaseResponse(
                     success=False,
-                    error={"msg": "No email or no password."},
+                    error={
+                        "msg": "Fields 'email' and 'password' are required."
+                    },
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
+            )
+
+        gmt = get_gmt_timezone(localtime=localtime)
+        if gmt is None:
+            logger.error(
+                "Local time isn't valid: %s", localtime, exc_info=True
             )
 
         user = self._auth_repository.get_user_by_email(email=email)
@@ -329,6 +379,7 @@ class AuthService:
         except Exception:
             user_agent = "unknown device"
 
+        self._auth_repository.set_gmt_timezone(user=user, tz=gmt)
         self._auth_repository.save_action_to_login_history(
             user_id=str(user.id),
             device_type=check_device_type(user_agent),

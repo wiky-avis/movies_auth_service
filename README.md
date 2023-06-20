@@ -9,6 +9,38 @@
 ### Создана интеграция Auth-сервиса и AsyncAPI-сервиса:
 [Интеграция с AsyncAPI](https://github.com/opodryadov/Async_API_sprint_1/pull/49)
 
+### Доработан сервис Auth:
+Осуществлена возможность передачи таймзоны (поле tz) от фронта в ручки регистрации/аутентификации пользователя, а также добавлена srv-ручка, которая по user_id возвращает всю модель без пароля.
+
+[Доработка сервиса](https://github.com/wiky-avis/Auth_sprint_1/pull/90)
+
+Пример запроса:
+```
+curl -X 'GET' \
+  'http://127.0.0.1:8000/api/srv/users?user_id=73c9c344-5230-478d-95bf-b100f8569440' \
+  -H 'accept: application/json'
+```
+
+Ответ ручки:
+```
+{
+  "success": true,
+  "error": null,
+  "result": {
+    "id": "73c9c344-5230-478d-95bf-b100f8569440",
+    "email": "123@123.ru",
+    "roles": [
+      "ROLE_PORTAL_USER"
+    ],
+    "verified_mail": true,
+    "registered_on": "2023-06-20 07:13:22",
+    "tz": "-8"
+  }
+}
+```
+
+
+
 ## Используемые технологии
 - API написано на Python и Flask.
 - В качестве хранилища используется Postgres и Redis.
@@ -258,5 +290,7 @@ Body:
 - Получение ролей пользователя по user_id: **GET /api/v1/roles/check_permissions/?user_id=<str:user_id>**
 - Добавление новой роли в бд: **POST /api/srv/roles/create_role**
 - Удаление роли из бд: **DELETE /api/srv/roles/<string:role_id>/delete_role**
+### Пользователи:
+- Получение информации о пользователе: **GET api/srv/users?user_id=<str:user_id>**
 
 *Необходим токен доступа

@@ -9,6 +9,7 @@ from tests.functional.vars.tables import CLEAN_TABLES
 
 email = "test44@test.ru"
 password = "verygoodpassword"
+localtime = "2020-01-08T12:00:00-08:00"
 
 
 def test_login_user(test_db, test_client, setup_url, create_roles):
@@ -20,7 +21,8 @@ def test_login_user(test_db, test_client, setup_url, create_roles):
     auth_repository.update_flag_verified_mail(user)
 
     res = test_client.post(
-        "/api/v1/users/login", json={"email": email, "password": password}
+        "/api/v1/users/login",
+        json={"email": email, "password": password, "localtime": localtime},
     )
     assert res.status_code == HTTPStatus.OK
     assert res.json == {
