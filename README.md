@@ -290,5 +290,7 @@ Body:
 - Получение ролей пользователя по user_id: **GET /api/v1/roles/check_permissions/?user_id=<str:user_id>**
 - Добавление новой роли в бд: **POST /api/srv/roles/create_role**
 - Удаление роли из бд: **DELETE /api/srv/roles/<string:role_id>/delete_role**
+### Пользователи:
+- Получение информации о пользователе: **GET api/srv/users?user_id=<str:user_id>**
 
 *Необходим токен доступа
