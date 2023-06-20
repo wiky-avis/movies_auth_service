@@ -9,7 +9,7 @@ class UserResponse(IdModelMixin, ORDJSONModelMixin):
     roles: List[RoleType] = list()
     verified_mail: Optional[bool] = None
     registered_on: Optional[str] = None
-    tz: str = None
+    tz: Optional[str] = None
 
 
 class UserRoleResponse(ORDJSONModelMixin):

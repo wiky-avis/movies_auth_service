@@ -37,10 +37,10 @@ def get_gmt_timezone(localtime: str):
     try:
         dt = datetime.fromisoformat(localtime).utcoffset()
         gmt_offset = dt.total_seconds() // 3600
-        gmt_timezone = int("{0:+3d}".format(int(gmt_offset)))
-        if gmt_timezone > 12 or gmt_timezone < -12:
+        gmt_timezone = "{0:+3d}".format(int(gmt_offset)).lstrip()
+        if int(gmt_timezone) > 12 or int(gmt_timezone) < -12:
             return None
 
-        return str(gmt_timezone)
+        return gmt_timezone
     except ValueError:
         return None

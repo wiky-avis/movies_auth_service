@@ -126,12 +126,12 @@ class AuthService:
     def register_temporary_user(
         self, email: str, password: str, localtime: str
     ):
-        if not email or not password or not localtime:
+        if not email or not password:
             return (
                 BaseResponse(
                     success=False,
                     error={
-                        "msg": "Fields 'email', 'password', 'localtime' are required."
+                        "msg": "Fields 'email' and 'password' are required."
                     },
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
@@ -139,12 +139,8 @@ class AuthService:
 
         gmt = get_gmt_timezone(localtime=localtime)
         if gmt is None:
-            return (
-                BaseResponse(
-                    success=False,
-                    error={"msg": "Local time isn't valid."},
-                ).dict(),
-                HTTPStatus.BAD_REQUEST,
+            logger.error(
+                "Local time isn't valid: %s", localtime, exc_info=True
             )
 
         role = RoleType.ROLE_PORTAL_USER.value
@@ -163,7 +159,7 @@ class AuthService:
 
         user = self._auth_repository.get_user_by_email(email=email)
         self._auth_repository.set_password(user=user, password=password)
-        self._auth_repository.update_gmt_timezone(user=user, tz=gmt)
+        self._auth_repository.set_gmt_timezone(user=user, tz=gmt)
         user_roles = self.get_user_roles(user.id)
         user = UserResponse(
             id=str(user.id),
@@ -318,12 +314,12 @@ class AuthService:
 
     @trace("auth_user")
     def auth_user(self, email: str, password: str, localtime: str):
-        if not email or not password or not localtime:
+        if not email or not password:
             return (
                 BaseResponse(
                     success=False,
                     error={
-                        "msg": "Fields 'email', 'password', 'localtime' are required."
+                        "msg": "Fields 'email' and 'password' are required."
                     },
                 ).dict(),
                 HTTPStatus.BAD_REQUEST,
@@ -331,12 +327,8 @@ class AuthService:
 
         gmt = get_gmt_timezone(localtime=localtime)
         if gmt is None:
-            return (
-                BaseResponse(
-                    success=False,
-                    error={"msg": "Local time isn't valid."},
-                ).dict(),
-                HTTPStatus.BAD_REQUEST,
+            logger.error(
+                "Local time isn't valid: %s", localtime, exc_info=True
             )
 
         user = self._auth_repository.get_user_by_email(email=email)
@@ -387,7 +379,7 @@ class AuthService:
         except Exception:
             user_agent = "unknown device"
 
-        self._auth_repository.update_gmt_timezone(user=user, tz=gmt)
+        self._auth_repository.set_gmt_timezone(user=user, tz=gmt)
         self._auth_repository.save_action_to_login_history(
             user_id=str(user.id),
             device_type=check_device_type(user_agent),
